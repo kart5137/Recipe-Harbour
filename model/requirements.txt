@@ -1,0 +1,16 @@
+# Produce-recognition model (R6): training and TF.js export.
+# Install into a separate env:  py -3.13 -m venv .venv-ml
+#   .venv-ml\Scripts\python -m pip install -r model/requirements.txt
+#   .venv-ml\Scripts\python -m pip install --no-deps tensorflowjs==4.22.0
+# tensorflowjs is installed without its dependencies: it requires tensorflow-decision-forests,
+# which has no Windows build and is not used for Keras models (see model/shims/).
+tensorflow==2.21.0
+tf-keras==2.21.0
+numpy==2.5.5
+pillow==13.0.0
+tensorflow-hub==0.16.1
+jax[cpu]==0.12.1
+setuptools==80.10.2   # tensorflow-hub still imports pkg_resources (removed in setuptools 81)
+six>=1.16
+importlib_resources
+packaging

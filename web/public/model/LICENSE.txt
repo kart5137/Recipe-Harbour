@@ -1,0 +1,12 @@
+Recipe Harbour produce classifier (TensorFlow.js)
+
+Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+
+Trained on:
+- Fruits-360 by Mihai Oltean, CC BY-SA 4.0 (https://github.com/fruits-360)
+- Open Images V7 (https://storage.googleapis.com/openimages/web/index.html): annotations CC BY 4.0
+  by Google LLC; photos CC BY 2.0 by their authors, listed in model/OPEN_IMAGES_CREDITS.csv
+  of the Recipe Harbour source repository.
+- MobileNetV2 ImageNet weights from TensorFlow/Keras (Apache 2.0).
+
+Details and test results: docs/model/MODEL_CARD.md in the source repository.

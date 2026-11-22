@@ -1,0 +1,184 @@
+{
+ "version": "v2",
+ "input": {
+  "size": 224,
+  "range": "0-255 RGB"
+ },
+ "thresholds": {
+  "top1": 0.7,
+  "top3": 0.9,
+  "min_test": 15
+ },
+ "weights": "float16",
+ "export_agreement": 1.0,
+ "classes": [
+  {
+   "id": "apple",
+   "offered": false,
+   "test_photos": 135,
+   "top1": 0.593,
+   "top3": 0.852
+  },
+  {
+   "id": "banana",
+   "offered": false,
+   "test_photos": 43,
+   "top1": 0.698,
+   "top3": 0.837
+  },
+  {
+   "id": "bell_pepper",
+   "offered": false,
+   "test_photos": 97,
+   "top1": 0.773,
+   "top3": 0.866
+  },
+  {
+   "id": "broccoli",
+   "offered": true,
+   "test_photos": 97,
+   "top1": 0.959,
+   "top3": 1.0
+  },
+  {
+   "id": "cabbage",
+   "offered": true,
+   "test_photos": 50,
+   "top1": 0.9,
+   "top3": 0.96
+  },
+  {
+   "id": "carrot",
+   "offered": false,
+   "test_photos": 114,
+   "top1": 0.702,
+   "top3": 0.877
+  },
+  {
+   "id": "coconut",
+   "offered": false,
+   "test_photos": 26,
+   "top1": 0.654,
+   "top3": 0.769
+  },
+  {
+   "id": "cucumber",
+   "offered": false,
+   "test_photos": 159,
+   "top1": 0.572,
+   "top3": 0.925
+  },
+  {
+   "id": "fig",
+   "offered": false,
+   "test_photos": 19,
+   "top1": 0.316,
+   "top3": 0.421
+  },
+  {
+   "id": "grapes",
+   "offered": true,
+   "test_photos": 130,
+   "top1": 0.877,
+   "top3": 0.954
+  },
+  {
+   "id": "mango",
+   "offered": false,
+   "test_photos": 36,
+   "top1": 0.278,
+   "top3": 0.5
+  },
+  {
+   "id": "melon",
+   "offered": false,
+   "test_photos": 49,
+   "top1": 0.694,
+   "top3": 0.796
+  },
+  {
+   "id": "mushroom",
+   "offered": true,
+   "test_photos": 156,
+   "top1": 0.917,
+   "top3": 0.974
+  },
+  {
+   "id": "orange",
+   "offered": true,
+   "test_photos": 200,
+   "top1": 0.8,
+   "top3": 0.92
+  },
+  {
+   "id": "peach",
+   "offered": true,
+   "test_photos": 90,
+   "top1": 0.822,
+   "top3": 0.978
+  },
+  {
+   "id": "pear",
+   "offered": false,
+   "test_photos": 47,
+   "top1": 0.489,
+   "top3": 0.702
+  },
+  {
+   "id": "pineapple",
+   "offered": false,
+   "test_photos": 29,
+   "top1": 0.828,
+   "top3": 0.862
+  },
+  {
+   "id": "pomegranate",
+   "offered": false,
+   "test_photos": 20,
+   "top1": 0.8,
+   "top3": 0.8
+  },
+  {
+   "id": "potato",
+   "offered": false,
+   "test_photos": 79,
+   "top1": 0.772,
+   "top3": 0.899
+  },
+  {
+   "id": "pumpkin",
+   "offered": true,
+   "test_photos": 54,
+   "top1": 0.704,
+   "top3": 0.907
+  },
+  {
+   "id": "radish",
+   "offered": true,
+   "test_photos": 37,
+   "top1": 0.838,
+   "top3": 0.973
+  },
+  {
+   "id": "strawberry",
+   "offered": true,
+   "test_photos": 200,
+   "top1": 0.91,
+   "top3": 0.97
+  },
+  {
+   "id": "tomato",
+   "offered": true,
+   "test_photos": 200,
+   "top1": 0.7,
+   "top3": 0.91
+  },
+  {
+   "id": "zucchini",
+   "offered": false,
+   "test_photos": 138,
+   "top1": 0.413,
+   "top3": 0.899
+  }
+ ]
+}

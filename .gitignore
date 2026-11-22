@@ -26,3 +26,8 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 .vscode/
+
+# ML training environment and data (reproducible, large)
+.venv-ml/
+model/data/
+model/runs/
