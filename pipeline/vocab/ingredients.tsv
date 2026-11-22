@@ -281,7 +281,7 @@ jam		sweetener		jam|jelly|preserves|marmalade|apricot jam|strawberry jam|raspber
 chocolate		baking		chocolate|dark chocolate|semisweet chocolate|semi-sweet chocolate|bittersweet chocolate|milk chocolate|white chocolate|baking chocolate|unsweetened chocolate|chocolate chips|chocolate chip|chocolate morsels|chocolate shavings|couverture|chocolate glaze|chocolate frosting	schokolade|zartbitterschokolade|vollmilchschokolade|weiße schokolade|kuvertüre|zartbitterkuvertüre|schokoladenstreusel|schokotropfen|blockschokolade|schokoraspeln|schokoladenglasur|kuchenglasur|schokoglasur|schoko-crossies|crossies|schokocrossies
 cocoa		baking		cocoa|cocoa powder|unsweetened cocoa|unsweetened cocoa powder|dutch-process cocoa|cacao	kakao|kakaopulver|backkakao|kakao ungesüßt
 baking_powder		baking		baking powder|double-acting baking powder	backpulver
-baking_soda		baking		baking soda|bicarbonate of soda|bicarb|sodium bicarbonate|soda|potash|kaun|akanwu	natron|backnatron|kaiser-natron|hirschhornsalz|pottasche
+baking_soda		baking		baking soda|bicarbonate of soda|bicarb|sodium bicarbonate|potash|kaun|akanwu	natron|backnatron|kaiser-natron|hirschhornsalz|pottasche
 yeast		baking		yeast|dry yeast|active dry yeast|instant yeast|fresh yeast|rapid rise yeast|quick-rise yeast|fermentation starter|sourdough starter|starter	hefe|trockenhefe|frischhefe|würfel hefe|backhefe|sauerteig|anstellgut
 cream_of_tartar		baking		cream of tartar	weinstein|weinsteinbackpulver
 food_coloring		baking		food coloring|food colouring|food color|food dye|sprinkles	lebensmittelfarbe|speisefarbe|zuckerstreusel|liebesperlen|bunte streusel|schokostreusel

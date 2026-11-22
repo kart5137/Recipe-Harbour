@@ -1,9 +1,10 @@
 "use client";
 
-import { LoaderCircle, Plus, Search, X } from "lucide-react";
+import { LoaderCircle, Plus, ScanBarcode, Search, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 
+import { ScanDialog } from "@/components/scan-dialog";
 import { label } from "@/lib/labels";
 import { type SearchState, toQuery } from "@/lib/params";
 import { suggest, type SuggestEntry } from "@/lib/search";
@@ -23,6 +24,7 @@ export function PantrySearch({ state, entries }: Props) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const [q, setQ] = useState(state.q);
+  const [scanOpen, setScanOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
@@ -72,9 +74,25 @@ export function PantrySearch({ state, entries }: Props) {
 
   return (
     <section aria-label="Search" className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
-      <label htmlFor={`${listId}-input`} className="text-sm font-semibold">
-        What do you have?
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={`${listId}-input`} className="text-sm font-semibold">
+          What do you have?
+        </label>
+        <button
+          type="button"
+          onClick={() => setScanOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
+        >
+          <ScanBarcode className="size-4" aria-hidden />
+          Scan a barcode
+        </button>
+      </div>
+      <ScanDialog
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        onAdd={(id) => go({ have: [...state.have.filter((h) => h !== id), id] })}
+        have={state.have}
+      />
       <div className="relative mt-2">
         <div
           className="flex min-h-14 flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface-2 px-3 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/25"
