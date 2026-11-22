@@ -1,9 +1,10 @@
 "use client";
 
-import { LoaderCircle, Plus, ScanBarcode, Search, X } from "lucide-react";
+import { Camera, LoaderCircle, Plus, ScanBarcode, Search, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 
+import { PhotoDialog } from "@/components/photo-dialog";
 import { ScanDialog } from "@/components/scan-dialog";
 import { label } from "@/lib/labels";
 import { type SearchState, toQuery } from "@/lib/params";
@@ -25,6 +26,7 @@ export function PantrySearch({ state, entries }: Props) {
   const [active, setActive] = useState(0);
   const [q, setQ] = useState(state.q);
   const [scanOpen, setScanOpen] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
@@ -74,19 +76,35 @@ export function PantrySearch({ state, entries }: Props) {
 
   return (
     <section aria-label="Search" className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
-      <div className="flex items-center justify-between gap-3">
-        <label htmlFor={`${listId}-input`} className="text-sm font-semibold">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label htmlFor={`${listId}-input`} className="shrink-0 text-sm font-semibold">
           What do you have?
         </label>
-        <button
-          type="button"
-          onClick={() => setScanOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
-        >
-          <ScanBarcode className="size-4" aria-hidden />
-          Scan a barcode
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setPhotoOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
+          >
+            <Camera className="size-4" aria-hidden />
+            Photo
+          </button>
+          <button
+            type="button"
+            onClick={() => setScanOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
+          >
+            <ScanBarcode className="size-4" aria-hidden />
+            Barcode
+          </button>
+        </div>
       </div>
+      <PhotoDialog
+        open={photoOpen}
+        onClose={() => setPhotoOpen(false)}
+        onAdd={(id) => go({ have: [...state.have.filter((h) => h !== id), id] })}
+        have={state.have}
+      />
       <ScanDialog
         open={scanOpen}
         onClose={() => setScanOpen(false)}
