@@ -4,6 +4,7 @@ Outputs
 - data/recipes.json        all kept recipes (CC BY-SA 4.0, see data/LICENSE.md)
 - data/recipes.meta.json   when, from which revisions, counts
 - docs/data/PROFILE.md     what was kept and dropped, field coverage, quality notes
+- docs/data/INGREDIENTS.md how much of the ingredient text the vocabulary understands
 """
 
 from __future__ import annotations
@@ -16,7 +17,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from .config import DOCS_DIR, OUT_DIR, RAW_DIR, SOURCES
+from .coverage import coverage_md
 from .fetch import read_pages
+from .ingredients import enrich_recipe, vocab
 from .parse import Dropped, parse_page
 
 log = logging.getLogger(__name__)
@@ -36,6 +39,7 @@ def _dist(values: list[int]) -> str:
 
 def build(raw_dir: Path = RAW_DIR, out_dir: Path = OUT_DIR, docs_dir: Path = DOCS_DIR) -> dict:
     now = datetime.now(UTC).replace(microsecond=0).isoformat()
+    v = vocab()
     recipes: list[dict] = []
     stats: dict[str, dict] = {}
     for lang, source in SOURCES.items():
@@ -44,7 +48,7 @@ def build(raw_dir: Path = RAW_DIR, out_dir: Path = OUT_DIR, docs_dir: Path = DOC
         dropped_examples: dict[str, list[str]] = {}
         for p in pages:
             try:
-                kept.append(parse_page(p, source).to_dict())
+                kept.append(enrich_recipe(parse_page(p, source).to_dict(), v))
             except Dropped as e:
                 dropped[e.reason] += 1
                 dropped_examples.setdefault(e.reason, []).append(p["title"])
@@ -60,6 +64,10 @@ def build(raw_dir: Path = RAW_DIR, out_dir: Path = OUT_DIR, docs_dir: Path = DOC
         }
         log.info("%s: %d fetched, %d kept, dropped %s", lang, len(pages), len(kept), dict(dropped))
 
+    docs_dir.mkdir(parents=True, exist_ok=True)
+    (docs_dir / "INGREDIENTS.md").write_text(coverage_md(recipes, now, v), encoding="utf-8")
+    for r in recipes:
+        r.pop("_match_sources", None)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "recipes.json").write_text(
         json.dumps(recipes, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
@@ -118,7 +126,7 @@ def _profile_md(stats: dict, now: str) -> str:
         ("Difficulty (1–5)", lambda r: r["difficulty"]),
         ("Category", lambda r: r["category"]),
         ("Cuisine", lambda r: r["cuisine"]),
-        ("Diet from the source (vegetarian/vegan/none)", lambda r: r["diet"]),
+        ("Diet from the source (vegetarian/vegan/none)", lambda r: r.get("diet_source") == "wiki"),
         ("Image named", lambda r: r["image"]),
         ("Introduction text", lambda r: r["description"]),
         ("Equipment list", lambda r: r["equipment"]),

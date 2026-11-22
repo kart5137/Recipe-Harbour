@@ -15,6 +15,11 @@ from rh_pipeline.wikitext import to_text
 FIX = Path(__file__).parent / "fixtures"
 
 
+def plain(groups):
+    """ingredient_groups with item texts only (links dropped) for compact assertions."""
+    return [{"name": g["name"], "items": [i["text"] for i in g["items"]]} for g in groups]
+
+
 def page(name: str, title: str, pageid: int = 1) -> dict:
     return {
         "pageid": pageid,
@@ -91,7 +96,7 @@ def test_english_recipe_summary_and_sections():
     assert r.title == "20-Minute Beef Stroganoff"
     assert r.category == "Beef recipes"
     assert r.servings == (4, 4) and r.minutes == (20, 20) and r.difficulty == 2
-    items = r.ingredient_groups[0]["items"]
+    items = plain(r.ingredient_groups)[0]["items"]
     assert items[0] == "8 oz wide egg noodles (figures are for yolk-free noodles)"
     assert "coarsely-chopped onion" in items[3]
     assert items[-1] == "Salt to taste"
@@ -100,11 +105,19 @@ def test_english_recipe_summary_and_sections():
     assert r.history_url.endswith("&action=history")
 
 
+def test_ingredient_links_are_kept():
+    r = parse_page(page("en_stroganoff.wiki", "Cookbook:20-Minute Beef Stroganoff"), SOURCES["en"])
+    items = r.ingredient_groups[0]["items"]
+    assert items[1] == {"text": "1 teaspoon olive oil", "links": ["Teaspoon", "Olive Oil"]}
+    assert items[3]["links"] == ["Cup", "Chopping", "Onion"]
+    assert items[0]["links"] == ["Pasta"]  # {{convert}} has no links
+
+
 def test_english_variant_infobox_equipment_and_description():
     r = parse_page(page("en_aadun.wiki", "Cookbook:Aadun"), SOURCES["en"])
     assert r.cuisine == "Nigerian" and r.difficulty == 2
     assert r.image == "Àádùn2.jpg"
-    assert r.ingredient_groups[0]["items"] == [
+    assert plain(r.ingredient_groups)[0]["items"] == [
         "1 cup corn flour",
         "1/4 cup palm oil",
         "½ teaspoon salt",
@@ -123,7 +136,7 @@ def test_german_rezeptbox():
     assert r.diet == "vegetarian"
     assert r.category == ""  # only an HTML comment in the source
     assert r.equipment == ["1 große Rührschüssel", "1 große Pfanne"]
-    assert r.ingredient_groups[0]["items"][1] == "2 Dosen Gemüsemais"
+    assert plain(r.ingredient_groups)[0]["items"][1] == "2 Dosen Gemüsemais"
     assert len(r.steps) == 3  # German pages use * bullets for steps
 
 
@@ -151,7 +164,7 @@ def test_ingredient_groups_from_subheadings():
 """
     r = parse_page({**page("en_aadun.wiki", "Cookbook:Pie"), "content": wiki}, SOURCES["en"])
     assert [g["name"] for g in r.ingredient_groups] == ["Dough", "Filling"]
-    assert r.ingredient_groups[0]["items"] == ["500 g flour", "1 egg"]
+    assert plain(r.ingredient_groups)[0]["items"] == ["500 g flour", "1 egg"]
     assert r.steps == ["Mix.", "Bake."]
 
 
@@ -188,7 +201,7 @@ def test_ingredient_table_with_groups():
 # Mix.
 """
     r = _en(wiki)
-    assert r.ingredient_groups == [
+    assert plain(r.ingredient_groups) == [
         {"name": "Dough", "items": ["1½ cups (375 g) Water", "1 sachet (7 g) Dry yeast", "1 tablespoon (18 g) Salt"]}
     ]
 
@@ -214,7 +227,7 @@ def test_indented_ingredient_table():
 ==Procedure==
 # Mix.
 """
-    assert _en(wiki).ingredient_groups == [{"name": None, "items": ["¾ tsp (3.5 ml) Salt", "12 ea. Egg yolks"]}]
+    assert plain(_en(wiki).ingredient_groups) == [{"name": None, "items": ["¾ tsp (3.5 ml) Salt", "12 ea. Egg yolks"]}]
 
 
 def test_gallery_captions_become_steps():
@@ -242,7 +255,7 @@ def test_sections_found_after_an_unclosed_table():
 Die Gurke waschen und in Scheiben hobeln.
 """
     r = parse_page({**page("de_aioli.wiki", "Kochbuch/ Gurkensalat"), "content": wiki}, SOURCES["de"])
-    assert r.ingredient_groups[0]["items"] == ["1 Salatgurke", "Salz und Pfeffer"]
+    assert plain(r.ingredient_groups)[0]["items"] == ["1 Salatgurke", "Salz und Pfeffer"]
     assert r.steps == ["Die Gurke waschen und in Scheiben hobeln."]
 
 
@@ -254,7 +267,7 @@ def test_prose_method_under_the_ingredient_list():
 Mehl mit dem Kümmel mischen, Zucker, Eier und geschmolzene Butter dazugeben, alles zu einem Knetteig verarbeiten.
 """
     r = parse_page({**page("de_aioli.wiki", "Kochbuch/ Moppen"), "content": wiki}, SOURCES["de"])
-    assert r.ingredient_groups[0]["items"] == ["500 g Mehl", "2 Eier"]
+    assert plain(r.ingredient_groups)[0]["items"] == ["500 g Mehl", "2 Eier"]
     assert r.steps[0].startswith("Mehl mit dem Kümmel")
 
 
@@ -268,8 +281,27 @@ Zutaten werden verrührt.
 * Ein Buch
 """
     r = parse_page({**page("de_aioli.wiki", "Kochbuch/ Omelette"), "content": wiki}, SOURCES["de"])
-    assert r.ingredient_groups == [{"name": "Grundrezept", "items": ["3 Eier", "1 Prise Salz"]}]
+    assert plain(r.ingredient_groups) == [{"name": "Grundrezept", "items": ["3 Eier", "1 Prise Salz"]}]
     assert r.steps == ["Zutaten werden verrührt."]
+
+
+def test_legends_labels_and_filler_in_ingredient_lists():
+    wiki = """== Zutaten ==
+* Kuchen:
+* 200 g Mehl
+* Streusel:
+* 100 g Butter
+* …
+* g = Gramm
+* EL = Esslöffel
+== Zubereitung ==
+* Backen.
+"""
+    r = parse_page({**page("de_aioli.wiki", "Kochbuch/ Streuselkuchen"), "content": wiki}, SOURCES["de"])
+    assert plain(r.ingredient_groups) == [
+        {"name": "Kuchen", "items": ["200 g Mehl"]},
+        {"name": "Streusel", "items": ["100 g Butter"]},
+    ]
 
 
 def test_old_german_overview_box():
@@ -304,7 +336,7 @@ def test_long_ingredient_lines_move_to_notes():
     note = "If cultured buttermilk is not available, similar results can be obtained by mixing lemon juice " \
            "with enough milk to make 1 cup, and letting it stand for ten minutes before using it in the dough."
     r = _en(f"== Ingredients ==\n* 2 cups flour\n* {note}\n== Procedure ==\n# Bake.\n")
-    assert r.ingredient_groups[0]["items"] == ["2 cups flour"]
+    assert plain(r.ingredient_groups)[0]["items"] == ["2 cups flour"]
     assert r.notes == [note]
 
 

@@ -1,0 +1,322 @@
+# Recipe Harbour ingredient vocabulary.
+# Columns (tab-separated): id, parents (|), group, flags (,), English names (|), German names (|)
+# flags: meat fish dairy egg honey gelatin alcohol diet_unknown staple produce
+#   meat/fish/gelatin -> not vegetarian; dairy/egg/honey -> vegetarian, not vegan;
+#   diet_unknown -> could be either (e.g. "broth"); staple -> assumed to be in every kitchen;
+#   produce -> a fresh fruit/vegetable the camera model may recognise.
+# Names are matched case-insensitively; umlauts/ß and accents are normalised (Möhre = Moehre).
+id	parents	group	flags	en	de
+# ---------------------------------------------------------------- staples
+water		other	staple	water|cold water|warm water|hot water|boiling water|lukewarm water|tap water	wasser|kaltes wasser|warmes wasser|heißes wasser|lauwarmes wasser
+sparkling_water	water	other	staple	sparkling water|carbonated water|soda water|club soda|mineral water	mineralwasser|sprudelwasser|sprudel
+ice	water	other	staple	ice|ice cubes|crushed ice	eiswürfel|crushed ice
+salt		spice	staple	salt|sea salt|table salt|kosher salt|coarse salt|rock salt	salz|meersalz|speisesalz|jodsalz|grobes salz|steinsalz
+black_pepper		spice	staple	pepper|black pepper|ground black pepper|ground pepper|peppercorns|black peppercorns|white pepper|peppercorn	pfeffer|schwarzer pfeffer|weißer pfeffer|pfefferkörner|schwarzer pfefferkörner|gemahlener pfeffer
+lemon_pepper	black_pepper	spice		lemon pepper	zitronenpfeffer
+sugar		sweetener	staple	sugar|white sugar|granulated sugar|caster sugar|castor sugar|superfine sugar|fine sugar|cane sugar	zucker|weißer zucker|kristallzucker|feinzucker|rohrzucker|backzucker
+brown_sugar	sugar	sweetener		brown sugar|light brown sugar|dark brown sugar|demerara sugar|muscovado sugar|turbinado sugar	brauner zucker|rohrohrzucker|muscovado
+powdered_sugar	sugar	sweetener		powdered sugar|icing sugar|confectioners sugar|confectioners' sugar	puderzucker|staubzucker
+vanilla_sugar	sugar|vanilla	sweetener		vanilla sugar	vanillezucker|vanillinzucker|bourbon vanillezucker
+palm_sugar	sugar	sweetener		palm sugar|jaggery|gur|coconut sugar	palmzucker|kokosblütenzucker
+sugar_substitute		sweetener		sweetener|stevia|xylitol|erythritol|sugar substitute|sucralose	süßstoff|stevia|xylit|erythrit|zuckerersatz|sucralose
+oil		fat	staple	oil|cooking oil|vegetable oil|neutral oil|salad oil|frying oil|oil and fat|cooking spray|nonstick cooking spray|fat|fat for deep frying|frying fat|deep frying fat|oil for deep frying|oil for frying	öl|speiseöl|pflanzenöl|bratöl|salatöl|neutrales öl|fett|bratfett|fett zum ausbacken|frittierfett|fett zum backen
+olive_oil	oil	fat		olive oil|extra virgin olive oil|extra-virgin olive oil|light olive oil	olivenöl|natives olivenöl
+sunflower_oil	oil	fat		sunflower oil	sonnenblumenöl
+canola_oil	oil	fat		canola oil|rapeseed oil	rapsöl
+peanut_oil	oil	fat		peanut oil|groundnut oil	erdnussöl
+sesame_oil	oil	fat		sesame oil|toasted sesame oil	sesamöl
+coconut_oil	oil	fat		coconut oil	kokosöl|kokosfett
+palm_oil	oil	fat		palm oil|red palm oil	palmöl
+corn_oil	oil	fat		corn oil	maiskeimöl
+# ---------------------------------------------------------------- dairy & eggs
+butter		dairy	dairy	butter|unsalted butter|salted butter|softened butter|melted butter	butter|weiche butter|zerlassene butter|süßrahmbutter|kräuterbutter
+ghee	butter	dairy	dairy	ghee|clarified butter|butter ghee	ghee|butterschmalz|geklärte butter
+margarine		fat		margarine|vegan butter|plant butter	margarine|pflanzenmargarine
+shortening		fat		shortening|vegetable shortening|crisco	pflanzenfett|backfett
+lard		fat	meat	lard|pork fat|beef dripping|dripping|suet|tallow	schmalz|schweineschmalz|griebenschmalz|rindertalg
+milk		dairy	dairy	milk|whole milk|skim milk|skimmed milk|low-fat milk|2% milk|full-fat milk	milch|vollmilch|frischmilch|fettarme milch|magermilch
+evaporated_milk	milk	dairy	dairy	evaporated milk|condensed milk|sweetened condensed milk	kondensmilch|gezuckerte kondensmilch|dosenmilch
+milk_powder	milk	dairy	dairy	milk powder|powdered milk|dry milk	milchpulver
+buttermilk	milk	dairy	dairy	buttermilk	buttermilch
+cream		dairy	dairy	cream|heavy cream|whipping cream|double cream|single cream|light cream|half and half|half-and-half|thickened cream|heavy whipping cream	sahne|schlagsahne|kochsahne|rahm|süße sahne|schlagrahm|sahne zum kochen|cremefine
+whipped_cream	cream	dairy	dairy	whipped cream|whipped topping|cool whip	geschlagene sahne|sprühsahne
+sour_cream	cream	dairy	dairy	sour cream|soured cream	saure sahne|saurer sahne|sauerrahm|schmand|sauerrahm schmand
+creme_fraiche	cream	dairy	dairy	creme fraiche|crème fraîche	creme fraiche|crème fraîche
+yogurt		dairy	dairy	yogurt|yoghurt|plain yogurt|greek yogurt|natural yogurt|curd|dahi	joghurt|naturjoghurt|griechischer joghurt|jogurt
+quark		dairy	dairy	quark|curd cheese|full-fat curd cheese|pot cheese|farmer cheese|farmers cheese	quark|magerquark|speisequark|topfen|sahnequark
+cheese		dairy	dairy	cheese|grated cheese|shredded cheese|hard cheese|processed cheese|salt-cured cheese|salt cured cheese	käse|geriebener käse|reibekäse|hartkäse|schmelzkäse
+parmesan	cheese	dairy	dairy	parmesan|parmesan cheese|parmigiano|parmigiano-reggiano|parmigiano reggiano|grana padano|pecorino|romano cheese	parmesan|parmesankäse|grana padano|pecorino
+cheddar	cheese	dairy	dairy	cheddar|cheddar cheese|sharp cheddar	cheddar|cheddarkäse
+mozzarella	cheese	dairy	dairy	mozzarella|mozzarella cheese|fresh mozzarella	mozzarella
+feta	cheese	dairy	dairy	feta|feta cheese	feta|fetakäse|schafskäse|hirtenkäse
+emmental	cheese	dairy	dairy	emmental|emmentaler|swiss cheese|gruyere|gruyère|comte|comté	emmentaler|emmentaler käse|gruyère|bergkäse|greyerzer|comté|comte|appenzeller|raclettekäse
+gouda	cheese	dairy	dairy	gouda|edam	gouda|edamer
+goat_cheese	cheese	dairy	dairy	goat cheese|chevre|goat's cheese	ziegenkäse
+monterey_jack	cheese	dairy	dairy	monterey jack|monterey jack cheese|pepper jack|colby jack|colby	monterey jack
+ricotta	cheese	dairy	dairy	ricotta|ricotta cheese|cottage cheese	ricotta|hüttenkäse
+mascarpone	cheese	dairy	dairy	mascarpone|mascarpone cheese	mascarpone
+cream_cheese	cheese	dairy	dairy	cream cheese|soft cheese|philadelphia	frischkäse|doppelrahmfrischkäse
+paneer	cheese	dairy	dairy	paneer|panir|chhena	paneer
+blue_cheese	cheese	dairy	dairy	blue cheese|gorgonzola|roquefort|stilton	blauschimmelkäse|gorgonzola|roquefort
+egg		egg	egg	egg|eggs|large egg|large eggs|whole egg|whole eggs|beaten egg|beaten eggs|hard boiled eggs|hard-boiled eggs|hard boiled egg|boiled eggs|duck egg|duck eggs|quail egg|quail eggs	ei|eier|hühnerei|hühnereier|gekochte eier|hartgekochte eier|vollei
+egg_yolk	egg	egg	egg	egg yolk|egg yolks|yolk|yolks|duck egg yolks|duck egg yolk	eigelb|eidotter|dotter
+egg_white	egg	egg	egg	egg white|egg whites	eiweiß|eiklar
+# ---------------------------------------------------------------- meat & poultry
+meat		meat	meat	meat|meat and poultry|stewing meat	fleisch|bratenfleisch|gulaschfleisch
+beef	meat	meat	meat	beef|stewing beef|beef steak|steak|sirloin|flank steak|chuck|brisket|beef tips|roast beef|oxtail|soup bones|beef bones|marrow bones|oxtails	rindfleisch|rind|rindersteak|rindergulasch|suppenfleisch|rinderbraten|tafelspitz|rinderhüfte|suppenknochen|markknochen|rinderknochen|knochen
+ground_meat	meat	meat	meat	ground meat|minced meat	hackfleisch|gemischtes hackfleisch|hack|gehacktes
+ground_beef	beef|ground_meat	meat	meat	ground beef|minced beef|beef mince|hamburger meat|lean ground beef|ground chuck|ground round|ground sirloin	rinderhackfleisch|rinderhack
+pork	meat	meat	meat	pork|pork chops|pork loin|pork shoulder|pork belly|pork tenderloin|spare ribs|ribs	schweinefleisch|schwein|schweinebauch|schweinelende|schweineschulter|schweinenacken|kotelett|kasseler|rippchen
+ground_pork	pork|ground_meat	meat	meat	ground pork|minced pork	schweinehackfleisch|schweinehack|mett
+bacon	pork	meat	meat	bacon|bacon slices|pancetta|streaky bacon|lardons	speck|schinkenspeck|frühstücksspeck|bauchspeck|räucherspeck|pancetta
+ham	pork	meat	meat	ham|prosciutto|cooked ham	schinken|kochschinken|rohschinken|katenschinken
+sausage	meat	meat	meat	sausage|sausages|chorizo|salami|pepperoni|hot dogs|frankfurters|bratwurst|kielbasa	wurst|würstchen|bratwurst|wiener würstchen|salami|chorizo|mettwurst|leberwurst|fleischwurst|kalbsbratwürste|bratwürste|würste|weißwürste|weißwurst
+chicken	meat	poultry	meat	chicken|whole chicken|chicken pieces|chicken thighs|chicken legs|chicken wings|chicken drumsticks|chicken meat	huhn|hähnchen|hühnchen|hühnerfleisch|hähnchenschenkel|hühnerschenkel|hähnchenkeulen|suppenhuhn|hähnchenflügel|hähnchenteile|hühnerteile|hähnchenkeule|hühnerkeule
+chicken_breast	chicken	poultry	meat	chicken breast|chicken breasts|chicken cutlets|chicken fillet|chicken tenders	hähnchenbrust|hühnerbrust|hähnchenbrustfilet|hühnerbrustfilet|hähnchenfilet
+turkey	meat	poultry	meat	turkey|turkey breast|ground turkey	pute|putenfleisch|putenbrust|truthahn|pute brust
+duck	meat	poultry	meat	duck|duck breast	ente|entenbrust
+goose	meat	poultry	meat	goose	gans|gänsebrust|gänsekeule
+lamb	meat	meat	meat	lamb|mutton|lamb chops|leg of lamb|ground lamb	lamm|lammfleisch|hammel|hammelfleisch|lammkeule|lammlachse|lammlachs|lammrücken|lammkotelett
+goat	meat	meat	meat	goat|goat meat	ziege|ziegenfleisch
+veal	meat	meat	meat	veal|veal cutlets	kalb|kalbfleisch|kalbsschnitzel
+venison	meat	meat	meat	venison|deer|rabbit	reh|hirsch|wild|kaninchen|hase
+liver	meat	meat	meat	liver|chicken liver|beef liver|offal|tripe|kidney	leber|hühnerleber|innereien|kutteln|niere
+gelatin		baking	gelatin	gelatin|gelatine|unflavored gelatin	gelatine|blattgelatine|gelatinepulver
+# ---------------------------------------------------------------- fish & seafood
+fish		fish	fish	fish|fish fillet|fish fillets|white fish|whitefish	fisch|fischfilet|seelachs|weißfisch|schollenfilet|scholle|rotbarsch|rotbarschfilet|viktoriabarsch
+salmon	fish	fish	fish	salmon|smoked salmon|salmon fillet	lachs|räucherlachs|lachsfilet|lachsschnitzel|lachsforelle
+tuna	fish	fish	fish	tuna|canned tuna|tuna fish	thunfisch
+cod	fish	fish	fish	cod|haddock|pollock|hake|stockfish|dried cod|salt cod	kabeljau|dorsch|schellfisch|stockfisch|klippfisch
+tilapia	fish	fish	fish	tilapia|catfish|carp|trout|perch	tilapia|wels|karpfen|forelle|barsch|zander
+sardine	fish	fish	fish	sardine|sardines|herring|mackerel|anchovy|anchovies|anchovy fillets	sardine|sardinen|hering|makrele|sardelle|sardellen|sardellenfilets|matjes
+dried_fish	fish	fish	fish	dried fish|dryfish|smoked fish|ground crayfish|crayfish|dried shrimp	trockenfisch|räucherfisch|flusskrebse
+shrimp	fish	seafood	fish	shrimp|shrimps|prawn|prawns|scampi|langoustine	garnelen|garnele|shrimps|krabben|scampi|riesengarnelen|krevetten
+crab	fish	seafood	fish	crab|crab meat|lobster	krabbe|krebs|krebsfleisch|hummer
+mussels	fish	seafood	fish	mussels|clams|oysters|scallops|cockles|periwinkles|periwinkle|snails|escargots	muscheln|miesmuscheln|venusmuscheln|austern|jakobsmuscheln|schnecken|weinbergschnecken
+squid	fish	seafood	fish	squid|calamari|octopus|cuttlefish	tintenfisch|kalmar|calamari|oktopus|sepia
+# ---------------------------------------------------------------- broths & stocks
+broth		other	diet_unknown	broth|stock|bouillon|bouillon cube|bouillon cubes|stock cube|stock cubes|dehydrated broth|consomme|maggi cube|seasoning cube|maggi	brühe|brühwürfel|bouillon|fond|instantbrühe|gekörnte brühe|maggi
+chicken_broth	broth|chicken	other	meat	chicken broth|chicken stock|chicken bouillon|chicken bouillon cube	hühnerbrühe|hühnerfond|geflügelbrühe|geflügelfond|hühnerbouillon
+beef_broth	broth|beef	other	meat	beef broth|beef stock|beef bouillon|meat stock	rinderbrühe|rinderfond|fleischbrühe|kalbsfond|bratenfond
+fish_stock	broth|fish	other	fish	fish stock|fish broth|fumet	fischfond|fischbrühe
+vegetable_broth	broth	other		vegetable broth|vegetable stock|vegetable bouillon|veggie broth	gemüsebrühe|gemüsefond|gemüsebouillon|klare gemüsebrühe
+# ---------------------------------------------------------------- vegetables
+onion		vegetable	produce	onion|onions|yellow onion|white onion|brown onion|sweet onion|large onion|medium onion|small onion|pearl onions|vidalia onion	zwiebel|zwiebeln|gemüsezwiebel|gemüsezwiebeln|gelbe zwiebel|weiße zwiebel|perlzwiebeln
+red_onion	onion	vegetable	produce	red onion|red onions|purple onion	rote zwiebel|rote zwiebeln|rote zwiebel
+green_onion	onion	vegetable	produce	green onion|green onions|spring onion|spring onions|scallion|scallions|salad onions	frühlingszwiebel|frühlingszwiebeln|lauchzwiebel|lauchzwiebeln
+shallot	onion	vegetable	produce	shallot|shallots	schalotte|schalotten
+leek		vegetable	produce	leek|leeks	lauch|porree|lauchstange|lauchstangen
+garlic		vegetable	produce	garlic|garlic clove|garlic cloves|cloves garlic|clove garlic|cloves of garlic|clove of garlic|minced garlic|garlic paste|crushed garlic	knoblauch|knoblauchzehe|knoblauchzehen|knoblauchpaste|zehe knoblauch|zehen knoblauch
+garlic_powder	garlic	spice		garlic powder|granulated garlic|garlic salt	knoblauchpulver|knoblauchgranulat|knoblauchsalz
+onion_powder	onion	spice		onion powder|dried onion|onion flakes	zwiebelpulver|röstzwiebeln|getrocknete zwiebeln
+tomato		vegetable	produce	tomato|tomatoes|ripe tomatoes|plum tomatoes|roma tomatoes|cherry tomatoes|cherry tomato|grape tomatoes|beefsteak tomato	tomate|tomaten|kirschtomaten|cocktailtomaten|fleischtomaten|strauchtomaten|eiertomaten|cherrytomaten
+canned_tomato	tomato	vegetable		canned tomatoes|diced tomatoes|crushed tomatoes|tinned tomatoes|whole peeled tomatoes|stewed tomatoes|canned chopped tomatoes|tinned chopped tomatoes|can of chopped tomatoes	dosentomaten|geschälte tomaten|stückige tomaten|gehackte tomaten|tomaten aus der dose|pizzatomaten
+tomato_paste	tomato	condiment		tomato paste|tomato puree|tomato concentrate	tomatenmark|tomatenpüree
+tomato_sauce	tomato	condiment		tomato sauce|passata|marinara sauce|pasta sauce|pizza sauce|strained tomatoes	tomatensoße|tomatensauce|passierte tomaten|passata|pizzasoße
+potato		vegetable	produce	potato|potatoes|russet potatoes|baking potatoes|new potatoes|waxy potatoes|red potatoes|mashed potatoes	kartoffel|kartoffeln|festkochende kartoffeln|mehligkochende kartoffeln|salatkartoffeln|pellkartoffeln|kartoffelpüree
+sweet_potato		vegetable	produce	sweet potato|sweet potatoes	süßkartoffel|süßkartoffeln|batate|bataten
+carrot		vegetable	produce	carrot|carrots|baby carrots	karotte|karotten|möhre|möhren|mohrrübe|mohrrüben|gelbe rübe|gelbe rüben|rüebli
+celery		vegetable	produce	celery|celery stalk|celery stalks|celery ribs|stalk celery|celery leaves	staudensellerie|stangensellerie|bleichsellerie|sellerie|selleriestange|selleriestangen
+celeriac		vegetable	produce	celeriac|celery root	knollensellerie|sellerieknolle
+bell_pepper		vegetable	produce	bell pepper|bell peppers|green pepper|green peppers|red pepper|red peppers|yellow pepper|sweet pepper|sweet peppers|capsicum|red bell pepper|green bell pepper	paprika|paprikaschote|paprikaschoten|rote paprika|grüne paprika|gelbe paprika|spitzpaprika|gemüsepaprika
+chili_pepper		vegetable	produce	chili|chilli|chile|chiles|chilies|chillies|chili pepper|chili peppers|chile pepper|hot pepper|hot peppers|green chili|green chilies|red chili|jalapeno|jalapenos|jalapeño|habanero|habaneros|serrano|scotch bonnet|bird's eye chili|chipotle|chipotle pepper|chipotle peppers|cayenne peppers|thai chili|fresh chilies|dried chilies|dried chiles|ancho chile|poblano	chili|chilis|chilischote|chilischoten|peperoni|peperoncini|jalapeño|jalapeños|habanero|pfefferschote|pfefferschoten|chilli
+chili_flakes	chili_pepper	spice		red pepper flakes|crushed red pepper|chili flakes|chilli flakes|pepper flakes|crushed chilies	chiliflocken|chiliflakes|getrocknete chili|chili getrocknet
+cayenne	chili_pepper	spice		cayenne|cayenne pepper|ground cayenne	cayennepfeffer|cayenne
+chili_powder	chili_pepper	spice		chili powder|chilli powder|chile powder|ancho chile powder|kashmiri chili powder|red chili powder	chilipulver|chili pulver
+cucumber		vegetable	produce	cucumber|cucumbers|english cucumber|gherkins|pickles|pickled cucumbers	gurke|gurken|salatgurke|salatgurken|gewürzgurken|essiggurken|cornichons|schlangengurke
+zucchini		vegetable	produce	zucchini|zucchinis|courgette|courgettes	zucchini|zucchinis|zucchino|zucchiniblüten
+eggplant		vegetable	produce	eggplant|eggplants|aubergine|aubergines|brinjal	aubergine|auberginen|melanzani
+pumpkin		vegetable	produce	pumpkin|pumpkin puree|squash|butternut squash|acorn squash|winter squash|butternut	kürbis|hokkaido|butternusskürbis|kürbispüree
+cabbage		vegetable	produce	cabbage|green cabbage|white cabbage|savoy cabbage|napa cabbage|chinese cabbage|bok choy|pak choi|coleslaw mix	kohl|weißkohl|weißkraut|kraut|spitzkohl|wirsing|chinakohl|pak choi|weisskohl
+red_cabbage	cabbage	vegetable	produce	red cabbage|purple cabbage	rotkohl|blaukraut|rotkraut
+sauerkraut	cabbage	vegetable		sauerkraut|kimchi	sauerkraut|kimchi
+broccoli		vegetable	produce	broccoli|broccoli florets	brokkoli|broccoli|brokkoliröschen
+cauliflower		vegetable	produce	cauliflower|cauliflower florets	blumenkohl|karfiol
+brussels_sprouts	cabbage	vegetable	produce	brussels sprouts	rosenkohl
+kohlrabi	cabbage	vegetable	produce	kohlrabi	kohlrabi
+spinach		vegetable	produce	spinach|baby spinach|frozen spinach	spinat|blattspinat|babyspinat|tk spinat|rahmspinat
+kale	cabbage	vegetable	produce	kale|collard greens|collards|chard|swiss chard|greens	grünkohl|mangold|schwarzkohl
+lettuce		vegetable	produce	lettuce|romaine|romaine lettuce|iceberg lettuce|salad greens|mixed greens|arugula|rocket|watercress|endive	kopfsalat|eisbergsalat|salat|blattsalat|rucola|feldsalat|endivie|endiviensalat|kresse|römersalat|friseesalat
+mushroom		vegetable	produce	mushroom|mushrooms|button mushrooms|white mushrooms|cremini|portobello|shiitake|shiitake mushrooms|oyster mushrooms|chanterelles|porcini|dried mushrooms	pilz|pilze|champignon|champignons|steinpilze|pfifferlinge|shiitake|austernpilze|egerlinge|braune champignons|waldpilze
+corn		vegetable	produce	corn|sweet corn|sweetcorn|corn kernels|corn on the cob|maize|baby corn	mais|zuckermais|maiskörner|maiskolben|gemüsemais|maiskölbchen|babymais|minimais
+peas		vegetable	produce	pea|peas|green peas|frozen peas|snow peas|sugar snap peas|snap peas|mangetout	erbsen|erbse|grüne erbsen|tiefkühlerbsen|zuckerschoten|kaiserschoten
+green_beans		vegetable	produce	green beans|green bean|string beans|french beans|runner beans|haricots verts|long beans	grüne bohnen|brechbohnen|prinzessbohnen|stangenbohnen|buschbohnen|keniabohnen
+asparagus		vegetable	produce	asparagus|asparagus spears	spargel|grüner spargel|weißer spargel
+beet		vegetable	produce	beet|beets|beetroot|beetroots	rote bete|rote beete|rote rübe|rote rüben|randen
+radish		vegetable	produce	radish|radishes|daikon|turnip|turnips|parsnip|parsnips|rutabaga|swede	radieschen|rettich|steckrübe|steckrüben|pastinake|pastinaken|weiße rübe|petersilienwurzel
+okra		vegetable	produce	okra|ladies fingers|bhindi	okra
+avocado		vegetable	produce	avocado|avocados|guacamole	avocado|avocados
+plantain		vegetable	produce	plantain|plantains|green plantain|green plantains|ripe plantains	kochbanane|kochbananen|plantain
+cassava		vegetable	produce	cassava|yuca|tapioca|garri|gari|fufu flour	maniok|cassava|tapioka|cassave
+yam		vegetable	produce	yam|yams|taro|cocoyam	yams|yamswurzel|taro
+fennel		vegetable	produce	fennel|fennel bulb	fenchel|fenchelknolle
+artichoke		vegetable	produce	artichoke|artichokes|artichoke hearts	artischocke|artischocken|artischockenherzen
+olive		vegetable		olive|olives|black olives|green olives|kalamata olives	olive|oliven|schwarze oliven|grüne oliven
+capers		condiment		capers|caper	kapern
+bean_sprouts		vegetable	produce	bean sprouts|mung bean sprouts|sprouts	sojasprossen|mungbohnensprossen|sprossen
+ginger		spice	produce	ginger|ginger root|fresh ginger|ground ginger|ginger powder|grated ginger|ginger paste|ginger garlic paste|galangal|galanga	ingwer|ingwerwurzel|frischer ingwer|ingwerpulver|gemahlener ingwer|galgant
+vegetables		vegetable		vegetables|mixed vegetables|frozen vegetables|vegetable	gemüse|mischgemüse|suppengemüse|suppengrün|tiefkühlgemüse
+# ---------------------------------------------------------------- fruit
+apple		fruit	produce	apple|apples|granny smith|green apple|apple slices|apple puree|applesauce	apfel|äpfel|apfelmus|boskop|säuerliche äpfel
+banana		fruit	produce	banana|bananas|ripe banana|ripe bananas	banane|bananen
+lemon		fruit	produce	lemon|lemons	zitrone|zitronen|bio-zitrone|unbehandelte zitrone
+lemon_juice	lemon	fruit		lemon juice|juice of 1 lemon|juice of lemon|lemon juice concentrate	zitronensaft|saft einer zitrone|saft von einer zitrone
+lemon_zest	lemon	fruit		lemon zest|lemon peel|grated lemon peel|lemon rind|zest of 1 lemon|grated lemon rind	zitronenschale|abgeriebene zitronenschale|zitronenabrieb|schale einer zitrone
+lime		fruit	produce	lime|limes|lime juice|lime zest|key lime	limette|limetten|limettensaft|limone|limonen
+orange		fruit	produce	orange|oranges|orange juice|orange zest|orange peel|mandarin|mandarins|tangerine|clementine	orange|orangen|orangensaft|apfelsine|apfelsinen|orangenschale|mandarine|mandarinen|clementine|o-saft
+candied_peel		fruit		candied peel|candied fruit|mixed peel|candied orange peel|candied lemon peel	orangeat|zitronat|kandierte früchte|belegkirschen
+strawberry		fruit	produce	strawberry|strawberries	erdbeere|erdbeeren
+raspberry		fruit	produce	raspberry|raspberries	himbeere|himbeeren
+blueberry		fruit	produce	blueberry|blueberries|bilberries	heidelbeere|heidelbeeren|blaubeere|blaubeeren
+berries		fruit	produce	berries|mixed berries|blackberries|blackberry|gooseberries|redcurrants|cranberries|cranberry|barberries|barberry|dried cranberries|lingonberries|elderberries|mulberries	beeren|beerenmischung|brombeeren|stachelbeeren|johannisbeeren|preiselbeeren|cranberries|berberitzen|holunderbeeren|maulbeeren
+cherry		fruit	produce	cherry|cherries|sour cherries|maraschino cherries	kirsche|kirschen|sauerkirschen|schattenmorellen|süßkirschen
+peach		fruit	produce	peach|peaches|nectarine|nectarines	pfirsich|pfirsiche|nektarine|nektarinen
+apricot		fruit	produce	apricot|apricots|dried apricots	aprikose|aprikosen|marille|marillen
+plum		fruit	produce	plum|plums|prunes|damson	pflaume|pflaumen|zwetschge|zwetschgen|zwetschen|backpflaumen|mirabellen
+pear		fruit	produce	pear|pears	birne|birnen
+pineapple		fruit	produce	pineapple|pineapple chunks|crushed pineapple|pineapple juice	ananas|ananasstücke|ananassaft
+mango		fruit	produce	mango|mangoes|mangos|mango pulp	mango|mangos
+grapes		fruit	produce	grapes|grape|white grapes|red grapes	trauben|weintrauben|weintraube
+melon		fruit	produce	melon|cantaloupe|honeydew|watermelon	melone|honigmelone|wassermelone|zuckermelone
+kiwi		fruit	produce	kiwi|kiwis|kiwifruit	kiwi|kiwis
+papaya		fruit	produce	papaya|papayas|guava|passion fruit|lychee|lychees	papaya|guave|maracuja|passionsfrucht|litschi
+pomegranate		fruit	produce	pomegranate|pomegranate seeds	granatapfel|granatapfelkerne
+rhubarb		fruit	produce	rhubarb	rhabarber
+fig		fruit	produce	fig|figs|dried figs	feige|feigen
+date		fruit		date|dates|medjool dates|pitted dates	dattel|datteln
+raisins		fruit		raisin|raisins|sultanas|golden raisins|currants|dried currants|dried fruit	rosinen|sultaninen|korinthen|trockenfrüchte|trockenobst
+coconut		fruit		coconut|grated coconut|shredded coconut|desiccated coconut|coconut flakes|fresh coconut	kokos|kokosnuss|kokosraspeln|kokosflocken|kokosraspel
+coconut_milk	coconut	other		coconut milk|coconut cream	kokosmilch|kokoscreme|kokossahne
+tamarind		fruit		tamarind|tamarind paste|tamarind pulp	tamarinde|tamarindenpaste
+fruit		fruit		fruit|fresh fruit|mixed fruit|fruit cocktail	obst|früchte|frisches obst|obstsalat
+# ---------------------------------------------------------------- herbs
+parsley		herb	produce	parsley|fresh parsley|flat-leaf parsley|italian parsley|curly parsley	petersilie|glatte petersilie|krause petersilie
+coriander		herb	produce	cilantro|coriander|coriander leaves|fresh coriander|coriander seed|coriander seeds|ground coriander|cilantro leaves	koriander|koriandergrün|koriandersamen|korianderkörner|gemahlener koriander|korianderpulver|korianderblätter
+basil		herb	produce	basil|fresh basil|basil leaves|thai basil|holy basil	basilikum|basilikumblätter
+thyme		herb		thyme|fresh thyme|dried thyme|thyme sprigs	thymian|thymianzweige
+rosemary		herb		rosemary|fresh rosemary|rosemary sprigs	rosmarin|rosmarinzweige
+oregano		herb		oregano|dried oregano|mexican oregano	oregano|origano
+dill		herb		dill|dill weed|fresh dill	dill
+mint		herb	produce	mint|mint leaves|fresh mint|peppermint|spearmint	minze|pfefferminze|minzblätter
+sage		herb		sage|sage leaves	salbei|salbeiblätter
+chives		herb		chives|chive	schnittlauch
+bay_leaf		herb		bay leaf|bay leaves|laurel leaves|bay leafs	lorbeerblatt|lorbeerblätter|lorbeer
+tarragon		herb		tarragon	estragon
+marjoram		herb		marjoram|savory	majoran|bohnenkraut
+curry_leaves		herb		curry leaves|curry leaf	curryblätter
+lemongrass		herb		lemongrass|lemon grass	zitronengras
+herbs		herb		herbs|fresh herbs|mixed herbs|dried herbs|herbes de provence|fines herbes|italian seasoning|bouquet garni|pandan leaves|pandan leaf|utazi leaves|utazi|scent leaf|scent leaves|bitter leaf|uziza leaves|fresh basil and mint	kräuter|frische kräuter|gemischte kräuter|kräuter der provence|italienische kräuter|tk-kräuter|bouquet garni
+# ---------------------------------------------------------------- spices
+cinnamon		spice		cinnamon|ground cinnamon|cinnamon stick|cinnamon sticks|cassia	zimt|zimtstange|zimtstangen|zimtpulver|gemahlener zimt|ceylon zimt
+cumin		spice		cumin|ground cumin|cumin seed|cumin seeds|jeera	kreuzkümmel|cumin|kreuzkümmelpulver|kreuzkümmelsamen
+caraway		spice		caraway|caraway seeds	kümmel|kümmelsamen|ganzer kümmel
+paprika		spice		paprika|sweet paprika|smoked paprika|hot paprika|hungarian paprika|pimenton	paprikapulver|paprika edelsüß|edelsüßes paprikapulver|paprika rosenscharf|geräuchertes paprikapulver|rosenpaprika
+turmeric		spice		turmeric|ground turmeric|haldi	kurkuma|gelbwurz|kurkumapulver|curcuma
+nutmeg		spice		nutmeg|ground nutmeg|grated nutmeg|mace	muskatnuss|muskat|geriebene muskatnuss|muskatblüte
+cloves		spice		cloves|ground cloves|whole cloves|clove	nelken|gewürznelken|nelkenpulver|gewürznelke|nelke
+cardamom		spice		cardamom|cardamom pods|green cardamom|ground cardamom|elaichi	kardamom|kardamomkapseln
+allspice		spice		allspice|pimento	piment|pimentkörner
+curry_powder		spice		curry powder|curry|madras curry powder|curry paste|red curry paste|green curry paste	currypulver|curry|currypaste|rote currypaste|grüne currypaste
+garam_masala		spice		garam masala|chaat masala|tandoori masala|masala|biryani masala|chicken masala|sambar powder	garam masala|tandoori masala|masala
+saffron		spice		saffron|saffron threads|saffron strands	safran|safranfäden
+vanilla		spice		vanilla|vanilla extract|vanilla essence|vanilla bean|vanilla pod|pure vanilla extract	vanille|vanilleschote|vanilleextrakt|vanillearoma|vanillemark
+mustard		condiment		mustard|dijon mustard|dijon|yellow mustard|whole grain mustard|prepared mustard|mustard powder|dry mustard	senf|dijonsenf|mittelscharfer senf|scharfer senf|körniger senf|süßer senf|senfpulver
+mustard_seed	mustard	spice		mustard seed|mustard seeds|black mustard seeds|brown mustard seeds	senfkörner|senfsaat|senfsamen
+fenugreek		spice		fenugreek|fenugreek seeds|methi|kasuri methi	bockshornklee
+asafoetida		spice		asafoetida|asafetida|hing	asant|asafoetida
+star_anise		spice		star anise|anise|aniseed|anise seed|fennel seed|fennel seeds	sternanis|anis|fenchelsamen
+juniper		spice		juniper|juniper berries	wacholder|wacholderbeeren
+sesame		spice		sesame|sesame seed|sesame seeds|tahini|tahina	sesam|sesamsaat|sesamkörner|tahin|tahini|sesampaste
+poppy_seed		spice		poppy seed|poppy seeds	mohn|blaumohn|mohnsamen
+berbere		spice		berbere|ras el hanout|baharat|za'atar|zaatar|sumac|five spice|five-spice powder|chinese five spice|cajun seasoning|old bay|jerk seasoning|adobo seasoning	ras el hanout|sumach|fünf-gewürze-pulver|cajun gewürz
+seasoning		spice		seasoning|spices|spice mix|seasoning salt|seasoned salt|all-purpose seasoning|barbecue rub|bbq rub|dry rub|rub|chop rub|rib rub|hickory bbq rub|poultry shake|poultry seasoning|mixed spice|pumpkin pie spice|apple pie spice	gewürze|gewürzmischung|würze|gewürzsalz|kräutersalz|lebkuchengewürz|spekulatiusgewürz|lebkuchengewuerz|grillgewürz
+msg		spice		msg|monosodium glutamate|accent seasoning	glutamat
+# ---------------------------------------------------------------- grains, bread, pasta
+flour		grain		flour|all-purpose flour|all purpose flour|plain flour|wheat flour|white flour|bread flour|cake flour|pastry flour|strong flour|maida|ap flour	mehl|weizenmehl|weizenmehl typ 405|weizenmehl type 405|typ 405|type 405|haushaltsmehl|weißmehl|backmehl|weizenmehl typ 550|typ 550
+whole_wheat_flour	flour	grain		whole wheat flour|wholemeal flour|whole-wheat flour|atta|graham flour	vollkornmehl|weizenvollkornmehl|vollkornweizenmehl
+self_rising_flour	flour	grain		self-rising flour|self rising flour|self-raising flour|self raising flour	selbstbackmehl|mehl mit backpulver
+spelt_flour	flour	grain		spelt flour|spelt	dinkelmehl|dinkel|dinkelvollkornmehl|dinkelmehl typ 630
+rye_flour		grain		rye flour|rye	roggenmehl|roggen|roggenvollkornmehl
+rice_flour		grain		rice flour|glutinous rice flour|sweet rice flour	reismehl|klebreismehl
+chickpea_flour		grain		chickpea flour|gram flour|besan|garbanzo flour	kichererbsenmehl
+cornstarch		baking		cornstarch|corn starch|cornflour|corn flour|potato starch|arrowroot|starch	speisestärke|maisstärke|kartoffelstärke|stärkemehl|mondamin|stärke|kartoffelmehl|gustin
+cornmeal		grain		cornmeal|polenta|grits|masa harina|masa|corn meal|yellow cornmeal|maize meal	maismehl|polenta|maisgrieß
+semolina		grain		semolina|cream of wheat|suji|sooji|rava	grieß|hartweizengrieß|weichweizengrieß
+oats		grain		oats|rolled oats|oatmeal|quick oats|old-fashioned oats|oat flakes|steel cut oats	haferflocken|hafer|zarte haferflocken|kernige haferflocken|hafermehl
+rice		grain		rice|white rice|long grain rice|long-grain rice|basmati rice|jasmine rice|brown rice|arborio rice|risotto rice|cooked rice|sushi rice|short grain rice|glutinous rice|parboiled rice	reis|langkornreis|basmatireis|jasminreis|naturreis|risottoreis|milchreis|rundkornreis|vollkornreis|parboiled reis
+pasta		grain		pasta|macaroni|penne|fusilli|rigatoni|farfalle|lasagna|lasagne|lasagna noodles|lasagne sheets|elbow macaroni|tortellini|ravioli|gnocchi|orzo|shells|cannelloni	nudeln|teigwaren|makkaroni|penne|fusilli|rigatoni|farfalle|lasagneplatten|lasagnenudeln|tortellini|ravioli|gnocchi|bandnudeln|spätzle|hörnchennudeln|suppennudeln|eiernudeln
+spaghetti	pasta	grain		spaghetti|linguine|fettuccine|tagliatelle|vermicelli|angel hair	spaghetti|linguine|fettuccine|tagliatelle|spaghettini
+noodles	pasta	grain		noodles|egg noodles|rice noodles|ramen|udon|soba|glass noodles|wide egg noodles|lo mein noodles	asianudeln|reisnudeln|glasnudeln|mie-nudeln|mienudeln|ramen|udon
+couscous		grain		couscous|bulgur|bulghur|cracked wheat|quinoa|millet|buckwheat|barley|pearl barley|farro|wheat germ|wheat bran|bran	couscous|bulgur|quinoa|hirse|buchweizen|gerste|graupen|perlgraupen|grünkern|weizenkeime|weizenkleie|kleie
+bread		grain		bread|white bread|sandwich bread|bread slices|slices of bread|loaf|baguette|french bread|sourdough|day-old bread|stale bread|rolls|bread rolls|buns|hamburger buns|brioche|toast|cornbread|crumbled cornbread|croutons|pumpernickel	brot|weißbrot|toastbrot|toast|brötchen|semmel|semmeln|baguette|altbackenes brot|graubrot|vollkornbrot|bauernbrot|schwarzbrot|toastscheiben|brotscheiben|pumpernickel|croutons|maisbrot
+breadcrumbs	bread	grain		bread crumbs|breadcrumbs|bread crumb|panko|dry bread crumbs|cracker crumbs|graham cracker crumbs	semmelbrösel|paniermehl|brösel|semmelbrösel panko|semmelmehl
+tortilla	bread	grain		tortilla|tortillas|flour tortillas|corn tortillas|pita|pita bread|naan|flatbread|chapati|roti|wraps|wheat flour tortillas|wheat tortillas	tortilla|tortillas|fladenbrot|pita|wraps|naan
+pastry		grain		puff pastry|pie crust|pie shell|pastry|shortcrust pastry|phyllo|filo|phyllo dough|filo pastry|pizza dough|pastry dough|pie dough|crescent rolls|wonton wrappers|wonton wrapper|egg roll wrappers|spring roll wrappers|dumpling wrappers|gyoza wrappers|rice paper|rice paper wrappers|biscuit dough|refrigerated biscuit dough|frozen biscuit dough|cookie dough|bread dough	blätterteig|mürbeteig|filoteig|yufkateig|strudelteig|pizzateig|tortenboden|quicheteig|frühlingsrollenteig|wan-tan-blätter|reispapier
+crackers		grain		crackers|biscuits|cookies|graham crackers|ladyfingers|savoiardi|wafers|cornflakes|cereal	kekse|butterkekse|löffelbiskuits|zwieback|cracker|cornflakes|amarettini|biskuit|oblaten|backoblaten
+# ---------------------------------------------------------------- legumes & soy
+beans		legume		beans|dried beans|cooked beans|canned beans|baked beans|pinto beans|white beans|navy beans|cannellini beans|great northern beans|lima beans|butter beans|broad beans|fava beans|black-eyed peas|cowpeas|refried beans	bohnen|weiße bohnen|dicke bohnen|saubohnen|limabohnen|wachtelbohnen|baked beans
+kidney_beans	beans	legume		kidney beans|red kidney beans|red beans	kidneybohnen|rote bohnen
+black_beans	beans	legume		black beans|black bean|black turtle beans	schwarze bohnen
+chickpeas		legume		chickpea|chickpeas|garbanzo beans|garbanzos|chana|hummus	kichererbsen|kichererbse|hummus
+lentils		legume		lentil|lentils|red lentils|green lentils|brown lentils|dal|dhal|toor dal|moong dal|urad dal|chana dal|masoor dal	linsen|rote linsen|tellerlinsen|berglinsen|belugalinsen|gelbe linsen
+tofu		legume		tofu|firm tofu|silken tofu|tempeh|seitan|bean curd	tofu|räuchertofu|seidentofu|tempeh|seitan
+soybeans		legume		soybeans|soy beans|edamame|soy milk|soya milk|soy protein	sojabohnen|edamame|sojamilch|sojadrink|hafermilch|mandelmilch|pflanzendrink
+# ---------------------------------------------------------------- nuts & seeds
+almonds		nut		almond|almonds|ground almonds|sliced almonds|slivered almonds|almond flour|almond meal|blanched almonds|almond extract|marzipan	mandeln|gemahlene mandeln|gehobelte mandeln|mandelblättchen|mandelstifte|mandel|bittermandelaroma|marzipan|marzipanrohmasse|gestiftelte mandeln|mandelsplitter|mandelmehl
+walnuts		nut		walnut|walnuts|chopped walnuts	walnüsse|walnusskerne|walnuss
+hazelnuts		nut		hazelnut|hazelnuts|filberts|ground hazelnuts|nutella|hazelnut spread	haselnüsse|gemahlene haselnüsse|haselnusskerne|haselnuss|nutella|nuss-nougat-creme
+peanuts		nut		peanut|peanuts|roasted peanuts|groundnuts	erdnüsse|erdnusskerne|erdnuss
+peanut_butter	peanuts	nut		peanut butter|groundnut paste	erdnussbutter|erdnussmus
+cashews		nut		cashew|cashews|cashew nuts	cashewkerne|cashewnüsse|cashews
+pecans		nut		pecan|pecans|pecan halves	pekannüsse|pekannuss
+pistachios		nut		pistachio|pistachios	pistazien|pistazienkerne
+pine_nuts		nut		pine nut|pine nuts|pignoli	pinienkerne
+nuts		nut		nuts|mixed nuts|chopped nuts|macadamia nuts|brazil nuts|candlenuts|candlenut|kemiri	nüsse|nusskerne|gemischte nüsse|gehackte nüsse|macadamianüsse
+seeds		nut		sunflower seeds|pumpkin seeds|pepitas|flaxseed|flax seeds|linseed|chia seeds|hemp seeds	sonnenblumenkerne|kürbiskerne|leinsamen|chiasamen|hanfsamen|körner
+# ---------------------------------------------------------------- sweet & baking
+honey		sweetener	honey	honey|clear honey|liquid honey	honig|flüssiger honig|blütenhonig
+maple_syrup		sweetener		maple syrup|pancake syrup	ahornsirup
+syrup		sweetener		syrup|corn syrup|light corn syrup|golden syrup|molasses|treacle|agave syrup|agave nectar|simple syrup|sugar syrup|date syrup|rice syrup|fruit syrup	sirup|zuckersirup|zuckerrübensirup|rübensirup|melasse|agavendicksaft|agavensirup|dattelsirup|reissirup
+jam		sweetener		jam|jelly|preserves|marmalade|apricot jam|strawberry jam|raspberry jam	marmelade|konfitüre|gelee|aprikosenmarmelade|erdbeermarmelade|johannisbeergelee
+chocolate		baking		chocolate|dark chocolate|semisweet chocolate|semi-sweet chocolate|bittersweet chocolate|milk chocolate|white chocolate|baking chocolate|unsweetened chocolate|chocolate chips|chocolate chip|chocolate morsels|chocolate shavings|couverture|chocolate glaze|chocolate frosting	schokolade|zartbitterschokolade|vollmilchschokolade|weiße schokolade|kuvertüre|zartbitterkuvertüre|schokoladenstreusel|schokotropfen|blockschokolade|schokoraspeln|schokoladenglasur|kuchenglasur|schokoglasur|schoko-crossies|crossies|schokocrossies
+cocoa		baking		cocoa|cocoa powder|unsweetened cocoa|unsweetened cocoa powder|dutch-process cocoa|cacao	kakao|kakaopulver|backkakao|kakao ungesüßt
+baking_powder		baking		baking powder|double-acting baking powder	backpulver
+baking_soda		baking		baking soda|bicarbonate of soda|bicarb|sodium bicarbonate|soda|potash|kaun|akanwu	natron|backnatron|kaiser-natron|hirschhornsalz|pottasche
+yeast		baking		yeast|dry yeast|active dry yeast|instant yeast|fresh yeast|rapid rise yeast|quick-rise yeast|fermentation starter|sourdough starter|starter	hefe|trockenhefe|frischhefe|würfel hefe|backhefe|sauerteig|anstellgut
+cream_of_tartar		baking		cream of tartar	weinstein|weinsteinbackpulver
+food_coloring		baking		food coloring|food colouring|food color|food dye|sprinkles	lebensmittelfarbe|speisefarbe|zuckerstreusel|liebesperlen|bunte streusel|schokostreusel
+pudding_powder		baking		pudding mix|instant pudding|custard powder|vanilla pudding mix	puddingpulver|vanillepuddingpulver|sahnesteif|tortenguss|vanillepudding
+ice_cream		dairy	dairy	ice cream|vanilla ice cream	speiseeis|vanilleeis|eiscreme
+# ---------------------------------------------------------------- condiments & sauces
+vinegar		condiment		vinegar|white vinegar|distilled vinegar|malt vinegar	essig|weißer essig|branntweinessig|tafelessig|essigessenz
+balsamic_vinegar	vinegar	condiment		balsamic vinegar|balsamic|balsamico	balsamico|balsamessig|aceto balsamico|balsamicoessig
+cider_vinegar	vinegar	condiment		cider vinegar|apple cider vinegar|apple vinegar	apfelessig|obstessig
+wine_vinegar	vinegar	condiment		wine vinegar|red wine vinegar|white wine vinegar|sherry vinegar	weinessig|rotweinessig|weißweinessig|kräuteressig
+rice_vinegar	vinegar	condiment		rice vinegar|rice wine vinegar	reisessig
+soy_sauce		condiment		soy sauce|soya sauce|light soy sauce|dark soy sauce|tamari|shoyu|kecap manis	sojasauce|sojasoße|helle sojasauce|dunkle sojasauce|sojasosse
+fish_sauce		condiment	fish	fish sauce|nam pla|nuoc mam|shrimp paste	fischsauce|fischsoße|garnelenpaste
+oyster_sauce		condiment	fish	oyster sauce	austernsauce|austernsoße
+worcestershire		condiment	fish	worcestershire sauce|worcestershire|worcester sauce	worcestersauce|worcestershiresauce|worcestersoße
+ketchup		condiment		ketchup|catsup|tomato ketchup	ketchup|tomatenketchup
+mayonnaise		condiment	egg	mayonnaise|mayo	mayonnaise|majonäse|mayo|salatmayonnaise
+hot_sauce		condiment		hot sauce|tabasco|tabasco sauce|sriracha|chili sauce|sweet chili sauce|harissa|sambal oelek|pepper sauce|adobo sauce|chipotles in adobo|chipotle in adobo sauce|hot pepper sauce|pepper sauce hot	scharfe soße|tabasco|sriracha|chilisoße|chilisauce|sambal oelek|harissa
+salsa		condiment		salsa|barbecue sauce|bbq sauce|hoisin sauce|teriyaki sauce|steak sauce|chutney|relish|pesto	salsa|grillsoße|barbecuesoße|bbq-soße|hoisinsauce|teriyakisauce|chutney|pesto
+# ---------------------------------------------------------------- drinks & alcohol
+wine		alcohol	alcohol	wine|cooking wine|dry wine	wein|kochwein
+white_wine	wine	alcohol	alcohol	white wine|dry white wine|marsala|marsala wine|vermouth|mirin|sake|rice wine|shaoxing wine	weißwein|trockener weißwein|marsala|wermut|reiswein|sake
+red_wine	wine	alcohol	alcohol	red wine|dry red wine|port|port wine	rotwein|trockener rotwein|portwein
+beer		alcohol	alcohol	beer|lager|ale|stout|dark beer	bier|dunkles bier|weißbier|pils|malzbier
+spirits		alcohol	alcohol	rum|dark rum|brandy|cognac|sherry|vodka|whiskey|whisky|bourbon|gin|tequila|liqueur|kirsch|kirschwasser|amaretto|grand marnier|cointreau|triple sec|kahlua|schnapps|calvados|madeira|grappa|ouzo	rum|brauner rum|weinbrand|cognac|sherry|wodka|whisky|likör|kirschwasser|obstbrand|amaretto|grand marnier|cointreau|korn|schnaps|eierlikör|rumaroma|calvados|madeira|grappa|ouzo
+coffee		beverage		coffee|espresso|instant coffee|coffee granules|strong coffee|brewed coffee	kaffee|espresso|instantkaffee|kaffeepulver|löslicher kaffee
+tea		beverage		tea|black tea|green tea|tea bags|tea leaves|chai	tee|schwarzer tee|grüner tee|teebeutel|früchtetee
+juice		beverage		juice|fruit juice|apple juice|grape juice|cranberry juice|tomato juice	saft|fruchtsaft|apfelsaft|traubensaft|kirschsaft|tomatensaft|johannisbeersaft
+# ---------------------------------------------------------------- added from the coverage report
+marshmallow		sweetener	gelatin	marshmallow|marshmallows|mini marshmallows|miniature marshmallows|marshmallow creme|marshmallow fluff	marshmallows|mäusespeck
+horseradish		condiment		horseradish|prepared horseradish|wasabi	meerrettich|kren|sahnemeerrettich|wasabi
+custard		dairy	dairy,egg	custard|vanilla custard|creme anglaise	vanillesoße|vanillesauce
+gravy		condiment	diet_unknown	gravy|brown gravy|pan drippings|drippings	bratensoße|bratensauce
+thickener		baking		xanthan gum|guar gum|agar|agar agar|pectin|citric acid|ascorbic acid|lecithin	xanthan|johannisbrotkernmehl|agar agar|pektin|zitronensäure|ascorbinsäure|gelierzucker|geliermittel
+nigella		spice		nigella seeds|nigella|kalonji|black cumin|onion seeds	schwarzkümmel|nigella
+dressing		condiment	diet_unknown	salad dressing|dressing|thousand island dressing|ranch dressing|caesar dressing|italian dressing|vinaigrette	salatdressing|dressing|vinaigrette
+cake_mix		baking		cake mix|box cake mix|yellow cake mix|brownie mix|box yellow cake mix|pancake mix|biscuit mix|bisquick	backmischung|kuchenmischung|pfannkuchenmischung
+non_food		other	non_food	hickory chunks|mesquite chunks|wood chips|hickory chips|smoking chips|hickory smoke powder|liquid smoke|toothpicks|skewers|wooden skewers|cupcake liners|paper cups|aluminum foil|parchment paper|kitchen twine|string|caffeine|mg caffeine	zahnstocher|schaschlikspieße|holzspieße|spieße|papierförmchen|backpapier|alufolie|küchengarn|servietten|ein paar servietten|frischhaltefolie|muffinförmchen|muffinformen|muffinsformen|papierbackförmchen|backform|springform

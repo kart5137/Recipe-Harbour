@@ -133,7 +133,8 @@ class Recipe:
     diet: str = ""  # from the source only (German "Vegetarisch" field): vegetarian|vegan|none
     image: str = ""
     wiki_categories: list[str] = field(default_factory=list)
-    ingredient_groups: list[dict] = field(default_factory=list)  # [{"name": str|None, "items": [...]}]
+    # [{"name": str | None, "items": [{"text": str, "links": [cookbook page titles]}]}]
+    ingredient_groups: list[dict] = field(default_factory=list)
     steps: list[str] = field(default_factory=list)
     equipment: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
@@ -156,9 +157,37 @@ _GROUP_LINE = re.compile(r"^\s*(?:;\s*(.+)|'''(.+?)'''\s*:?\s*)$")
 _REDIRECT = re.compile(r"^\s*#\s*(redirect|weiterleitung)\b", re.I)
 
 
-def _list_items(body: str) -> tuple[list[tuple[str | None, str]], list[str]]:
-    """(items as (group, text), plain paragraphs) from a section body."""
-    items: list[tuple[str | None, str]] = []
+_LEGEND = re.compile(r"^\s*[^\W\d_]{1,4}\.?\s*=\s*[^\W\d_]")  # "g = Gramm", "EL = Esslöffel"
+_LABEL = re.compile(r"^[^\W\d_][^\W\d_\s\-/&]*(?:\s[^\W\d_\-/&]+){0,3}\s*:$")  # "Kuchen:", "For the glaze:"
+_LINK = re.compile(r"\[\[\s*([^|\]#]+)")
+_LINK_NS = re.compile(r"^\s*:?\s*(cookbook|kochbuch)\s*:\s*", re.I)
+_NON_TEXT_NS = re.compile(r"^\s*:?\s*(file|image|datei|bild|category|kategorie|w|wikipedia|wikt|wiktionary)\s*:", re.I)
+
+
+def _links(fragment: str) -> list[str]:
+    """Targets of the cookbook links in a fragment: '[[Cookbook:Olive Oil|oil]]' -> 'Olive Oil'.
+
+    In the English Cookbook these point at ingredient (and unit/technique) pages, a strong
+    hint for which canonical ingredient a line means."""
+    out = []
+    for target in _LINK.findall(fragment):
+        if _NON_TEXT_NS.match(target):
+            continue
+        name = _LINK_NS.sub("", target).strip().replace("_", " ")
+        name = re.sub(r"^kochbuch/\s*", "", name, flags=re.I)
+        if name:
+            out.append(name[0].upper() + name[1:])
+    return out
+
+
+Item = tuple[str | None, str, list[str]]  # (group, text, link targets)
+
+
+def _list_items(body: str, ingredients: bool = False) -> tuple[list[Item], list[str]]:
+    """(items as (group, text, links), plain paragraphs) from a section body.
+
+    In ingredient lists, a short "Label:" item names a group and legends ("g = Gramm") are dropped."""
+    items: list[Item] = []
     paras: list[str] = []
     group: str | None = None
     buf: list[str] = []
@@ -169,8 +198,13 @@ def _list_items(body: str) -> tuple[list[tuple[str | None, str]], list[str]]:
         m = _LIST_LINE.match(raw)
         if m:
             text = to_text(m.group(2))
+            if not re.search(r"[^\W\d_]", text) or (ingredients and _LEGEND.match(text)):
+                continue  # "g = Gramm" abbreviation legends, "…" filler
+            if ingredients and _LABEL.match(text):
+                group = text.rstrip(":").strip()  # "Streusel:" as a list item labels what follows
+                continue
             if text:
-                items.append((group, text))
+                items.append((group, text, _links(m.group(2))))
             continue
         if raw.strip():
             buf.append(raw)
@@ -182,7 +216,7 @@ def _list_items(body: str) -> tuple[list[tuple[str | None, str]], list[str]]:
     return items, [p for p in paras if p]
 
 
-def _table_items(table: str) -> list[tuple[str | None, str]]:
+def _table_items(table: str) -> list[Item]:
     """Ingredients from a wikitable (e.g. the baking tables with Ingredient / Count /
     Volume / Weight / Baker's % columns). A full-width bold row names a group."""
     rows: list[list[tuple[str, str]]] = [[]]  # cells as (kind "!"|"|", raw)
@@ -218,17 +252,22 @@ def _table_items(table: str) -> list[tuple[str | None, str]]:
     i_ing = col("ingredient", "zutat")
     i_amt = [i for i in (col("count", "anzahl"), col("volume", "amount", "quantity", "menge")) if i is not None]
     i_wt = col("weight", "gewicht")
-    items: list[tuple[str | None, str]] = []
+    items: list[Item] = []
     group: str | None = None
     for r in rows:
-        cells = [to_text(c) for k, c in r if k == "|"]
+        raw_cells = [c for k, c in r if k == "|"]
+        cells = [to_text(c) for c in raw_cells]
         if not cells or all(k == "!" for k, _ in r):
             continue
         if len(cells) == 1 and len(r) == 1:  # full-width row: a group label
             group = cells[0].strip(":") or None
             continue
+        links = _links(" ".join(raw_cells))
         if i_ing is not None and i_ing < len(cells):
             name = cells[i_ing]
+            if name.strip().lower().rstrip(":") in {"total", "totals", "gesamt", "summe", "sum"}:
+                continue  # the table's sum row, not an ingredient
+            links = _links(raw_cells[i_ing]) + [x for x in links if x not in _links(raw_cells[i_ing])]
             amount = " ".join(cells[i] for i in i_amt if i < len(cells) and cells[i])
             weight = cells[i_wt] if i_wt is not None and i_wt < len(cells) else ""
             if amount and weight:
@@ -239,7 +278,7 @@ def _table_items(table: str) -> list[tuple[str | None, str]]:
             text = " ".join(c for c in cells if c)
         text = re.sub(r"\s+", " ", text).strip()
         if text and name_like(text):
-            items.append((group, text))
+            items.append((group, text, links))
     return items
 
 
@@ -398,13 +437,13 @@ def parse_page(page: dict, source: Source) -> Recipe:
 
     # Walk headings: a heading of a known kind starts that kind; deeper unknown
     # headings inherit it (and name an ingredient group).
-    ingredients: list[tuple[str | None, str]] = []
+    ingredients: list[Item] = []
     ing_paras: list[str] = []
     steps: list[str] = []
     step_paras: list[str] = []
     # Lists under unrecognised top-level headings before the first steps section,
     # e.g. "Grundrezept" holding the ingredient list: used only if nothing else is found.
-    early_lists: list[tuple[str | None, str]] = []
+    early_lists: list[Item] = []
     seen_steps = False
     current: str | None = None
     level = 0
@@ -421,30 +460,30 @@ def parse_page(page: dict, source: Source) -> Recipe:
         else:
             current, level = None, hlevel
             if not seen_steps:
-                items, _ = _list_items(_TABLE.sub("", _GALLERY.sub("", body)))
-                early_lists += [(g or htext, t) for g, t in items]
+                items, _ = _list_items(_TABLE.sub("", _GALLERY.sub("", body)), ingredients=True)
+                early_lists += [(g or htext, t, ln) for g, t, ln in items]
             continue
         tables = _TABLE.findall(body)
         gallery = _gallery_steps(body)
-        items, paras = _list_items(_TABLE.sub("", _GALLERY.sub("", body)))
+        items, paras = _list_items(_TABLE.sub("", _GALLERY.sub("", body)), ingredients=current == "ingredients")
         if current == "ingredients":
             # A heading like "Ingredients for the sauce" is itself a group name.
             head_group = group or (htext if k and htext.lower().strip() not in {"ingredients", "zutaten"} else None)
             for t in tables:
-                ingredients += [(g or head_group, x) for g, x in _table_items(t)]
-            ingredients += [(g or head_group, t) for g, t in items]
+                ingredients += [(g or head_group, x, ln) for g, x, ln in _table_items(t)]
+            ingredients += [(g or head_group, t, ln) for g, t, ln in items]
             ing_paras += paras
         elif current == "steps":
             seen_steps = True
-            steps += gallery + [t for _, t in items]
+            steps += gallery + [t for _, t, _ in items]
             step_paras += paras
         elif current == "equipment":
-            rec.equipment += [t for _, t in items]
+            rec.equipment += [t for _, t, _ in items]
         elif current == "notes":
-            rec.notes += [t for _, t in items] + paras
+            rec.notes += [t for _, t, _ in items] + paras
 
     if not ingredients and ing_paras:
-        ingredients = [(None, p) for p in ing_paras if len(p) < 200]
+        ingredients = [(None, p, []) for p in ing_paras if len(p) < 200]
         ing_paras = [p for p in ing_paras if len(p) >= 200]
     if not ingredients and early_lists and (steps or step_paras):
         ingredients = early_lists
@@ -453,18 +492,18 @@ def parse_page(page: dict, source: Source) -> Recipe:
     if not steps and ingredients and ing_paras:
         # Method written as prose under the ingredient list (no own heading).
         steps = ing_paras
-    rec.notes += [t for _, t in ingredients if len(t) > _MAX_INGREDIENT_CHARS]
-    ingredients = [(g, t) for g, t in ingredients if len(t) <= _MAX_INGREDIENT_CHARS]
+    rec.notes += [t for _, t, _ in ingredients if len(t) > _MAX_INGREDIENT_CHARS]
+    ingredients = [x for x in ingredients if len(x[1]) <= _MAX_INGREDIENT_CHARS]
     if not ingredients:
         raise Dropped("no_ingredients")
     if not steps:
         raise Dropped("no_steps")
 
     groups: list[dict] = []
-    for g, t in ingredients:
+    for g, t, ln in ingredients:
         if not groups or groups[-1]["name"] != g:
             groups.append({"name": g, "items": []})
-        groups[-1]["items"].append(t)
+        groups[-1]["items"].append({"text": t, "links": ln})
     rec.ingredient_groups = groups
     rec.steps = steps
     return rec
