@@ -1,0 +1,21 @@
+<noinclude>{{:Kochbuch/ Navigationsleiste/ Ebenen}}</noinclude>
+
+{{:Kochbuch/_Vorlage/_RezeptBox
+|Bild                =Aioli mit Oliven.jpg<!-- Bild des zubereiteten Rezeptes -->
+|Kategorie           =Kochbuch/ Saucen <!-- Name einer existierenden Kategorie -->
+|Portionen           =für 4 Personen <!-- Anzahl Portionen -->
+|Zubereitungszeit    = 20-30 Minuten<!-- Arbeitszeit -->
+|Schwierigkeitsgrad  = 3<!-- 1, 2, 3, 4 oder 5 -->
+|Vegetarisch         = Vegan<!-- Nein / Ja / Vegan -->
+}}
+
+Aioli (auch Allioli) ist eine katalanische Knoblauchcremesauce, welche typisch für die dortige Küche ist. Traditionell besteht die Aioli nur aus Knoblauch und Olivenöl.
+
+== Zutaten ==
+* ca. 8 Knoblauchzehen
+* ca. 100 ml Olivenöl
+
+== Zubereitung ==
+
+* Zunächst müssen die Knoblauchzehen vollständig von ihrer Hülle befreit werden.
+* Nun gibt man die Knoblauchzehen in eine Mörserschale.

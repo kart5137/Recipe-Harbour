@@ -1,0 +1,26 @@
+__NOTOC__
+{{recipesummary|category=Beef recipes|servings=4|time=20 minutes|difficulty=2
+}}
+{{Nutrition Summary|
+|ServingSize=1 serving (440 g)
+|Servings=4
+|Cals=487
+}}
+{{recipe}}
+
+==Ingredients==
+
+* {{convert|8|oz|g|abbr=on}} wide [[Cookbook:Pasta|egg noodles]] (figures are for yolk-free noodles)
+* 1 [[Cookbook:Teaspoon|teaspoon]] [[Cookbook:Olive Oil|olive oil]]
+* 1 package ({{convert|8|oz|g|disp=s|abbr=on}}) [[Cookbook:Slicing|sliced]] [[Cookbook:Mushroom|mushrooms]]
+* 1 large (1 [[Cookbook:Cup|cup]]/{{convert|150|g|oz|disp=s|abbr=on}}) coarsely-[[Cookbook:Chopping|chopped]] [[Cookbook:Onion|onion]]
+* ¼ [[Cookbook:Cup|cup]] ({{convert|60|ml|USoz|disp=s|abbr=on}}) [[Cookbook:Milk|skim milk]]
+* [[Cookbook:Salt|Salt]] to taste
+
+==Procedure==
+
+# Prepare noodles according to package directions and drain.
+# As the noodles are boiling, warm oil in very deep [[Cookbook:Skillet|skillet]] over medium heat.
+# Add mushrooms and onions and cook until onion is soft, about 3 minutes.<ref>A note.</ref>
+
+[[Category:Beef recipes]]

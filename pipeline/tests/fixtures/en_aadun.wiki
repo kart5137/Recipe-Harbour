@@ -1,0 +1,26 @@
+__NOTOC__
+{{Recipe summary
+| Cuisine = Nigerian
+| Difficulty = 2
+| Image = [[File:Àádùn2.jpg|300px]]
+}}
+
+{{recipe}} | [[Cookbook:Cuisine of Nigeria|Cuisine of Nigeria]]
+
+'''Aadun''' is a snack common amongst [[Yoruba]]-speaking people of Nigeria.<ref>{{Cite web |last=9jafoodie |title=Adun}}</ref> There are two types of aadun: one made from pure corn flour and one made from corn flour mixed with palm oil and salt.
+
+== Ingredients ==
+*1 [[Cookbook:Cup|cup]] [[Cookbook:Corn Flour|corn flour]]
+*{{frac|1|4}} [[Cookbook:Cup|cup]] [[Cookbook:Palm Oil|palm oil]]
+
+*½ [[Cookbook:Teaspoon|teaspoon]] [[Cookbook:Salt|salt]]
+== Equipment ==
+*[[Cookbook: Mixing Bowl|Mixing bowl]]
+
+== Procedure ==
+
+# Combine the corn flour, palm oil, chili pepper, and salt in a bowl.
+# Leave the mixture to sit for 2–3 hours.
+==References==
+<references />
+[[Category:Recipes using palm oil]]

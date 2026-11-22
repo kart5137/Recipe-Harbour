@@ -1,0 +1,28 @@
+{{:Kochbuch/ Navigationsleiste/ Ebenen}}
+{{:Kochbuch/_Vorlage/_RezeptBox
+|Kategorie           = <!-- Name einer existierenden Kategorie -->
+|Portionen           = 4-6<!-- Anzahl Portionen oder Anzahl Personen -->
+|Zubereitungszeit    = 40 min<!-- Arbeitszeit -->
+|Schwierigkeitsgrad  = 1<!-- 1, 2, 3, 4 oder 5 -->
+|Vegetarisch         = Ja<!-- Nein / Ja / Vegan -->
+|Alkohol             = Nein<!-- Nein / Ja -->
+}}
+
+
+'''Maispuffer'''
+
+== Benötigt ==
+*1 große Rührschüssel
+*1 große Pfanne
+
+== Zutaten ==
+*150 g Mehl
+*2 Dosen Gemüsemais
+*4 Eier
+*Sonnenblumenöl (mit anderen Sorten schmeckt es eigenartig)
+
+== Zubereitung ==
+
+*Reichlich Öl in die Pfanne geben und diese erhitzen.
+*Mehl mit Backpulver mischen, den Mais und die Eier unterrühren.
+*1 bis 2 Minuten auf der anderen Seite backen.
