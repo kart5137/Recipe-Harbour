@@ -115,7 +115,22 @@ export type Query = {
   q: string; // recipe name search
   lang: "all" | "en" | "de";
   staples: boolean; // assume salt, pepper, oil, sugar, water
+  type?: string; // dish family, "" = any
+  time?: number; // maximum minutes (recipes without a stated time are excluded), 0 = any
+  diet?: "" | "vegetarian" | "vegan"; // vegetarian includes vegan
+  ready?: boolean; // only recipes with nothing missing (needs ingredients)
+  browse?: boolean; // with no ingredients and no name: list every recipe that passes the filters
 };
+
+/** Does a recipe pass the dish-type, time and diet filters? */
+export function passesFilters(r: Recipe, q: Pick<Query, "lang" | "type" | "time" | "diet">): boolean {
+  if (q.lang !== "all" && r.lang !== q.lang) return false;
+  if (q.type && r.family !== q.type) return false;
+  if (q.time && !(r.min && r.min[0] <= q.time)) return false;
+  if (q.diet === "vegan" && r.diet !== "vegan") return false;
+  if (q.diet === "vegetarian" && r.diet !== "vegetarian" && r.diet !== "vegan") return false;
+  return true;
+}
 
 export type Hit = {
   recipe: Recipe;
@@ -153,12 +168,12 @@ export function search(m: Model, query: Query): Result {
   const hits: Hit[] = [];
 
   recipes.forEach((recipe, i) => {
-    if (query.lang !== "all" && recipe.lang !== query.lang) return;
+    if (!passesFilters(recipe, query)) return;
     const tm = titleMatch(m, i, qTokens);
     if (tm === 0) return;
     if (!have.length) {
-      if (!qTokens.length) return; // nothing asked
-      hits.push({ recipe, used: [], missing: [], missingOther: 0, satisfied: 0, total: 0, score: tm });
+      if (!qTokens.length && !query.browse) return; // nothing asked
+      hits.push({ recipe, used: [], missing: [], missingOther: 0, satisfied: 0, total: 0, score: qTokens.length ? tm : 0 });
       return;
     }
     const used = new Set<number>();
@@ -186,6 +201,9 @@ export function search(m: Model, query: Query): Result {
     hits.push({ recipe, used: [...used], missing, missingOther: recipe.unk, satisfied, total, score });
   });
 
+  if (query.ready && have.length) {
+    for (let i = hits.length - 1; i >= 0; i--) if (hits[i].missing.length || hits[i].missingOther) hits.splice(i, 1);
+  }
   hits.sort(
     (a, b) =>
       b.score - a.score ||

@@ -4,6 +4,8 @@ import { CameraOff, Check, LoaderCircle, PackageSearch, Plus, ScanBarcode, X } f
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { normaliseBarcode } from "@/lib/barcode";
+import { useDict, useLocale } from "@/components/locale";
+import type { Dict, Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
 import { CameraError, startScanner } from "@/lib/scanner";
 
@@ -17,22 +19,17 @@ type Phase =
   | { kind: "result"; result: Lookup }
   | { kind: "added"; id: string };
 
-const CAMERA_MESSAGES: Record<CameraError["kind"], string> = {
-  blocked: "Camera access is blocked. Allow it in your browser settings, or type the barcode below.",
-  no_camera: "No camera was found on this device. Type the barcode below instead.",
-  insecure: "The camera only works over a secure (https) connection. Type the barcode below instead.",
-  other: "The camera could not be started. Type the barcode below instead.",
-};
-
 type Props = { open: boolean; onClose: () => void; onAdd: (id: string) => void; have: string[] };
 
 /** Scan a product barcode (or type it), look it up in Open Food Facts, confirm the ingredient. */
 export function ScanDialog({ open, onClose, onAdd, have }: Props) {
+  const t = useDict();
+  const lang = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>({ kind: "scanning" });
-  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraError, setCameraError] = useState<CameraError["kind"] | null>(null);
   const [starting, setStarting] = useState(false);
   const [typed, setTyped] = useState("");
   const titleId = useId();
@@ -77,7 +74,7 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
         else stopRef.current = stop;
       })
       .catch((e) => {
-        if (!cancelled) setCameraError(CAMERA_MESSAGES[e instanceof CameraError ? e.kind : "other"]);
+        if (!cancelled) setCameraError(e instanceof CameraError ? e.kind : "other");
       })
       .finally(() => {
         if (!cancelled) setStarting(false);
@@ -122,9 +119,9 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
       <div className="flex items-center justify-between border-b border-line px-5 py-4">
         <h2 id={titleId} className="flex items-center gap-2 font-display text-xl font-semibold">
           <ScanBarcode className="size-5 text-brand" aria-hidden />
-          Scan a product
+          {t.scan.title}
         </h2>
-        <button type="button" onClick={close} className="grid size-9 place-items-center rounded-full hover:bg-surface-2" aria-label="Close">
+        <button type="button" onClick={close} className="grid size-9 place-items-center rounded-full hover:bg-surface-2" aria-label={t.scan.close}>
           <X className="size-5" aria-hidden />
         </button>
       </div>
@@ -133,7 +130,7 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
         {phase.kind === "scanning" && (
           <>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
-              <video ref={videoRef} muted playsInline className="size-full object-cover" aria-label="Camera preview" />
+              <video ref={videoRef} muted playsInline className="size-full object-cover" aria-label={t.scan.cameraPreview} />
               {!cameraError && (
                 <div aria-hidden className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.25)]" />
               )}
@@ -142,26 +139,26 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
                   {cameraError ? (
                     <span className="flex flex-col items-center gap-2">
                       <CameraOff className="size-8" aria-hidden />
-                      {cameraError}
+                      {t.scan.camera[cameraError]}
                     </span>
                   ) : (
-                    <LoaderCircle className="size-8 animate-spin" aria-label="Starting camera" />
+                    <LoaderCircle className="size-8 animate-spin" aria-label={t.scan.starting} />
                   )}
                 </div>
               )}
             </div>
-            {!cameraError && <p className="text-center text-sm text-muted">Hold the barcode of a packaged food inside the frame.</p>}
+            {!cameraError && <p className="text-center text-sm text-muted">{t.scan.hold}</p>}
           </>
         )}
 
         {phase.kind === "looking" && (
           <p className="flex items-center justify-center gap-2 py-10 text-muted" role="status">
             <LoaderCircle className="size-5 animate-spin" aria-hidden />
-            Looking up {phase.code}…
+            {t.scan.looking(phase.code)}
           </p>
         )}
 
-        {phase.kind === "result" && <ResultView result={phase.result} have={have} onAdd={(id) => {
+        {phase.kind === "result" && <ResultView t={t} lang={lang} result={phase.result} have={have} onAdd={(id) => {
           onAdd(id);
           setPhase({ kind: "added", id });
         }} onAgain={again} />}
@@ -170,14 +167,14 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
           <div className="space-y-4 py-4 text-center" role="status">
             <p className="inline-flex items-center gap-2 rounded-full bg-have-soft px-4 py-2 font-semibold text-have">
               <Check className="size-4" aria-hidden />
-              Added {label(phase.id)}
+              {t.scan.added(label(phase.id, lang))}
             </p>
             <div className="flex justify-center gap-3">
               <button type="button" onClick={again} className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink">
-                Scan another
+                {t.scan.another}
               </button>
               <button type="button" onClick={close} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold">
-                Done
+                {t.scan.done}
               </button>
             </div>
           </div>
@@ -189,33 +186,35 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               inputMode="numeric"
-              placeholder="Or type the barcode number"
-              aria-label="Barcode number"
+              placeholder={t.scan.typed}
+              aria-label={t.scan.typedAria}
               className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface-2 px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
             />
             <button type="submit" className="rounded-xl bg-brand px-4 text-sm font-semibold text-brand-ink disabled:opacity-50" disabled={!typed.trim()}>
-              Look up
+              {t.scan.lookUp}
             </button>
           </form>
         )}
       </div>
 
       <p className="border-t border-line px-5 py-3 text-xs text-muted">
-        Product data from{" "}
+        {t.scan.credit[0]}{" "}
         <a href="https://world.openfoodfacts.org" className="underline underline-offset-2 hover:text-ink">
-          Open Food Facts
+          {t.scan.credit[1]}
         </a>{" "}
-        contributors, available under the{" "}
+        {t.scan.credit[2]}{" "}
         <a href="https://opendatacommons.org/licenses/odbl/1-0/" className="underline underline-offset-2 hover:text-ink">
-          ODbL
+          {t.scan.credit[3]}
         </a>
-        .
+        {t.scan.credit[4]}
       </p>
     </dialog>
   );
 }
 
-function ResultView({ result, have, onAdd, onAgain }: { result: Lookup; have: string[]; onAdd: (id: string) => void; onAgain: () => void }) {
+type ResultProps = { t: Dict; lang: Locale; result: Lookup; have: string[]; onAdd: (id: string) => void; onAgain: () => void };
+
+function ResultView({ t, lang, result, have, onAdd, onAgain }: ResultProps) {
   if (result.status === "found") {
     const id = result.ingredient;
     return (
@@ -232,43 +231,39 @@ function ResultView({ result, have, onAdd, onAgain }: { result: Lookup; have: st
         {id ? (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm">
-              Ingredient: <span className="font-semibold">{label(id)}</span>
+              {t.scan.ingredient} <span className="font-semibold">{label(id, lang)}</span>
             </p>
             <div className="flex gap-2">
               <button type="button" onClick={onAgain} className="rounded-full border border-line px-4 py-2 text-sm font-semibold">
-                Scan again
+                {t.scan.again}
               </button>
               {have.includes(id) ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-have-soft px-4 py-2 text-sm font-semibold text-have">
-                  <Check className="size-4" aria-hidden /> Already added
+                  <Check className="size-4" aria-hidden /> {t.scan.already}
                 </span>
               ) : (
                 <button type="button" onClick={() => onAdd(id)} className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink">
-                  <Plus className="size-4" aria-hidden /> Add {label(id)}
+                  <Plus className="size-4" aria-hidden /> {t.scan.add(label(id, lang))}
                 </button>
               )}
             </div>
           </div>
         ) : (
-          <Message text="We could not tell which recipe ingredient this product is. Type it in the search box instead." onAgain={onAgain} />
+          <Message text={t.scan.noMatch} again={t.scan.again} onAgain={onAgain} />
         )}
       </div>
     );
   }
-  const text = {
-    not_found: "This barcode is not in Open Food Facts yet. Type the ingredient in the search box instead.",
-    invalid: "That is not a valid product barcode. Check the digits under the bars.",
-    unavailable: "The product database is not answering right now. Try again in a minute.",
-  }[result.status];
-  return <Message text={text} onAgain={onAgain} />;
+  const text = { not_found: t.scan.notFound, invalid: t.scan.invalid, unavailable: t.scan.unavailable }[result.status];
+  return <Message text={text} again={t.scan.again} onAgain={onAgain} />;
 }
 
-function Message({ text, onAgain }: { text: string; onAgain: () => void }) {
+function Message({ text, again, onAgain }: { text: string; again: string; onAgain: () => void }) {
   return (
     <div className="space-y-3 rounded-2xl border border-miss/30 bg-miss-soft p-4 text-sm">
       <p>{text}</p>
       <button type="button" onClick={onAgain} className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold">
-        Scan again
+        {again}
       </button>
     </div>
   );

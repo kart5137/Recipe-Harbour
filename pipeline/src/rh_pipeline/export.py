@@ -208,6 +208,11 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
         "recipes": out_recipes,
     }
     out_dir.mkdir(parents=True, exist_ok=True)
+    # German display names for the interface (first German name, each word capitalised).
+    names_de = {x["id"]: " ".join(w[:1].upper() + w[1:] for w in x["de"][0].split()) for x in ingredients if x["de"]}
+    (out_dir / "ingredient-names-de.json").write_text(
+        json.dumps(names_de, ensure_ascii=False, indent=0, sort_keys=True), encoding="utf-8"
+    )
     path = out_dir / "search-index.json"
     path.write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log.info("search index: %d recipes, %d ingredients, %.1f MB -> %s", len(out_recipes), len(ingredients),

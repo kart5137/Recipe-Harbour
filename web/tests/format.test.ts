@@ -24,12 +24,12 @@ describe("formatMinutes", () => {
 describe("URL state", () => {
   it("round-trips", () => {
     const s = parseState({ have: "onion,garlic", q: "soup", lang: "de", staples: "0", n: "48" });
-    assert.deepEqual(s, { have: ["onion", "garlic"], q: "soup", lang: "de", staples: false, n: 48 });
+    assert.deepEqual(s, { have: ["onion", "garlic"], q: "soup", lang: "de", staples: false, type: "", time: 0, diet: "", ready: false, n: 48 });
     assert.equal(toQuery(s), "?have=onion%2Cgarlic&q=soup&lang=de&staples=0&n=48");
   });
   it("uses defaults and rejects junk", () => {
     const s = parseState({ have: "onion,<script>,ONION,onion", lang: "fr", n: "-5" });
-    assert.deepEqual(s, { have: ["onion"], q: "", lang: "all", staples: true, n: 24 });
+    assert.deepEqual(s, { have: ["onion"], q: "", lang: "all", staples: true, type: "", time: 0, diet: "", ready: false, n: 24 });
     assert.equal(toQuery(s), "?have=onion");
   });
 });

@@ -4,10 +4,13 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BackLink } from "@/components/back-link";
+import { FavouriteButton } from "@/components/favourite-button";
 import { IngredientsPanel } from "@/components/ingredients-panel";
 import { getIngredientsLite, getRecipe, sampleRecipeIds } from "@/lib/data";
 import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
+import { dict, type Locale } from "@/lib/i18n";
+import { getLocale } from "@/lib/locale-server";
 import type { RecipeDetail } from "@/lib/recipe";
 
 export function generateStaticParams() {
@@ -15,50 +18,61 @@ export function generateStaticParams() {
   return sampleRecipeIds().map((id) => ({ id }));
 }
 
-export async function generateMetadata(props: PageProps<"/recipe/[id]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/[lang]/recipe/[id]">): Promise<Metadata> {
   const { id } = await props.params;
+  const t = dict(await getLocale());
   const r = getRecipe(id);
   return r
-    ? { title: `${r.title} · Recipe Harbour`, description: r.description.slice(0, 160) || undefined }
-    : { title: "Recipe not found · Recipe Harbour" };
+    ? {
+        title: `${r.title} · Recipe Harbour`,
+        description: r.description.slice(0, 160) || undefined,
+        alternates: { languages: { en: `/en/recipe/${id}`, de: `/de/recipe/${id}` } },
+      }
+    : { title: `${t.recipe.notFoundTitle} · Recipe Harbour` };
 }
 
-export default function RecipePage(props: PageProps<"/recipe/[id]">) {
+export default async function RecipePage(props: PageProps<"/[lang]/recipe/[id]">) {
+  const lang = await getLocale();
   return (
     <main className="mx-auto max-w-6xl px-4 pt-6 pb-6 sm:px-6">
-      <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}>
+      <Suspense fallback={<p className="text-sm text-muted">{dict(lang).recipe.loading}</p>}>
         <BackLink />
       </Suspense>
       <Suspense fallback={<RecipeSkeleton />}>
-        <Recipe params={props.params} />
+        <Recipe params={props.params} lang={lang} />
       </Suspense>
     </main>
   );
 }
 
-const DIET: Record<string, string> = { vegan: "Vegan", vegetarian: "Vegetarian", none: "Contains meat or fish" };
-
-async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
+async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "params"> & { lang: Locale }) {
   const { id } = await params;
   const r = getRecipe(id);
   if (!r) notFound();
+  const t = dict(lang);
+  const diet = r.diet === "vegan" || r.diet === "vegetarian" || r.diet === "none" ? t.diet[r.diet] : null;
   const fam = family(r.family);
   const Icon = fam.icon;
-  const time = formatMinutes(r.minutes);
-  const updated = r.revision_timestamp ? r.revision_timestamp.slice(0, 10) : "";
-  const source = r.lang === "de" ? "Wikibooks Kochbuch" : "Wikibooks Cookbook";
+  const time = formatMinutes(r.minutes, lang);
+  const updated = r.revision_timestamp
+    ? new Intl.DateTimeFormat(lang === "de" ? "de-DE" : "en-GB", { dateStyle: "long", timeZone: "UTC" }).format(new Date(r.revision_timestamp))
+    : "";
+  const source = t.recipe.source[r.lang];
 
   return (
     <article className="mt-4">
       <header className={`overflow-hidden rounded-3xl ${fam.tint}`}>
         <div className="px-5 py-7 sm:px-8 sm:py-10">
-          <p className={`inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase ${fam.ink}`}>
-            <Icon className="size-5" aria-hidden />
-            {fam.label}
-            <span className="rounded-md bg-surface/80 px-1.5 py-0.5 text-[11px] font-bold tracking-wider text-muted">
-              {r.lang === "de" ? "Deutsch" : "English"}
-            </span>
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className={`inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase ${fam.ink}`}>
+              <Icon className="size-5" aria-hidden />
+              {fam.label[lang]}
+              <span className="rounded-md bg-surface/80 px-1.5 py-0.5 text-[11px] font-bold tracking-wider text-muted">
+                {t.recipe.languageName[r.lang]}
+              </span>
+            </p>
+            <FavouriteButton fav={{ id: r.id, title: r.title, lang: r.lang, family: r.family, min: r.minutes }} />
+          </div>
           <h1 lang={r.lang} className="mt-3 max-w-3xl font-display text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
             {r.title}
           </h1>
@@ -68,19 +82,19 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
             </p>
           )}
           <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-            {time && <Fact icon={<Clock className="size-4" />} term="Time" value={time} />}
+            {time && <Fact icon={<Clock className="size-4" />} term={t.recipe.time} value={time} />}
             {r.servings_text && (
-              <Fact icon={<Users className="size-4" />} term="Serves" value={r.servings_text} lang={r.lang} />
+              <Fact icon={<Users className="size-4" />} term={t.recipe.serves} value={r.servings_text} lang={r.lang} />
             )}
-            {r.difficulty && <Fact icon={<Gauge className="size-4" />} term="Difficulty" value={`${r.difficulty} of 5`} />}
+            {r.difficulty && <Fact icon={<Gauge className="size-4" />} term={t.recipe.difficulty} value={t.recipe.difficultyValue(r.difficulty)} />}
             {(r.cuisine || r.category) && (
-              <Fact icon={<Globe2 className="size-4" />} term="Type" value={[r.cuisine, r.category].filter(Boolean).join(" · ")} lang={r.lang} />
+              <Fact icon={<Globe2 className="size-4" />} term={t.recipe.type} value={[r.cuisine, r.category].filter(Boolean).join(" · ")} lang={r.lang} />
             )}
-            {DIET[r.diet] && (
+            {diet && (
               <Fact
                 icon={<Leaf className="size-4" />}
-                term="Diet"
-                value={`${DIET[r.diet]}${r.diet_source === "inferred" ? " (from the ingredients)" : ""}`}
+                term={t.recipe.diet}
+                value={`${diet}${r.diet_source === "inferred" ? t.diet.fromIngredients : ""}`}
               />
             )}
           </dl>
@@ -92,7 +106,7 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
           {/* The panel reads the URL (useSearchParams), so in a prerendered page the browser renders
               everything up to the nearest Suspense boundary. Its own boundary keeps that to the panel;
               the fallback is the plain ingredient list. */}
-          <Suspense fallback={<StaticIngredients groups={r.groups} lang={r.lang} />}>
+          <Suspense fallback={<StaticIngredients groups={r.groups} lang={r.lang} heading={t.recipe.ingredients} />}>
             <IngredientsPanel
               recipe={{ title: r.title, groups: r.groups, lang: r.lang }}
               ingredients={getIngredientsLite()}
@@ -103,7 +117,7 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
         <div className="space-y-8">
           <section aria-labelledby="method">
             <h2 id="method" className="font-display text-2xl font-semibold">
-              Method
+              {t.recipe.method}
             </h2>
             <ol className="mt-4 space-y-4" lang={r.lang}>
               {r.steps.map((s, i) => (
@@ -120,7 +134,7 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
           {r.equipment.length > 0 && (
             <section aria-labelledby="equipment">
               <h2 id="equipment" className="font-display text-xl font-semibold">
-                Equipment
+                {t.recipe.equipment}
               </h2>
               <ul className="mt-3 flex flex-wrap gap-2" lang={r.lang}>
                 {r.equipment.map((e, i) => (
@@ -135,7 +149,7 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
           {r.notes.length > 0 && (
             <section aria-labelledby="notes">
               <h2 id="notes" className="font-display text-xl font-semibold">
-                Notes and variations
+                {t.recipe.notes}
               </h2>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-muted" lang={r.lang}>
                 {r.notes.map((n, i) => (
@@ -146,33 +160,30 @@ async function Recipe({ params }: Pick<PageProps<"/recipe/[id]">, "params">) {
           )}
 
           {r.diet_source === "inferred" && (
-            <p className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted">
-              The diet label is worked out from the ingredient list, not stated by the recipe. If you have an allergy
-              or a strict diet, check every ingredient yourself.
-            </p>
+            <p className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted">{t.recipe.dietNote}</p>
           )}
 
           <footer className="rounded-2xl border border-line bg-surface p-5 text-sm text-muted">
             <p>
-              This recipe comes from the{" "}
+              {t.recipe.comesFrom}{" "}
               <a href={r.url} className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand">
                 {source}
               </a>{" "}
-              and was written by{" "}
+              {t.recipe.writtenBy}{" "}
               <a href={r.history_url} className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand">
-                its contributors
+                {t.recipe.contributors}
               </a>
-              . It is shared under{" "}
+              {t.recipe.sharedUnder}{" "}
               <a
                 href="https://creativecommons.org/licenses/by-sa/4.0/"
                 className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand"
               >
                 CC BY-SA 4.0
               </a>{" "}
-              and has been reformatted for this site{updated ? ` (version of ${updated})` : ""}.
+              {t.recipe.reformatted(updated).replace(/^ /, "")}
             </p>
             <a href={r.url} className="mt-3 inline-flex items-center gap-1 font-medium text-brand hover:underline">
-              Read the original on Wikibooks <ExternalLink className="size-3.5" aria-hidden />
+              {t.recipe.readOriginal} <ExternalLink className="size-3.5" aria-hidden />
             </a>
           </footer>
         </div>
@@ -195,11 +206,11 @@ function Fact({ icon, term, value, lang }: { icon: React.ReactNode; term: string
   );
 }
 
-function StaticIngredients({ groups, lang }: { groups: RecipeDetail["groups"]; lang: string }) {
+function StaticIngredients({ groups, lang, heading }: { groups: RecipeDetail["groups"]; lang: string; heading: string }) {
   return (
     <section aria-labelledby="ingredients" className="rounded-2xl border border-line bg-surface p-5 shadow-sm">
       <h2 id="ingredients" className="font-display text-xl font-semibold">
-        Ingredients
+        {heading}
       </h2>
       <div className="mt-4 space-y-5" lang={lang}>
         {groups.map((g, gi) => (

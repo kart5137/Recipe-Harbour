@@ -2,86 +2,98 @@ import Link from "next/link";
 
 import { RecipeCard } from "@/components/recipe-card";
 import { getModel } from "@/lib/data";
+import { dict, type Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
-import { PAGE, type SearchState, toQuery } from "@/lib/params";
+import { hasFilters, PAGE, type SearchState, toQuery } from "@/lib/params";
 import { search } from "@/lib/search";
 
-const EXAMPLES: { title: string; have: string[] }[] = [
-  { title: "Onion · tomato · egg", have: ["onion", "tomato", "egg"] },
-  { title: "Kartoffeln · Eier · Speck", have: ["potato", "egg", "bacon"] },
-  { title: "Pasta · garlic · olive oil", have: ["pasta", "garlic", "olive_oil"] },
-  { title: "Rice · chicken · bell pepper", have: ["rice", "chicken", "bell_pepper"] },
-  { title: "Äpfel · Mehl · Butter", have: ["apple", "flour", "butter"] },
+/** Ingredients for the example searches, in the same order as the dictionary's example titles. */
+const EXAMPLES: string[][] = [
+  ["onion", "tomato", "egg"],
+  ["potato", "egg", "bacon"],
+  ["pasta", "garlic", "olive_oil"],
+  ["rice", "chicken", "bell_pepper"],
+  ["apple", "flour", "butter"],
 ];
 
-export function Results({ state }: { state: SearchState }) {
+export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
+  const t = dict(lang).results;
   const m = getModel();
   const pantry = state.have.length > 0;
+  const named = state.q.trim() !== "";
+  const browse = !pantry && !named && hasFilters(state);
 
-  if (!pantry && !state.q.trim()) {
+  if (!pantry && !named && !browse) {
     return (
       <section aria-labelledby="try" className="mt-10">
         <h2 id="try" className="text-sm font-semibold text-muted">
-          Not sure where to start? Try one of these
+          {t.tryHeading}
         </h2>
         <ul className="mt-3 flex flex-wrap gap-2">
-          {EXAMPLES.map((ex) => (
-            <li key={ex.title}>
+          {EXAMPLES.map((have, i) => (
+            <li key={have.join()}>
               <Link
-                href={`/${toQuery({ ...state, have: ex.have })}`}
+                href={`/${lang}${toQuery({ ...state, have })}`}
                 scroll={false}
                 className="inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium shadow-sm transition hover:border-brand hover:text-brand"
               >
-                {ex.title}
+                {t.examples[i]}
               </Link>
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-sm text-muted">{t.browseHint}</p>
       </section>
     );
   }
 
-  const res = search(m, { have: state.have, q: state.q, lang: state.lang, staples: state.staples });
+  const res = search(m, {
+    have: state.have,
+    q: state.q,
+    lang: state.lang,
+    staples: state.staples,
+    type: state.type,
+    time: state.time,
+    diet: state.diet,
+    ready: state.ready,
+    browse,
+  });
   const shown = res.hits.slice(0, state.n);
   const { ingredients } = m.data;
   const query = toQuery({ ...state, n: undefined }); // carried to the recipe page for "Back to results"
+
+  const order = pantry ? (res.canMakeNow > 0 && !state.ready ? null : t.bestFirst) : named ? null : t.browseOrder;
 
   return (
     <section aria-labelledby="results" className="mt-10">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="results" className="font-display text-2xl font-semibold">
-          {res.total === 0
-            ? "No recipes found"
-            : `${res.total.toLocaleString("en")} recipe${res.total === 1 ? "" : "s"}`}
+          {res.total === 0 ? t.none : t.count(res.total)}
         </h2>
-        {pantry && res.total > 0 && (
+        {res.total > 0 && pantry && res.canMakeNow > 0 && !state.ready && (
           <p className="text-sm text-muted">
-            {res.canMakeNow > 0 ? (
-              <>
-                <span className="font-semibold text-have">{res.canMakeNow}</span> you can make with what you have
-              </>
-            ) : (
-              "Best matches first: most of the recipe covered, using most of your ingredients"
-            )}
+            <span className="font-semibold text-have">{t.canMake(res.canMakeNow)[0]}</span>
+            {t.canMake(res.canMakeNow)[1]}
           </p>
         )}
+        {res.total > 0 && order && <p className="text-sm text-muted">{order}</p>}
       </div>
 
-      {res.unknown.length > 0 && (
-        <p className="mt-2 text-sm text-miss">Ignored unknown ingredient{res.unknown.length > 1 ? "s" : ""}: {res.unknown.join(", ")}</p>
-      )}
+      {res.unknown.length > 0 && <p className="mt-2 text-sm text-miss">{t.ignored(res.unknown.join(", "))}</p>}
 
       {res.total === 0 ? (
         <p className="mt-4 max-w-prose text-muted">
           {pantry
-            ? `No recipe uses ${state.have.map(label).join(", ")}${state.q ? ` and matches “${state.q}”` : ""}${state.lang !== "all" ? " in this language" : ""}. Try removing an ingredient${state.lang !== "all" ? " or showing all languages" : ""}.`
-            : `No recipe name matches “${state.q}”.`}
+            ? `${t.noneWithPantry} (${state.have.map((id) => label(id, lang)).join(", ")})`
+            : named
+              ? t.noneWithName(state.q)
+              : t.noneWithFilters}
         </p>
       ) : (
         <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((hit) => (
             <li key={hit.recipe.id} className="flex">
-              <RecipeCard hit={hit} ingredients={ingredients} pantry={pantry} query={query} />
+              <RecipeCard hit={hit} ingredients={ingredients} pantry={pantry} query={query} lang={lang} />
             </li>
           ))}
         </ul>
@@ -90,11 +102,11 @@ export function Results({ state }: { state: SearchState }) {
       {res.total > shown.length && (
         <div className="mt-8 flex justify-center">
           <Link
-            href={`/${toQuery({ ...state, n: state.n + PAGE })}`}
+            href={`/${lang}${toQuery({ ...state, n: state.n + PAGE })}`}
             scroll={false}
             className="rounded-full border border-line bg-surface px-6 py-2.5 text-sm font-semibold shadow-sm transition hover:border-brand hover:text-brand"
           >
-            Show more ({(res.total - shown.length).toLocaleString("en")} left)
+            {t.more(res.total - shown.length)}
           </Link>
         </div>
       )}

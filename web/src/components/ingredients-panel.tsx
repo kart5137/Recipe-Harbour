@@ -4,6 +4,7 @@ import { Check, ClipboardCheck, Copy, ShoppingBasket } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import { useDict } from "@/components/locale";
 import { parseState } from "@/lib/params";
 import type { RecipeDetail } from "@/lib/recipe";
 import { buildRelations, covers, type Ingredient } from "@/lib/search";
@@ -18,6 +19,7 @@ const key = (g: number, i: number) => `${g}-${i}`;
  * without a search only the staples are ticked.
  */
 export function IngredientsPanel({ recipe, ingredients }: Props) {
+  const t = useDict().recipe;
   const sp = useSearchParams();
   const rel = useMemo(() => buildRelations(ingredients), [ingredients]);
   const initial = useMemo(() => {
@@ -47,7 +49,7 @@ export function IngredientsPanel({ recipe, ingredients }: Props) {
   const haveCount = required.length - toBuy.length;
 
   const copy = async () => {
-    const text = [`${recipe.title}: shopping list`, ...toBuy.map((l) => `- ${l.text}`)].join("\n");
+    const text = [t.listTitle(recipe.title), ...toBuy.map((l) => `- ${l.text}`)].join("\n");
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -62,13 +64,15 @@ export function IngredientsPanel({ recipe, ingredients }: Props) {
       <section aria-labelledby="ingredients" className="rounded-2xl border border-line bg-surface p-5 shadow-sm">
         <div className="flex items-baseline justify-between gap-3">
           <h2 id="ingredients" className="font-display text-xl font-semibold">
-            Ingredients
+            {t.ingredients}
           </h2>
           <p className="text-sm text-muted" aria-live="polite">
-            You have <span className="font-semibold text-have">{haveCount}</span> of {required.length}
+            {t.youHaveOf(haveCount, required.length)[0]}
+            <span className="font-semibold text-have">{t.youHaveOf(haveCount, required.length)[1]}</span>
+            {t.youHaveOf(haveCount, required.length)[2]}
           </p>
         </div>
-        <p className="mt-1 text-xs text-muted">Tick what you already have.</p>
+        <p className="mt-1 text-xs text-muted">{t.tickHint}</p>
 
         <div className="mt-4 space-y-5" lang={recipe.lang}>
           {recipe.groups.map((g, gi) => (
@@ -92,7 +96,7 @@ export function IngredientsPanel({ recipe, ingredients }: Props) {
                           {it.text}
                           {it.optional && (
                             <span className="ml-2 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] font-medium text-muted no-underline">
-                              optional
+                              {t.optional}
                             </span>
                           )}
                         </span>
@@ -110,7 +114,7 @@ export function IngredientsPanel({ recipe, ingredients }: Props) {
         <div className="flex items-center justify-between gap-3">
           <h2 id="shopping" className="flex items-center gap-2 font-display text-xl font-semibold">
             <ShoppingBasket className="size-5 text-miss" aria-hidden />
-            Shopping list
+            {t.shopping}
           </h2>
           {toBuy.length > 0 && (
             <button
@@ -119,13 +123,13 @@ export function IngredientsPanel({ recipe, ingredients }: Props) {
               className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:border-brand hover:text-brand"
             >
               {copied ? <ClipboardCheck className="size-4 text-have" aria-hidden /> : <Copy className="size-4" aria-hidden />}
-              {copied ? "Copied" : "Copy list"}
+              {copied ? t.copied : t.copy}
             </button>
           )}
         </div>
         {toBuy.length === 0 ? (
           <p className="mt-3 rounded-xl bg-have-soft px-4 py-3 text-sm font-medium text-have">
-            Nothing to buy: you have everything for this recipe.
+            {t.nothingToBuy}
           </p>
         ) : (
           <ul className="mt-3 space-y-1.5 text-[15px]" lang={recipe.lang}>

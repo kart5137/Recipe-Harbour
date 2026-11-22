@@ -5,6 +5,8 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { type Classifier, loadClassifier } from "@/lib/classifier";
 import { type Guess, type Interpretation, interpret, offeredIds } from "@/lib/classify-result";
+import { useDict, useLocale } from "@/components/locale";
+import type { Dict, Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
 
 type Phase =
@@ -18,11 +20,17 @@ type Phase =
 type Props = { open: boolean; onClose: () => void; onAdd: (id: string) => void; have: string[] };
 
 const pct = (p: number) => `${Math.round(p * 100)} %`;
-/** What the model recognises, without the search label's broader wording ("Radish & root veg" -> "radish"). */
-const seen = (id: string) => label(id).split(" & ")[0].toLowerCase();
+/** What the model recognises, without the search label's broader wording ("Radish & root veg" -> "radish").
+ *  German nouns keep their capital letter. */
+const seen = (id: string, lang: Locale) => {
+  const s = label(id, lang).split(" & ")[0];
+  return lang === "de" ? s : s.toLowerCase();
+};
 
 /** Recognise a fruit or vegetable in a photo, on the device, and confirm it as an ingredient. */
 export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
+  const t = useDict();
+  const lang = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -153,9 +161,9 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
       <div className="flex items-center justify-between border-b border-line px-5 py-4">
         <h2 id={titleId} className="flex items-center gap-2 font-display text-xl font-semibold">
           <Camera className="size-5 text-brand" aria-hidden />
-          Photo of fruit or vegetables
+          {t.photo.title}
         </h2>
-        <button type="button" onClick={close} className="grid size-9 place-items-center rounded-full hover:bg-surface-2" aria-label="Close">
+        <button type="button" onClick={close} className="grid size-9 place-items-center rounded-full hover:bg-surface-2" aria-label={t.scan.close}>
           <X className="size-5" aria-hidden />
         </button>
       </div>
@@ -163,7 +171,7 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
       <div className="space-y-4 p-5">
         {phase.kind === "loading" && (
           <div className="space-y-3 py-6 text-center" role="status">
-            <p className="text-sm text-muted">Loading the recognition model (about 5 MB, once)…</p>
+            <p className="text-sm text-muted">{t.photo.loading}</p>
             <div className="mx-auto h-2 w-56 overflow-hidden rounded-full bg-line">
               <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${Math.round(phase.progress * 100)}%` }} />
             </div>
@@ -172,28 +180,25 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
 
         {phase.kind === "failed" && (
           <p className="rounded-2xl border border-miss/30 bg-miss-soft p-4 text-sm">
-            The recognition model could not be loaded. Check your connection and open this again, or type the
-            ingredient in the search box.
+            {t.photo.failed}
           </p>
         )}
 
         {phase.kind === "ready" && (
           <>
             <div className="relative aspect-square overflow-hidden rounded-2xl bg-black">
-              <video ref={videoRef} muted playsInline className="size-full object-cover" aria-label="Camera preview" />
+              <video ref={videoRef} muted playsInline className="size-full object-cover" aria-label={t.scan.cameraPreview} />
               {camera === "on" && (
                 <div aria-hidden className="pointer-events-none absolute inset-10 rounded-2xl border-2 border-white/80" />
               )}
               {camera !== "on" && (
                 <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-white">
                   {camera === "starting" ? (
-                    <LoaderCircle className="size-8 animate-spin" aria-label="Starting camera" />
+                    <LoaderCircle className="size-8 animate-spin" aria-label={t.scan.starting} />
                   ) : (
                     <span className="flex flex-col items-center gap-2">
                       <CameraOff className="size-8" aria-hidden />
-                      {camera === "blocked"
-                        ? "Camera access is blocked. Choose a photo instead, or allow the camera in your browser settings."
-                        : "No camera available. Choose a photo instead."}
+                      {camera === "blocked" ? t.photo.blocked : t.photo.noCamera}
                     </span>
                   )}
                 </div>
@@ -206,14 +211,14 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
                 disabled={camera !== "on"}
                 className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink disabled:opacity-40"
               >
-                <Camera className="size-4" aria-hidden /> Take photo
+                <Camera className="size-4" aria-hidden /> {t.photo.take}
               </button>
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-semibold"
               >
-                <ImageUp className="size-4" aria-hidden /> Choose a photo
+                <ImageUp className="size-4" aria-hidden /> {t.photo.choose}
               </button>
               <input
                 ref={fileRef}
@@ -222,7 +227,7 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
                 capture="environment"
                 className="sr-only"
                 tabIndex={-1}
-                aria-label="Photo of fruit or vegetables"
+                aria-label={t.photo.inputAria}
                 onChange={(e) => {
                   void fromFile(e.target.files?.[0]);
                   e.target.value = "";
@@ -235,14 +240,14 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
         {(phase.kind === "analysing" || phase.kind === "result") && (
           <div className="flex gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element -- a local, already-decoded photo */}
-            <img src={phase.preview} alt="Your photo" className="size-28 shrink-0 rounded-2xl object-cover" />
+            <img src={phase.preview} alt={t.photo.yourPhoto} className="size-28 shrink-0 rounded-2xl object-cover" />
             <div className="min-w-0 flex-1 space-y-3" role="status">
               {phase.kind === "analysing" ? (
                 <p className="flex items-center gap-2 pt-2 text-muted">
-                  <LoaderCircle className="size-5 animate-spin" aria-hidden /> Looking…
+                  <LoaderCircle className="size-5 animate-spin" aria-hidden /> {t.photo.looking}
                 </p>
               ) : (
-                <ResultView result={phase.result} have={have} onAdd={add} />
+                <ResultView t={t} lang={lang} result={phase.result} have={have} onAdd={add} />
               )}
             </div>
           </div>
@@ -250,7 +255,7 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
         {phase.kind === "result" && (
           <div className="flex justify-end">
             <button type="button" onClick={again} className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-semibold">
-              <RotateCcw className="size-4" aria-hidden /> Try another photo
+              <RotateCcw className="size-4" aria-hidden /> {t.photo.tryAnother}
             </button>
           </div>
         )}
@@ -258,14 +263,14 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
         {phase.kind === "added" && (
           <div className="space-y-4 py-4 text-center" role="status">
             <p className="inline-flex items-center gap-2 rounded-full bg-have-soft px-4 py-2 font-semibold text-have">
-              <Check className="size-4" aria-hidden /> Added {label(phase.id)}
+              <Check className="size-4" aria-hidden /> {t.scan.added(label(phase.id, lang))}
             </p>
             <div className="flex justify-center gap-3">
               <button type="button" onClick={again} className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink">
-                Take another
+                {t.photo.takeAnother}
               </button>
               <button type="button" onClick={close} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold">
-                Done
+                {t.scan.done}
               </button>
             </div>
           </div>
@@ -273,18 +278,20 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
       </div>
 
       <p className="border-t border-line px-5 py-3 text-xs leading-relaxed text-muted">
-        Photos stay on your device. Works best with one item, close up
-        {offered.length > 0 && <>: {offered.map(seen).join(", ")}</>}.
+        {t.photo.footer}
+        {offered.length > 0 && <>: {offered.map((id) => seen(id, lang)).join(", ")}</>}.
       </p>
     </dialog>
   );
 }
 
-function AddButton({ g, have, onAdd, primary }: { g: Guess; have: string[]; onAdd: (id: string) => void; primary?: boolean }) {
+type AddProps = { t: Dict; lang: Locale; g: Guess; have: string[]; onAdd: (id: string) => void; primary?: boolean };
+
+function AddButton({ t, lang, g, have, onAdd, primary }: AddProps) {
   if (have.includes(g.id)) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-have-soft px-3 py-1.5 text-sm font-semibold text-have">
-        <Check className="size-4" aria-hidden /> {label(g.id)} added
+        <Check className="size-4" aria-hidden /> {t.photo.addedChip(label(g.id, lang))}
       </span>
     );
   }
@@ -294,23 +301,26 @@ function AddButton({ g, have, onAdd, primary }: { g: Guess; have: string[]; onAd
       onClick={() => onAdd(g.id)}
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ${primary ? "bg-brand text-brand-ink" : "border border-line"}`}
     >
-      <Plus className="size-4" aria-hidden /> {label(g.id)}
+      <Plus className="size-4" aria-hidden /> {label(g.id, lang)}
       <span className={`font-normal ${primary ? "opacity-80" : "text-muted"}`}>{pct(g.p)}</span>
     </button>
   );
 }
 
-function ResultView({ result, have, onAdd }: { result: Interpretation; have: string[]; onAdd: (id: string) => void }) {
+type ResultProps = { t: Dict; lang: Locale; result: Interpretation; have: string[]; onAdd: (id: string) => void };
+
+function ResultView({ t, lang, result, have, onAdd }: ResultProps) {
+  const common = { t, lang, have, onAdd };
   if (result.status === "confident") {
     return (
       <>
         <p className="flex items-center gap-2 font-semibold">
-          <Sparkles className="size-4 text-brand" aria-hidden /> Looks like {seen(result.best.id)}
+          <Sparkles className="size-4 text-brand" aria-hidden /> {t.photo.looksLike(seen(result.best.id, lang))}
         </p>
         <div className="flex flex-wrap gap-2">
-          <AddButton g={result.best} have={have} onAdd={onAdd} primary />
+          <AddButton g={result.best} {...common} primary />
           {result.others.map((g) => (
-            <AddButton key={g.id} g={g} have={have} onAdd={onAdd} />
+            <AddButton key={g.id} g={g} {...common} />
           ))}
         </div>
       </>
@@ -319,19 +329,15 @@ function ResultView({ result, have, onAdd }: { result: Interpretation; have: str
   if (result.status === "unsure") {
     return (
       <>
-        <p className="font-semibold">Not sure. Could it be one of these?</p>
+        <p className="font-semibold">{t.photo.notSure}</p>
         <div className="flex flex-wrap gap-2">
           {result.options.map((g) => (
-            <AddButton key={g.id} g={g} have={have} onAdd={onAdd} />
+            <AddButton key={g.id} g={g} {...common} />
           ))}
         </div>
-        <p className="text-xs text-muted">If none is right, type the ingredient in the search box.</p>
+        <p className="text-xs text-muted">{t.photo.noneRight}</p>
       </>
     );
   }
-  return (
-    <p className="text-sm">
-      The camera can&apos;t recognise this yet. Type the ingredient in the search box, or try a closer photo of one item.
-    </p>
-  );
+  return <p className="text-sm">{t.photo.unknown}</p>;
 }

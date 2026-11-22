@@ -1,13 +1,15 @@
 "use client";
 
-import { Camera, LoaderCircle, Plus, ScanBarcode, Search, X } from "lucide-react";
+import { Camera, LoaderCircle, Plus, ScanBarcode, Search, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 
+import { useDict, useLocale } from "@/components/locale";
 import { PhotoDialog } from "@/components/photo-dialog";
 import { ScanDialog } from "@/components/scan-dialog";
+import { FAMILIES } from "@/lib/families";
 import { label } from "@/lib/labels";
-import { type SearchState, toQuery } from "@/lib/params";
+import { type Diet, FAMILY_KEYS, type SearchState, TIME_OPTIONS, toQuery } from "@/lib/params";
 import { suggest, type SuggestEntry } from "@/lib/search";
 
 type Props = { state: SearchState; entries: SuggestEntry[] };
@@ -18,6 +20,8 @@ type Props = { state: SearchState; entries: SuggestEntry[] };
  * the URL, so results are rendered on the server and every search can be shared.
  */
 export function PantrySearch({ state, entries }: Props) {
+  const lang = useLocale();
+  const t = useDict();
   const router = useRouter();
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
@@ -75,10 +79,10 @@ export function PantrySearch({ state, entries }: Props) {
   const showList = open && text.trim() !== "";
 
   return (
-    <section aria-label="Search" className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
+    <section aria-label={t.search.label} className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <label htmlFor={`${listId}-input`} className="shrink-0 text-sm font-semibold">
-          What do you have?
+          {t.search.whatHave}
         </label>
         <div className="flex gap-2">
           <button
@@ -87,7 +91,7 @@ export function PantrySearch({ state, entries }: Props) {
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
           >
             <Camera className="size-4" aria-hidden />
-            Photo
+            {t.search.photo}
           </button>
           <button
             type="button"
@@ -95,7 +99,7 @@ export function PantrySearch({ state, entries }: Props) {
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
           >
             <ScanBarcode className="size-4" aria-hidden />
-            Barcode
+            {t.search.barcode}
           </button>
         </div>
       </div>
@@ -118,7 +122,7 @@ export function PantrySearch({ state, entries }: Props) {
         >
           {state.have.map((id) => (
             <span key={id} className="inline-flex items-center gap-1 rounded-full bg-brand-soft py-1 pr-1 pl-3 text-sm font-medium text-ink">
-              {label(id)}
+              {label(id, lang)}
               <button
                 type="button"
                 onClick={(e) => {
@@ -126,7 +130,7 @@ export function PantrySearch({ state, entries }: Props) {
                   remove(id);
                 }}
                 className="grid size-6 place-items-center rounded-full text-muted hover:bg-brand/15 hover:text-ink"
-                aria-label={`Remove ${label(id)}`}
+                aria-label={t.search.remove(label(id, lang))}
               >
                 <X className="size-3.5" aria-hidden />
               </button>
@@ -149,11 +153,11 @@ export function PantrySearch({ state, entries }: Props) {
             onFocus={() => setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 120)}
             onKeyDown={onKeyDown}
-            placeholder={state.have.length ? "Add more…" : "Type an ingredient: onion, Zwiebel, rice…"}
+            placeholder={state.have.length ? t.search.placeholderMore : t.search.placeholderFirst}
             className="min-w-40 flex-1 bg-transparent py-1.5 text-base outline-none placeholder:text-muted/80"
             autoComplete="off"
           />
-          {pending && <LoaderCircle className="size-5 animate-spin text-muted" aria-label="Updating results" />}
+          {pending && <LoaderCircle className="size-5 animate-spin text-muted" aria-label={t.search.updating} />}
         </div>
 
         {showList && (
@@ -163,7 +167,7 @@ export function PantrySearch({ state, entries }: Props) {
             className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border border-line bg-surface py-1 shadow-lg"
           >
             {suggestions.length === 0 && (
-              <li className="px-4 py-3 text-sm text-muted">No ingredient called “{text.trim()}” in the vocabulary.</li>
+              <li className="px-4 py-3 text-sm text-muted">{t.search.noIngredient(text.trim())}</li>
             )}
             {suggestions.map((s, i) => (
               <li
@@ -180,9 +184,9 @@ export function PantrySearch({ state, entries }: Props) {
               >
                 <span className="flex items-center gap-2">
                   <Plus className="size-4 text-brand" aria-hidden />
-                  <span className="font-medium">{label(s.id)}</span>
+                  <span className="font-medium">{label(s.id, lang)}</span>
                 </span>
-                {s.name.toLowerCase() !== label(s.id).toLowerCase() && (
+                {s.name.toLowerCase() !== label(s.id, lang).toLowerCase() && (
                   <span className="truncate text-xs text-muted">
                     {s.lang === "de" ? "DE" : "EN"} · {s.name}
                   </span>
@@ -200,17 +204,17 @@ export function PantrySearch({ state, entries }: Props) {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Or search recipe names (optional)"
-            aria-label="Search recipe names"
+            placeholder={t.search.names}
+            aria-label={t.search.namesAria}
             className="h-11 w-full rounded-xl border border-line bg-surface-2 pr-3 pl-9 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
           />
         </div>
-        <div role="radiogroup" aria-label="Recipe language" className="inline-flex rounded-xl border border-line bg-surface-2 p-1 text-sm">
+        <div role="radiogroup" aria-label={t.search.recipeLanguage} className="inline-flex rounded-xl border border-line bg-surface-2 p-1 text-sm">
           {(
             [
-              ["all", "All recipes"],
-              ["en", "English"],
-              ["de", "Deutsch"],
+              ["all", t.search.langAll],
+              ["en", t.search.langEn],
+              ["de", t.search.langDe],
             ] as const
           ).map(([value, text]) => (
             <button
@@ -238,7 +242,7 @@ export function PantrySearch({ state, entries }: Props) {
           >
             <span className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-all ${state.staples ? "left-5.5" : "left-0.5"}`} />
           </button>
-          I have the basics: salt, pepper, oil, sugar and water
+          {t.search.staples}
         </label>
         {(state.have.length > 0 || state.q) && (
           <button
@@ -249,10 +253,68 @@ export function PantrySearch({ state, entries }: Props) {
             }}
             className="text-sm font-medium text-muted underline-offset-4 hover:text-ink hover:underline"
           >
-            Clear search
+            {t.search.clear}
           </button>
         )}
       </div>
+
+      <Filters state={state} go={go} />
     </section>
+  );
+}
+
+const SELECT =
+  "h-10 rounded-xl border border-line bg-surface-2 px-3 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/25";
+
+/** Dish type, time and diet, plus "only what I can make now" once there are ingredients. */
+function Filters({ state, go }: { state: SearchState; go: (next: Partial<SearchState>) => void }) {
+  const lang = useLocale();
+  const t = useDict().filters;
+  const active = Boolean(state.type || state.time || state.diet || state.ready);
+  const families = [...FAMILY_KEYS].sort((a, b) => FAMILIES[a].label[lang].localeCompare(FAMILIES[b].label[lang], lang));
+  return (
+    <fieldset className="mt-4 border-t border-line pt-4">
+      <legend className="sr-only">{t.label}</legend>
+      <div className="flex flex-wrap items-center gap-2">
+        <SlidersHorizontal className="size-4 text-muted" aria-hidden />
+        <select aria-label={t.type} value={state.type} onChange={(e) => go({ type: e.target.value })} className={SELECT}>
+          <option value="">{t.anyType}</option>
+          {families.map((k) => (
+            <option key={k} value={k}>
+              {FAMILIES[k].label[lang]}
+            </option>
+          ))}
+        </select>
+        <select aria-label={t.time} value={state.time} onChange={(e) => go({ time: Number(e.target.value) })} className={SELECT}>
+          <option value={0}>{t.anyTime}</option>
+          {TIME_OPTIONS.map((m) => (
+            <option key={m} value={m}>
+              {t.upTo(m)}
+            </option>
+          ))}
+        </select>
+        <select aria-label={t.diet} value={state.diet} onChange={(e) => go({ diet: e.target.value as Diet })} className={SELECT}>
+          <option value="">{t.anyDiet}</option>
+          <option value="vegetarian">{t.vegetarian}</option>
+          <option value="vegan">{t.vegan}</option>
+        </select>
+        {state.have.length > 0 && (
+          <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface-2 px-3 text-sm font-medium has-checked:border-have has-checked:bg-have-soft has-checked:text-have">
+            <input type="checkbox" checked={state.ready} onChange={(e) => go({ ready: e.target.checked })} className="size-4 accent-[var(--color-have)]" />
+            {t.ready}
+          </label>
+        )}
+        {active && (
+          <button
+            type="button"
+            onClick={() => go({ type: "", time: 0, diet: "", ready: false })}
+            className="h-10 px-2 text-sm font-medium text-muted underline-offset-4 hover:text-ink hover:underline"
+          >
+            {t.reset}
+          </button>
+        )}
+      </div>
+      {state.time > 0 && <p className="mt-2 text-xs text-muted">{t.timeNote}</p>}
+    </fieldset>
   );
 }
