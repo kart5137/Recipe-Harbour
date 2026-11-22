@@ -2,6 +2,7 @@
 
     rh fetch [en|de|all]     download recipe pages (MediaWiki API) to data/raw/
     rh build                 parse raw pages -> data/recipes.json + docs/data/PROFILE.md
+    rh export                write the web app search index -> web/src/data/search-index.json
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ def main(argv: list[str] | None = None) -> int:
     f = sub.add_parser("fetch", help="download recipe pages to data/raw/")
     f.add_argument("lang", nargs="?", default="all", choices=[*SOURCES, "all"])
     sub.add_parser("build", help="parse raw pages into data/recipes.json and the profile")
+    sub.add_parser("export", help="write the web app's search index (web/src/data/)")
     args = ap.parse_args(argv)
 
     logging.basicConfig(
@@ -38,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
         from .build import build
 
         build()
+    elif args.cmd == "export":
+        from .export import export
+
+        export()
     return 0
 
 

@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* Recipe Harbour palette: warm paper, harbour teal, coral accent. */
+:root {
+  --bg: #f7f3ec;
+  --surface: #ffffff;
+  --surface-2: #fbf8f3;
+  --ink: #15222b;
+  --muted: #5d6b75;
+  --line: #e7e0d4;
+  --brand: #0e6170;
+  --brand-ink: #ffffff;
+  --brand-soft: #dceff1;
+  --accent: #d9634a;
+  --have: #2f7d4f;
+  --have-soft: #e3f3e9;
+  --miss: #a3620f;
+  --miss-soft: #fbf0de;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e171d;
+    --surface: #15222b;
+    --surface-2: #192933;
+    --ink: #e7eef2;
+    --muted: #97a8b3;
+    --line: #253742;
+    --brand: #56b6c2;
+    --brand-ink: #071216;
+    --brand-soft: #16353b;
+    --accent: #f08b73;
+    --have: #6cca95;
+    --have-soft: #173426;
+    --miss: #e3ac56;
+    --miss-soft: #3a2a12;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent: var(--accent);
+  --color-have: var(--have);
+  --color-have-soft: var(--have-soft);
+  --color-miss: var(--miss);
+  --color-miss-soft: var(--miss-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-fraunces);
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--brand-soft);
+}

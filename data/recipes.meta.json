@@ -1,13 +1,14 @@
 {
-  "built_at": "2026-11-22T00:43:02+00:00",
+  "built_at": "2026-11-22T11:15:21+00:00",
   "licence": "CC BY-SA 4.0",
   "sources": {
     "en": {
       "wiki": "https://en.wikibooks.org",
       "category": "Category:Recipes",
       "fetched_pages": 3835,
-      "recipes": 3820,
+      "recipes": 3786,
       "dropped": {
+        "not_in_cookbook": 34,
         "no_ingredients": 7,
         "no_steps": 7,
         "not_a_recipe": 1
@@ -19,11 +20,12 @@
       "fetched_pages": 640,
       "recipes": 603,
       "dropped": {
-        "no_ingredients": 31,
+        "not_in_cookbook": 6,
+        "no_ingredients": 25,
         "no_steps": 3,
         "redirect": 3
       }
     }
   },
-  "total_recipes": 4423
+  "total_recipes": 4389
 }

@@ -340,6 +340,12 @@ def test_long_ingredient_lines_move_to_notes():
     assert r.notes == [note]
 
 
+def test_user_drafts_are_not_in_the_cookbook():
+    with pytest.raises(Dropped) as e:
+        parse_page(page("en_stroganoff.wiki", "User:Someone/Banga stew"), SOURCES["en"])
+    assert e.value.reason == "not_in_cookbook"
+
+
 def test_policy_pages_are_not_recipes():
     with pytest.raises(Dropped) as e:
         parse_page({**page("en_stroganoff.wiki", "Cookbook:Policy/Recipe template")}, SOURCES["en"])

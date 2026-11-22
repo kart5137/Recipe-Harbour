@@ -383,6 +383,9 @@ def parse_page(page: dict, source: Source) -> Recipe:
         raise Dropped("empty")
     if _REDIRECT.match(content):
         raise Dropped("redirect")
+    if not page["title"].startswith(source.title_prefix):
+        # e.g. "User:Name/Banga stew" drafts and sandboxes that sit in the recipe category
+        raise Dropped("not_in_cookbook")
     if _NOT_RECIPE_TITLE.search(page["title"]):
         raise Dropped("not_a_recipe")
 
