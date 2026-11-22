@@ -8,7 +8,8 @@ web/src/data/search-index.json   what search and the result cards need:
         opt   ingredients only used in optional lines
         unk   required lines that were not understood (shown as "other ingredients")
 
-The full recipe records (steps, quantities, attribution) stay in data/recipes.json.
+web/src/data/recipes/shard-NN.json   full recipe pages (description, ingredients, steps,
+    attribution), split into 32 shards so a page loads ~300 KB instead of the whole set.
 """
 
 from __future__ import annotations
@@ -86,6 +87,59 @@ def _short(text: str, n: int = 170) -> str:
     return cut[: cut.rfind(" ")].rstrip(",;:") + "…"
 
 
+SHARDS = 32
+
+
+def _fnv1a(text: str) -> int:
+    """32-bit FNV-1a over UTF-8 bytes."""
+    h = 0x811C9DC5
+    for b in text.encode("utf-8"):
+        h = ((h ^ b) * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
+def shard_of(recipe_id: str) -> int:
+    """Stable shard number for a recipe id; web/src/lib/shard.ts computes the same."""
+    return _fnv1a(recipe_id) % SHARDS
+
+
+def _detail(r: dict, family: str) -> dict:
+    """Everything the recipe page shows. Quantities stay inside the line text."""
+    return {
+        "id": r["id"],
+        "lang": r["lang"],
+        "title": r["title"],
+        "family": family,
+        "description": r.get("description", ""),
+        "category": r.get("category", ""),
+        "cuisine": r.get("cuisine", ""),
+        "servings_text": r.get("servings_text", ""),
+        "servings": r.get("servings", None),
+        "time_text": r.get("time_text", ""),
+        "minutes": r.get("minutes", None),
+        "difficulty": r.get("difficulty", None),
+        "diet": r.get("diet", ""),
+        "diet_source": r.get("diet_source", ""),
+        "groups": [
+            {
+                "name": g["name"],
+                "items": [
+                    {"text": i["text"], "ids": i["ids"], "optional": i["optional"], "alt": i["alt"]}
+                    for i in g["items"]
+                ],
+            }
+            for g in r["ingredient_groups"]
+        ],
+        "steps": r.get("steps", []),
+        "equipment": r.get("equipment", []),
+        "notes": r.get("notes", []),
+        "url": r["url"],
+        "history_url": r.get("history_url", ""),
+        "revision_id": r.get("revision_id", None),
+        "revision_timestamp": r.get("revision_timestamp", ""),
+    }
+
+
 def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DATA) -> dict:
     v = vocab()
     recipes = json.loads(recipes_path.read_text(encoding="utf-8"))
@@ -113,6 +167,7 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
 
     out_recipes = []
     families: dict[str, int] = {}
+    shards: list[dict] = [{} for _ in range(SHARDS)]
     for r in recipes:
         req, opt, unk = [], set(), 0
         for g in r["ingredient_groups"]:
@@ -129,6 +184,7 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
                     unk += 1
         fam = family_of(r, v)
         families[fam] = families.get(fam, 0) + 1
+        shards[shard_of(r["id"])][r["id"]] = _detail(r, fam)
         out_recipes.append({
             "id": r["id"],
             "lang": r["lang"],
@@ -157,4 +213,14 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
     log.info("search index: %d recipes, %d ingredients, %.1f MB -> %s", len(out_recipes), len(ingredients),
              path.stat().st_size / 1e6, path)
     log.info("families: %s", dict(sorted(families.items(), key=lambda kv: -kv[1])))
+    detail_dir = out_dir / "recipes"
+    detail_dir.mkdir(parents=True, exist_ok=True)
+    for old in detail_dir.glob("shard-*.json"):
+        old.unlink()
+    for k, shard in enumerate(shards):
+        (detail_dir / f"shard-{k:02d}.json").write_text(
+            json.dumps(shard, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+        )
+    sizes = [(detail_dir / f"shard-{k:02d}.json").stat().st_size for k in range(SHARDS)]
+    log.info("recipe details: %d shards, %.0f-%.0f KB each", SHARDS, min(sizes) / 1e3, max(sizes) / 1e3)
     return {"recipes": len(out_recipes), "ingredients": len(ingredients), "families": families}

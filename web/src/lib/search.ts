@@ -44,29 +44,38 @@ export type IndexData = {
   recipes: Recipe[];
 };
 
-export type Model = {
-  data: IndexData;
+/** Ingredient hierarchy, usable without the recipes (the recipe page uses it in the browser). */
+export type Relations = {
+  ingredients: Ingredient[];
   byId: Map<string, number>;
   ancestors: Set<number>[];
+};
+
+export type Model = Relations & {
+  data: IndexData;
   titleTokens: string[][];
 };
 
-export function buildModel(data: IndexData): Model {
-  const byId = new Map(data.ingredients.map((ing, i) => [ing.id, i]));
-  const ancestors = data.ingredients.map((_, i) => {
+export function buildRelations(ingredients: Ingredient[]): Relations {
+  const byId = new Map(ingredients.map((ing, i) => [ing.id, i]));
+  const ancestors = ingredients.map((_, i) => {
     const out = new Set<number>();
-    const todo = [...data.ingredients[i].parents];
+    const todo = [...ingredients[i].parents];
     while (todo.length) {
       const p = todo.pop()!;
       if (!out.has(p)) {
         out.add(p);
-        todo.push(...data.ingredients[p].parents);
+        todo.push(...ingredients[p].parents);
       }
     }
     return out;
   });
+  return { ingredients, byId, ancestors };
+}
+
+export function buildModel(data: IndexData): Model {
   const titleTokens = data.recipes.map((r) => tokens(r.title));
-  return { data, byId, ancestors, titleTokens };
+  return { ...buildRelations(data.ingredients), data, titleTokens };
 }
 
 /**
@@ -77,11 +86,22 @@ export function buildModel(data: IndexData): Model {
  * groups it means "made from" (onion powder from onion, tomato paste from tomato, chicken
  * broth from chicken), and having one does not mean having the other.
  */
-export function related(m: Model, user: number, need: number): boolean {
+export function related(m: Relations, user: number, need: number): boolean {
   if (user === need) return true;
-  const ing = m.data.ingredients;
+  const ing = m.ingredients;
   if (kind(ing[user].group) !== kind(ing[need].group)) return false;
   return m.ancestors[need].has(user) || m.ancestors[user].has(need);
+}
+
+/**
+ * Is a recipe line (ingredient ids, any of which will do) covered by what you have?
+ * Unknown ids are ignored; staples count when assumed.
+ */
+export function covers(m: Relations, have: string[], lineIds: string[], staples: boolean): boolean {
+  const need = lineIds.filter((id) => m.byId.has(id)).map((id) => m.byId.get(id)!);
+  const mine = have.filter((id) => m.byId.has(id)).map((id) => m.byId.get(id)!);
+  if (need.some((n) => mine.some((u) => related(m, u, n)))) return true;
+  return staples && need.some((n) => m.ingredients[n].staple);
 }
 
 // Poultry is a kind of meat and seafood a kind of fish ("500 g meat" is covered by chicken).

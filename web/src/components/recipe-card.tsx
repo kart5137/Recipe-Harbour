@@ -1,4 +1,5 @@
-import { Check, Clock, ExternalLink, Leaf, ShoppingBasket } from "lucide-react";
+import { ArrowRight, Check, Clock, Leaf, ShoppingBasket } from "lucide-react";
+import Link from "next/link";
 
 import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
@@ -7,7 +8,9 @@ import type { Hit, Ingredient } from "@/lib/search";
 
 const DIET: Record<string, string> = { vegan: "Vegan", vegetarian: "Vegetarian" };
 
-export function RecipeCard({ hit, ingredients, pantry }: { hit: Hit; ingredients: Ingredient[]; pantry: boolean }) {
+type Props = { hit: Hit; ingredients: Ingredient[]; pantry: boolean; query: string };
+
+export function RecipeCard({ hit, ingredients, pantry, query }: Props) {
   const r = hit.recipe;
   const fam = family(r.family);
   const Icon = fam.icon;
@@ -31,9 +34,9 @@ export function RecipeCard({ hit, ingredients, pantry }: { hit: Hit; ingredients
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <h3 className="font-display text-lg leading-snug font-semibold">
-          <a href={r.url} target="_blank" rel="noreferrer" className="after:absolute after:inset-0 focus-visible:outline-none">
+          <Link href={`/recipe/${r.id}${query}`} lang={r.lang} className="after:absolute after:inset-0 focus-visible:outline-none">
             {r.title}
-          </a>
+          </Link>
         </h3>
 
         {(time || r.diff || DIET[r.diet]) && (
@@ -89,9 +92,9 @@ export function RecipeCard({ hit, ingredients, pantry }: { hit: Hit; ingredients
           </div>
         )}
 
-        <span className="mt-auto inline-flex items-center gap-1 pt-1 text-xs text-muted group-hover:text-brand">
-          Recipe on Wikibooks
-          <ExternalLink className="size-3" aria-hidden />
+        <span className="mt-auto inline-flex items-center gap-1 pt-1 text-xs font-medium text-muted group-hover:text-brand">
+          View recipe
+          <ArrowRight className="size-3.5 transition group-hover:translate-x-0.5" aria-hidden />
         </span>
       </div>
     </article>

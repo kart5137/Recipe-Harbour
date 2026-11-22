@@ -69,3 +69,39 @@ def test_export_index(tmp_path):
     # parents are indexes into the same list
     olive = index["ingredients"][ids.index("olive_oil")]
     assert [ids[p] for p in olive["parents"]] == ["oil"]
+
+
+def test_shard_of_is_stable_and_spread():
+    from rh_pipeline.export import SHARDS, _fnv1a, shard_of
+
+    assert _fnv1a("a") == 0xE40C292C and _fnv1a("foobar") == 0xBF9CF968  # published FNV-1a test vectors
+    assert shard_of("en-1") == 0xCC932CBC % SHARDS  # FNV-1a("en-1"), also asserted in the web tests
+    ids = [f"en-{n}" for n in range(1000, 2000)]
+    used = {shard_of(i) for i in ids}
+    assert len(used) == SHARDS  # every shard gets recipes
+
+
+def test_export_writes_recipe_details(tmp_path):
+    from rh_pipeline.export import shard_of
+
+    recipes = [{
+        "id": "de-7", "lang": "de", "title": "Aioli", "category": "Saucen", "wiki_categories": [],
+        "cuisine": "", "description": "Eine Knoblauchsauce.", "servings_text": "für 4 Personen", "servings": [4, 4],
+        "time_text": "20-30 Minuten", "minutes": [20, 30], "difficulty": 3, "diet": "vegan", "diet_source": "wiki",
+        "url": "https://de.wikibooks.org/wiki/Kochbuch/_Aioli", "history_url": "https://de.wikibooks.org/h",
+        "revision_id": 961199, "revision_timestamp": "2021-05-24T11:26:39Z", "ingredient_ids": ["garlic"],
+        "ingredient_groups": [{"name": None, "items": [
+            {"text": "8 Knoblauchzehen", "ids": ["garlic"], "qty": [8, 8], "unit": None,
+             "optional": False, "alt": False}
+        ]}],
+        "steps": ["Zerkleinern."], "equipment": ["Mörser"], "notes": [],
+    }]
+    src = tmp_path / "recipes.json"
+    src.write_text(json.dumps(recipes), encoding="utf-8")
+    export(src, tmp_path)
+    shard = json.loads((tmp_path / "recipes" / f"shard-{shard_of('de-7'):02d}.json").read_text(encoding="utf-8"))
+    d = shard["de-7"]
+    assert d["family"] == "sauce" and d["revision_id"] == 961199 and d["diet_source"] == "wiki"
+    assert d["groups"] == [{"name": None, "items": [
+        {"text": "8 Knoblauchzehen", "ids": ["garlic"], "optional": False, "alt": False}]}]
+    assert d["steps"] == ["Zerkleinern."] and d["equipment"] == ["Mörser"]

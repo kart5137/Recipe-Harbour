@@ -44,6 +44,7 @@ export function Results({ state }: { state: SearchState }) {
   const res = search(m, { have: state.have, q: state.q, lang: state.lang, staples: state.staples });
   const shown = res.hits.slice(0, state.n);
   const { ingredients } = m.data;
+  const query = toQuery({ ...state, n: undefined }); // carried to the recipe page for "Back to results"
 
   return (
     <section aria-labelledby="results" className="mt-10">
@@ -80,7 +81,7 @@ export function Results({ state }: { state: SearchState }) {
         <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((hit) => (
             <li key={hit.recipe.id} className="flex">
-              <RecipeCard hit={hit} ingredients={ingredients} pantry={pantry} />
+              <RecipeCard hit={hit} ingredients={ingredients} pantry={pantry} query={query} />
             </li>
           ))}
         </ul>
