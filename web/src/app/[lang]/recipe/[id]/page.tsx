@@ -1,4 +1,4 @@
-import { Clock, ExternalLink, Gauge, Globe2, Leaf, Users } from "lucide-react";
+import { Clock, Gauge, Globe2, Leaf, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -54,9 +54,6 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
   const fam = family(r.family);
   const Icon = fam.icon;
   const time = formatMinutes(r.minutes, lang);
-  const updated = r.revision_timestamp
-    ? new Intl.DateTimeFormat(lang === "de" ? "de-DE" : "en-GB", { dateStyle: "long", timeZone: "UTC" }).format(new Date(r.revision_timestamp))
-    : "";
   const source = t.recipe.source[r.lang];
 
   return (
@@ -163,29 +160,21 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
             <p className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted">{t.recipe.dietNote}</p>
           )}
 
-          <footer className="rounded-2xl border border-line bg-surface p-5 text-sm text-muted">
-            <p>
-              {t.recipe.comesFrom}{" "}
-              <a href={r.url} className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand">
-                {source}
-              </a>{" "}
-              {t.recipe.writtenBy}{" "}
-              <a href={r.history_url} className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand">
-                {t.recipe.contributors}
-              </a>
-              {t.recipe.sharedUnder}{" "}
-              <a
-                href="https://creativecommons.org/licenses/by-sa/4.0/"
-                className="font-medium text-ink underline decoration-line underline-offset-4 hover:text-brand"
-              >
-                CC BY-SA 4.0
-              </a>{" "}
-              {t.recipe.reformatted(updated).replace(/^ /, "")}
-            </p>
-            <a href={r.url} className="mt-3 inline-flex items-center gap-1 font-medium text-brand hover:underline">
-              {t.recipe.readOriginal} <ExternalLink className="size-3.5" aria-hidden />
-            </a>
-          </footer>
+          <p className="text-xs text-muted">
+            {t.recipe.sourceLabel}{" "}
+            <a href={r.url} className="underline decoration-line underline-offset-2 hover:text-ink">
+              {source}
+            </a>{" "}
+            ·{" "}
+            <a href={r.history_url} className="underline decoration-line underline-offset-2 hover:text-ink">
+              {t.recipe.authors}
+            </a>{" "}
+            ·{" "}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="underline decoration-line underline-offset-2 hover:text-ink">
+              CC BY-SA 4.0
+            </a>{" "}
+            · {t.recipe.adapted}
+          </p>
         </div>
       </div>
     </article>

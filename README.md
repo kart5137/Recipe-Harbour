@@ -81,8 +81,7 @@ files instead of the Hugging Face copy, put `NEXT_PUBLIC_MODEL_BASE=/model/` in 
 
 ## Credits
 
-- **The original RecipeHarbor (2023)** was a team project at VIT Bhopal by **Karthik Manoj, Yash Raj,
-  Madhav Nawab and Kumar Prince**. This is a rebuild of that idea with open data and new features.
+- **Made by Karthik Manoj.** A rebuild of my 2023 project *RecipeHarbor* with open data and new features.
 - **Recipes:** the [Wikibooks Cookbook](https://en.wikibooks.org/wiki/Cookbook:Table_of_Contents) and
   the [Wikibooks Kochbuch](https://de.wikibooks.org/wiki/Kochbuch), written by their contributors and
   shared under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Every recipe page

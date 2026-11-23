@@ -8,7 +8,7 @@ import { useDict, useLocale } from "@/components/locale";
 import { LOCALE_COOKIE } from "@/lib/negotiate";
 
 const CLASS =
-  "inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-sm font-medium text-muted transition hover:border-brand hover:text-ink";
+  "inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1.5 sm:px-3 text-sm font-medium text-muted transition hover:border-brand hover:text-ink";
 
 const remember = (lang: string) => {
   document.cookie = `${LOCALE_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;
@@ -33,7 +33,8 @@ export function LanguageSwitch() {
       className={CLASS}
     >
       <Languages className="size-4" aria-hidden />
-      {t.nav.otherLanguage}
+      <span className="max-sm:hidden">{t.nav.otherLanguage}</span>
+      <span className="uppercase sm:hidden">{other}</span>
     </Link>
   );
 }
@@ -45,7 +46,8 @@ export function LanguageSwitchFallback() {
   return (
     <Link href={`/${other}`} hrefLang={other} lang={other} aria-label={t.nav.switchLabel} onClick={() => remember(other)} className={CLASS}>
       <Languages className="size-4" aria-hidden />
-      {t.nav.otherLanguage}
+      <span className="max-sm:hidden">{t.nav.otherLanguage}</span>
+      <span className="uppercase sm:hidden">{other}</span>
     </Link>
   );
 }

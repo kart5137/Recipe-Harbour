@@ -1,39 +1,43 @@
 @import "tailwindcss";
 
-/* Recipe Harbour palette: warm paper, harbour teal, coral accent. */
+/* Recipe Harbour palette: "fresh market" – leaf green, lemon and carrot on a light green-white. */
 :root {
-  --bg: #f7f3ec;
+  --bg: #f7fbf4;
   --surface: #ffffff;
-  --surface-2: #fbf8f3;
-  --ink: #15222b;
-  --muted: #5d6b75;
-  --line: #e7e0d4;
-  --brand: #0e6170;
+  --surface-2: #eff6ea;
+  --ink: #1e2a1e;
+  --muted: #536253;
+  --line: #dde8d6;
+  --brand: #2e7d32;
   --brand-ink: #ffffff;
-  --brand-soft: #dceff1;
-  --accent: #d9634a;
-  --have: #2f7d4f;
-  --have-soft: #e3f3e9;
-  --miss: #a3620f;
-  --miss-soft: #fbf0de;
+  --brand-soft: #e2f1e3;
+  --accent: #f28c28;
+  --lemon: #f4c430;
+  --pattern: #2e7d32;
+  --have: #276c2b;
+  --have-soft: #e4f2e2;
+  --miss: #a04e0b;
+  --miss-soft: #fdefd9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e171d;
-    --surface: #15222b;
-    --surface-2: #192933;
-    --ink: #e7eef2;
-    --muted: #97a8b3;
-    --line: #253742;
-    --brand: #56b6c2;
-    --brand-ink: #071216;
-    --brand-soft: #16353b;
-    --accent: #f08b73;
-    --have: #6cca95;
-    --have-soft: #173426;
-    --miss: #e3ac56;
-    --miss-soft: #3a2a12;
+    --bg: #0f1a12;
+    --surface: #16241a;
+    --surface-2: #1b2d20;
+    --ink: #e8f1e6;
+    --muted: #9db09f;
+    --line: #26392a;
+    --brand: #7bd389;
+    --brand-ink: #0b160d;
+    --brand-soft: #1b3a20;
+    --accent: #f5a65b;
+    --lemon: #e9c046;
+    --pattern: #7bd389;
+    --have: #7bd389;
+    --have-soft: #183320;
+    --miss: #f2b36b;
+    --miss-soft: #3a2810;
   }
 }
 
@@ -48,6 +52,7 @@
   --color-brand-ink: var(--brand-ink);
   --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
+  --color-lemon: var(--lemon);
   --color-have: var(--have);
   --color-have-soft: var(--have-soft);
   --color-miss: var(--miss);
@@ -61,6 +66,8 @@ html {
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -68,4 +75,23 @@ body {
 
 ::selection {
   background: var(--brand-soft);
+}
+
+/* Faint hand-drawn produce and dishes behind everything, tinted by the theme. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--pattern);
+  opacity: 0.06;
+  -webkit-mask: url("/food-pattern.svg") 0 0 / 420px 420px repeat;
+  mask: url("/food-pattern.svg") 0 0 / 420px 420px repeat;
+}
+
+@media (prefers-color-scheme: dark) {
+  body::before {
+    opacity: 0.05;
+  }
 }

@@ -16,10 +16,20 @@ export default async function Home(props: PageProps<"/[lang]">) {
       <div className="max-w-2xl">
         <h1 className="font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
           {t.hero.before}
-          <span className="text-brand">{t.hero.accent}</span>
+          <span className="relative whitespace-nowrap text-brand">
+            <span aria-hidden className="absolute inset-x-0 bottom-1 -z-10 h-3 rounded-full bg-lemon/50 dark:bg-lemon/20 sm:bottom-1.5 sm:h-4" />
+            {t.hero.accent}
+          </span>
           {t.hero.after}
         </h1>
-        <p className="mt-4 text-lg text-muted">{t.hero.sub(stats.total, stats.en, stats.de)}</p>
+        <p className="mt-4 text-lg text-muted">{t.hero.sub}</p>
+        <ul className="mt-5 flex flex-wrap gap-2 text-sm font-medium">
+          {t.hero.stats(stats.total).map((s) => (
+            <li key={s} className="rounded-full border border-line bg-surface/80 px-3 py-1 text-ink shadow-sm">
+              {s}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="mt-8">

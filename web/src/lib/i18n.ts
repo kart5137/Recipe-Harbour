@@ -15,15 +15,15 @@ const nf = (lang: Locale) => (n: number) => n.toLocaleString(lang === "de" ? "de
 const en = {
   meta: {
     title: "Recipe Harbour",
-    description: "Find recipes from what you already have, in English and German, from the open Wikibooks cookbooks.",
+    description: "Type, scan or photograph what's in your kitchen and find recipes you can cook today. Thousands of free recipes in English and German.",
   },
   nav: { favourites: "Favourites", otherLanguage: "Deutsch", otherLanguageCode: "de", switchLabel: "Auf Deutsch" },
   hero: {
     before: "Cook with what you ",
     accent: "already have",
     after: ".",
-    sub: (total: number, enN: number, deN: number) =>
-      `Add the ingredients in your kitchen, in English or German, and find matching recipes from ${nf("en")(total)} open cookbook recipes (${nf("en")(enN)} English, ${nf("en")(deN)} German).`,
+    sub: "Type what's in your kitchen, scan a barcode or snap a photo of your veg, and find recipes you can cook today.",
+    stats: (total: number) => [`${nf("en")(total)} recipes`, "English & German", "Free, no sign-up"],
   },
   footer: {
     recipesFrom: "Recipes from the",
@@ -32,8 +32,7 @@ const en = {
     kochbuch: "Kochbuch",
     writtenBy: ", written by their contributors and shared under",
     reformatted: ". Reformatted for search.",
-    rebuild: "A rebuild of",
-    team: ", a 2023 VIT Bhopal team project by Karthik Manoj, Yash Raj, Madhav Nawab and Kumar Prince.",
+    madeBy: "Made by Karthik Manoj.",
     model: "Photo recognition model:",
     modelCard: "how it was trained and how accurate it is",
   },
@@ -120,12 +119,9 @@ const en = {
     dietNote:
       "The diet label is worked out from the ingredient list, not stated by the recipe. If you have an allergy or a strict diet, check every ingredient yourself.",
     source: { en: "Wikibooks Cookbook", de: "Wikibooks Kochbuch" },
-    comesFrom: "This recipe comes from the",
-    writtenBy: "and was written by",
-    contributors: "its contributors",
-    sharedUnder: ". It is shared under",
-    reformatted: (date: string) => ` and has been reformatted for this site${date ? ` (version of ${date})` : ""}.`,
-    readOriginal: "Read the original on Wikibooks",
+    sourceLabel: "Source:",
+    authors: "authors",
+    adapted: "adapted",
     back: "Back to results",
     searchRecipes: "Search recipes",
     loading: "Loading…",
@@ -197,15 +193,15 @@ export type Dict = typeof en;
 const de: Dict = {
   meta: {
     title: "Recipe Harbour",
-    description: "Rezepte mit dem finden, was du schon hast – auf Deutsch und Englisch, aus den offenen Wikibooks-Kochbüchern.",
+    description: "Tippe, scanne oder fotografiere, was in deiner Küche ist, und finde Rezepte, die du heute kochen kannst. Tausende kostenlose Rezepte auf Deutsch und Englisch.",
   },
   nav: { favourites: "Favoriten", otherLanguage: "English", otherLanguageCode: "en", switchLabel: "In English" },
   hero: {
     before: "Koch mit dem, was du ",
     accent: "schon hast",
     after: ".",
-    sub: (total: number, enN: number, deN: number) =>
-      `Gib die Zutaten aus deiner Küche ein, auf Deutsch oder Englisch, und finde passende Rezepte aus ${nf("de")(total)} offenen Kochbuch-Rezepten (${nf("de")(enN)} englische, ${nf("de")(deN)} deutsche).`,
+    sub: "Tippe ein, was in deiner Küche ist, scanne einen Barcode oder fotografiere dein Gemüse und finde Rezepte, die du heute kochen kannst.",
+    stats: (total: number) => [`${nf("de")(total)} Rezepte`, "Deutsch & Englisch", "Kostenlos, ohne Anmeldung"],
   },
   footer: {
     recipesFrom: "Rezepte aus dem",
@@ -214,8 +210,7 @@ const de: Dict = {
     kochbuch: "Kochbuch",
     writtenBy: ", geschrieben von ihren Autorinnen und Autoren und geteilt unter",
     reformatted: ". Für die Suche neu formatiert.",
-    rebuild: "Eine Neuauflage von",
-    team: ", einem Teamprojekt von 2023 an der VIT Bhopal von Karthik Manoj, Yash Raj, Madhav Nawab und Kumar Prince.",
+    madeBy: "Gemacht von Karthik Manoj.",
     model: "Bilderkennungsmodell:",
     modelCard: "wie es trainiert wurde und wie genau es ist",
   },
@@ -302,12 +297,9 @@ const de: Dict = {
     dietNote:
       "Die Ernährungsangabe wurde aus der Zutatenliste ermittelt und steht nicht im Rezept. Bei Allergien oder strenger Ernährung prüfe bitte jede Zutat selbst.",
     source: { en: "Wikibooks Cookbook", de: "Wikibooks Kochbuch" },
-    comesFrom: "Dieses Rezept stammt aus dem",
-    writtenBy: "und wurde geschrieben von",
-    contributors: "seinen Autorinnen und Autoren",
-    sharedUnder: ". Es steht unter",
-    reformatted: (date: string) => ` und wurde für diese Seite neu formatiert${date ? ` (Fassung vom ${date})` : ""}.`,
-    readOriginal: "Original auf Wikibooks lesen",
+    sourceLabel: "Quelle:",
+    authors: "Autoren",
+    adapted: "bearbeitet",
     back: "Zurück zu den Ergebnissen",
     searchRecipes: "Rezepte suchen",
     loading: "Wird geladen…",

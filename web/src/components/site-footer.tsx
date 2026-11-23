@@ -22,10 +22,7 @@ export function SiteFooter({ lang }: { lang: Locale }) {
           </a>
           {t.reformatted}
         </p>
-        <p>
-          {t.rebuild} <em>RecipeHarbor</em>
-          {t.team}
-        </p>
+        <p>{t.madeBy}</p>
       </div>
     </footer>
   );

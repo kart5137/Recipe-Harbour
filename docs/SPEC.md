@@ -1,7 +1,6 @@
 # Recipe Harbour: spec (rebuild)
 
-A rebuild of the 2023 VIT Bhopal team project *RecipeHarbor* (Karthik Manoj, Yash Raj,
-Madhav Nawab, Kumar Prince). The original was a command-line script over the paid Spoonacular
+A rebuild of Karthik Manoj's 2023 project *RecipeHarbor*. The original was a command-line script over the paid Spoonacular
 API, written because no usable recipe dataset could be found. The rebuild uses open recipe data
 it owns: a polished, bilingual (English/German) web app built on the Wikibooks cookbooks.
 
