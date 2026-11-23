@@ -10,7 +10,6 @@ import type { Dict, Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
 
 type Phase =
-  | { kind: "loading"; progress: number }
   | { kind: "failed" }
   | { kind: "ready" }
   | { kind: "analysing"; preview: string }
@@ -36,8 +35,8 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const clfRef = useRef<Classifier | null>(null);
-  const [phase, setPhase] = useState<Phase>({ kind: "loading", progress: 0 });
-  const [camera, setCamera] = useState<"off" | "starting" | "on" | string>("off");
+  const [phase, setPhase] = useState<Phase>({ kind: "ready" });
+  const [camera, setCamera] = useState<"off" | "starting" | "on" | string>("starting");
   const [offered, setOffered] = useState<string[]>([]);
   const [perf, setPerf] = useState<{ backend: string; ms: number } | null>(null); // diagnostics only
   const titleId = useId();
@@ -63,18 +62,18 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
     if (!open && d.open) d.close();
   }, [open]);
 
-  // Load TensorFlow.js and the model the first time the dialog opens.
+  // The camera starts straight away; the model loads quietly behind it (usually it was
+  // already fetched in the background, see preloadClassifier).
   useEffect(() => {
-    if (!open || clfRef.current) return;
+    if (!open) return;
     let cancelled = false;
-    loadClassifier((f) => !cancelled && setPhase({ kind: "loading", progress: f }))
+    loadClassifier()
       .then((c) => {
         if (cancelled) return;
         clfRef.current = c;
         setOffered(offeredIds(c.labels));
-        toReady();
       })
-      .catch(() => !cancelled && setPhase({ kind: "failed" }));
+      .catch(() => {}); // reported if a photo is taken before it works
     return () => {
       cancelled = true;
     };
@@ -84,8 +83,10 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
   useEffect(() => {
     if (!open || phase.kind !== "ready" || camera !== "starting" || !videoRef.current) return;
     let cancelled = false;
-    navigator.mediaDevices
-      .getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } } })
+    const media = navigator.mediaDevices;
+    (media?.getUserMedia
+      ? media.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } } })
+      : Promise.reject({ name: "NotSupportedError" }))
       .then(async (stream) => {
         if (cancelled || !videoRef.current) return stream.getTracks().forEach((t) => t.stop());
         streamRef.current = stream;
@@ -108,9 +109,15 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
   useEffect(() => () => streamRef.current?.getTracks().forEach((t) => t.stop()), []);
 
   const analyse = async (source: HTMLVideoElement | ImageBitmap, preview: string) => {
-    const clf = clfRef.current;
-    if (!clf) return;
     setPhase({ kind: "analysing", preview });
+    let clf: Classifier;
+    try {
+      clf = clfRef.current ?? (await loadClassifier());
+    } catch {
+      setPhase({ kind: "failed" });
+      return;
+    }
+    clfRef.current = clf;
     const { probs, ms } = await clf.classify(source);
     setPerf({ backend: clf.backend, ms: Math.round(ms) });
     setPhase({ kind: "result", preview, result: interpret(probs, clf.labels) });
@@ -142,7 +149,8 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
   };
   const close = () => {
     stopCamera();
-    if (clfRef.current) toReady();
+    setPhase({ kind: "ready" });
+    setCamera("starting"); // starts again when the dialog is next opened
     onClose();
   };
 
@@ -169,19 +177,15 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
       </div>
 
       <div className="space-y-4 p-5">
-        {phase.kind === "loading" && (
-          <div className="space-y-3 py-6 text-center" role="status">
-            <p className="text-sm text-muted">{t.photo.loading}</p>
-            <div className="mx-auto h-2 w-56 overflow-hidden rounded-full bg-line">
-              <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${Math.round(phase.progress * 100)}%` }} />
+        {phase.kind === "failed" && (
+          <div className="space-y-3">
+            <p className="rounded-2xl border border-miss/30 bg-miss-soft p-4 text-sm">{t.photo.failed}</p>
+            <div className="flex justify-end">
+              <button type="button" onClick={again} className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-semibold">
+                <RotateCcw className="size-4" aria-hidden /> {t.photo.tryAnother}
+              </button>
             </div>
           </div>
-        )}
-
-        {phase.kind === "failed" && (
-          <p className="rounded-2xl border border-miss/30 bg-miss-soft p-4 text-sm">
-            {t.photo.failed}
-          </p>
         )}
 
         {phase.kind === "ready" && (

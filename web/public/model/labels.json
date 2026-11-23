@@ -1,184 +1,846 @@
 {
- "version": "v2",
- "input": {
-  "size": 224,
-  "range": "0-255 RGB"
- },
- "thresholds": {
-  "top1": 0.7,
-  "top3": 0.9,
-  "min_test": 15
- },
- "weights": "float16",
- "export_agreement": 1.0,
- "classes": [
-  {
-   "id": "apple",
-   "offered": false,
-   "test_photos": 135,
-   "top1": 0.593,
-   "top3": 0.852
-  },
-  {
-   "id": "banana",
-   "offered": false,
-   "test_photos": 43,
-   "top1": 0.698,
-   "top3": 0.837
-  },
-  {
-   "id": "bell_pepper",
-   "offered": false,
-   "test_photos": 97,
-   "top1": 0.773,
-   "top3": 0.866
-  },
-  {
-   "id": "broccoli",
-   "offered": true,
-   "test_photos": 97,
-   "top1": 0.959,
-   "top3": 1.0
-  },
-  {
-   "id": "cabbage",
-   "offered": true,
-   "test_photos": 50,
-   "top1": 0.9,
-   "top3": 0.96
-  },
-  {
-   "id": "carrot",
-   "offered": false,
-   "test_photos": 114,
-   "top1": 0.702,
-   "top3": 0.877
-  },
-  {
-   "id": "coconut",
-   "offered": false,
-   "test_photos": 26,
-   "top1": 0.654,
-   "top3": 0.769
-  },
-  {
-   "id": "cucumber",
-   "offered": false,
-   "test_photos": 159,
-   "top1": 0.572,
-   "top3": 0.925
-  },
-  {
-   "id": "fig",
-   "offered": false,
-   "test_photos": 19,
-   "top1": 0.316,
-   "top3": 0.421
-  },
-  {
-   "id": "grapes",
-   "offered": true,
-   "test_photos": 130,
-   "top1": 0.877,
-   "top3": 0.954
-  },
-  {
-   "id": "mango",
-   "offered": false,
-   "test_photos": 36,
-   "top1": 0.278,
-   "top3": 0.5
-  },
-  {
-   "id": "melon",
-   "offered": false,
-   "test_photos": 49,
-   "top1": 0.694,
-   "top3": 0.796
-  },
-  {
-   "id": "mushroom",
-   "offered": true,
-   "test_photos": 156,
-   "top1": 0.917,
-   "top3": 0.974
-  },
-  {
-   "id": "orange",
-   "offered": true,
-   "test_photos": 200,
-   "top1": 0.8,
-   "top3": 0.92
-  },
-  {
-   "id": "peach",
-   "offered": true,
-   "test_photos": 90,
-   "top1": 0.822,
-   "top3": 0.978
-  },
-  {
-   "id": "pear",
-   "offered": false,
-   "test_photos": 47,
-   "top1": 0.489,
-   "top3": 0.702
-  },
-  {
-   "id": "pineapple",
-   "offered": false,
-   "test_photos": 29,
-   "top1": 0.828,
-   "top3": 0.862
-  },
-  {
-   "id": "pomegranate",
-   "offered": false,
-   "test_photos": 20,
-   "top1": 0.8,
-   "top3": 0.8
-  },
-  {
-   "id": "potato",
-   "offered": false,
-   "test_photos": 79,
-   "top1": 0.772,
-   "top3": 0.899
-  },
-  {
-   "id": "pumpkin",
-   "offered": true,
-   "test_photos": 54,
-   "top1": 0.704,
-   "top3": 0.907
-  },
-  {
-   "id": "radish",
-   "offered": true,
-   "test_photos": 37,
-   "top1": 0.838,
-   "top3": 0.973
-  },
-  {
-   "id": "strawberry",
-   "offered": true,
-   "test_photos": 200,
-   "top1": 0.91,
-   "top3": 0.97
-  },
-  {
-   "id": "tomato",
-   "offered": true,
-   "test_photos": 200,
-   "top1": 0.7,
-   "top3": 0.91
-  },
-  {
-   "id": "zucchini",
-   "offered": false,
-   "test_photos": 138,
-   "top1": 0.413,
-   "top3": 0.899
-  }
- ]
+"version": "siglip2-b32-q4h",
+"model": "google/siglip2-base-patch32-256",
+"input": {
+"size": 256,
+"mean": [
+0.5,
+0.5,
+0.5
+],
+"std": [
+0.5,
+0.5,
+0.5
+]
+},
+"dim": 768,
+"names": [
+"onion",
+"onion",
+"onion",
+"onion",
+"onion",
+"onion",
+"green_onion",
+"green_onion",
+"onion",
+"leek",
+"leek",
+"garlic",
+"garlic",
+"garlic",
+"ginger",
+"ginger",
+"tomato",
+"tomato",
+"tomato",
+"potato",
+"potato",
+"sweet_potato",
+"sweet_potato",
+"carrot",
+"carrot",
+"celery",
+"celery",
+"celeriac",
+"celeriac",
+"bell_pepper",
+"bell_pepper",
+"bell_pepper",
+"bell_pepper",
+"chili_pepper",
+"chili_pepper",
+"chili_pepper",
+"cucumber",
+"cucumber",
+"zucchini",
+"zucchini",
+"eggplant",
+"eggplant",
+"pumpkin",
+"pumpkin",
+"pumpkin",
+"cabbage",
+"cabbage",
+"cabbage",
+"cabbage",
+"cabbage",
+"red_cabbage",
+"broccoli",
+"cauliflower",
+"brussels_sprouts",
+"kohlrabi",
+"spinach",
+"spinach",
+"kale",
+"kale",
+"lettuce",
+"lettuce",
+"lettuce",
+"lettuce",
+"mushroom",
+"mushroom",
+"corn",
+"corn",
+"peas",
+"peas",
+"green_beans",
+"asparagus",
+"beet",
+"beet",
+"radish",
+"radish",
+"radish",
+"radish",
+"radish",
+"okra",
+"avocado",
+"avocado",
+"plantain",
+"cassava",
+"yam",
+"yam",
+"fennel",
+"artichoke",
+"artichoke",
+"bean_sprouts",
+"apple",
+"apple",
+"apple",
+"apple",
+"banana",
+"banana",
+"lemon",
+"lemon",
+"lime",
+"lime",
+"orange",
+"orange",
+"orange",
+"orange",
+"strawberry",
+"strawberry",
+"raspberry",
+"blueberry",
+"berries",
+"berries",
+"berries",
+"berries",
+"cherry",
+"peach",
+"peach",
+"peach",
+"apricot",
+"apricot",
+"plum",
+"plum",
+"pear",
+"pear",
+"pineapple",
+"mango",
+"mango",
+"grapes",
+"grapes",
+"melon",
+"melon",
+"melon",
+"kiwi",
+"kiwi",
+"papaya",
+"papaya",
+"papaya",
+"papaya",
+"pomegranate",
+"rhubarb",
+"fig",
+"fig",
+"coconut",
+"parsley",
+"coriander",
+"coriander",
+"basil",
+"basil",
+"mint",
+"dill",
+"rosemary",
+"thyme",
+"chives",
+"lemongrass"
+],
+"scale": 100.0,
+"thresholds": {
+"top3": 0.8,
+"precision": 0.8,
+"confident": 0.6,
+"min_test": 15
+},
+"classes": [
+{
+"id": "onion",
+"offered": true,
+"test_photos": 30,
+"top1": 0.9,
+"top3": 0.967,
+"confident": 25,
+"confident_right": 0.84
+},
+{
+"id": "green_onion",
+"offered": false,
+"test_photos": 30,
+"top1": 0.767,
+"top3": 0.967,
+"confident": 23,
+"confident_right": 0.696
+},
+{
+"id": "leek",
+"offered": false,
+"test_photos": 4,
+"top1": 0.25,
+"top3": 0.75,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "garlic",
+"offered": true,
+"test_photos": 30,
+"top1": 1.0,
+"top3": 1.0,
+"confident": 31,
+"confident_right": 0.935
+},
+{
+"id": "ginger",
+"offered": false,
+"test_photos": 7,
+"top1": 0.857,
+"top3": 1.0,
+"confident": 7,
+"confident_right": 0.714
+},
+{
+"id": "tomato",
+"offered": true,
+"test_photos": 230,
+"top1": 0.639,
+"top3": 0.843,
+"confident": 85,
+"confident_right": 0.976
+},
+{
+"id": "potato",
+"offered": true,
+"test_photos": 109,
+"top1": 0.752,
+"top3": 0.945,
+"confident": 73,
+"confident_right": 0.89
+},
+{
+"id": "sweet_potato",
+"offered": false,
+"test_photos": 3,
+"top1": 0.333,
+"top3": 1.0,
+"confident": 9,
+"confident_right": 0.0
+},
+{
+"id": "carrot",
+"offered": true,
+"test_photos": 144,
+"top1": 0.868,
+"top3": 0.951,
+"confident": 114,
+"confident_right": 0.904
+},
+{
+"id": "celery",
+"offered": false,
+"test_photos": 2,
+"top1": 0.5,
+"top3": 0.5,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "celeriac",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "bell_pepper",
+"offered": true,
+"test_photos": 127,
+"top1": 0.85,
+"top3": 0.937,
+"confident": 103,
+"confident_right": 0.913
+},
+{
+"id": "chili_pepper",
+"offered": false,
+"test_photos": 30,
+"top1": 0.633,
+"top3": 0.933,
+"confident": 23,
+"confident_right": 0.739
+},
+{
+"id": "cucumber",
+"offered": false,
+"test_photos": 189,
+"top1": 0.529,
+"top3": 0.852,
+"confident": 90,
+"confident_right": 0.689
+},
+{
+"id": "zucchini",
+"offered": false,
+"test_photos": 160,
+"top1": 0.494,
+"top3": 0.881,
+"confident": 80,
+"confident_right": 0.65
+},
+{
+"id": "eggplant",
+"offered": true,
+"test_photos": 25,
+"top1": 0.88,
+"top3": 0.96,
+"confident": 22,
+"confident_right": 1.0
+},
+{
+"id": "pumpkin",
+"offered": true,
+"test_photos": 84,
+"top1": 0.845,
+"top3": 0.929,
+"confident": 65,
+"confident_right": 1.0
+},
+{
+"id": "cabbage",
+"offered": true,
+"test_photos": 80,
+"top1": 0.762,
+"top3": 0.925,
+"confident": 57,
+"confident_right": 0.93
+},
+{
+"id": "red_cabbage",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "broccoli",
+"offered": true,
+"test_photos": 127,
+"top1": 0.787,
+"top3": 0.937,
+"confident": 86,
+"confident_right": 0.919
+},
+{
+"id": "cauliflower",
+"offered": false,
+"test_photos": 18,
+"top1": 0.556,
+"top3": 0.722,
+"confident": 17,
+"confident_right": 0.588
+},
+{
+"id": "brussels_sprouts",
+"offered": false,
+"test_photos": 7,
+"top1": 0.857,
+"top3": 0.857,
+"confident": 19,
+"confident_right": 0.316
+},
+{
+"id": "kohlrabi",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "spinach",
+"offered": false,
+"test_photos": 7,
+"top1": 0.429,
+"top3": 1.0,
+"confident": 2,
+"confident_right": 0.5
+},
+{
+"id": "kale",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 1,
+"confident_right": 0.0
+},
+{
+"id": "lettuce",
+"offered": false,
+"test_photos": 10,
+"top1": 0.6,
+"top3": 0.8,
+"confident": 6,
+"confident_right": 0.333
+},
+{
+"id": "mushroom",
+"offered": true,
+"test_photos": 186,
+"top1": 0.952,
+"top3": 0.978,
+"confident": 169,
+"confident_right": 1.0
+},
+{
+"id": "corn",
+"offered": true,
+"test_photos": 30,
+"top1": 0.933,
+"top3": 0.967,
+"confident": 28,
+"confident_right": 0.964
+},
+{
+"id": "peas",
+"offered": false,
+"test_photos": 30,
+"top1": 0.767,
+"top3": 0.933,
+"confident": 24,
+"confident_right": 0.708
+},
+{
+"id": "green_beans",
+"offered": true,
+"test_photos": 23,
+"top1": 0.783,
+"top3": 1.0,
+"confident": 21,
+"confident_right": 0.857
+},
+{
+"id": "asparagus",
+"offered": true,
+"test_photos": 30,
+"top1": 0.733,
+"top3": 0.9,
+"confident": 22,
+"confident_right": 0.955
+},
+{
+"id": "beet",
+"offered": false,
+"test_photos": 7,
+"top1": 0.571,
+"top3": 1.0,
+"confident": 3,
+"confident_right": 1.0
+},
+{
+"id": "radish",
+"offered": true,
+"test_photos": 60,
+"top1": 0.7,
+"top3": 0.9,
+"confident": 40,
+"confident_right": 0.85
+},
+{
+"id": "okra",
+"offered": false,
+"test_photos": 4,
+"top1": 0.75,
+"top3": 0.75,
+"confident": 4,
+"confident_right": 0.75
+},
+{
+"id": "avocado",
+"offered": false,
+"test_photos": 7,
+"top1": 0.714,
+"top3": 0.714,
+"confident": 15,
+"confident_right": 0.333
+},
+{
+"id": "plantain",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "cassava",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "yam",
+"offered": false,
+"test_photos": 1,
+"top1": 0.0,
+"top3": 0.0,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "fennel",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "artichoke",
+"offered": true,
+"test_photos": 30,
+"top1": 0.833,
+"top3": 0.933,
+"confident": 23,
+"confident_right": 1.0
+},
+{
+"id": "bean_sprouts",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "apple",
+"offered": true,
+"test_photos": 165,
+"top1": 0.715,
+"top3": 0.897,
+"confident": 102,
+"confident_right": 0.99
+},
+{
+"id": "banana",
+"offered": true,
+"test_photos": 73,
+"top1": 0.808,
+"top3": 0.863,
+"confident": 53,
+"confident_right": 0.981
+},
+{
+"id": "lemon",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "lime",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 4,
+"confident_right": 0.0
+},
+{
+"id": "orange",
+"offered": true,
+"test_photos": 200,
+"top1": 0.82,
+"top3": 0.905,
+"confident": 141,
+"confident_right": 0.979
+},
+{
+"id": "strawberry",
+"offered": true,
+"test_photos": 230,
+"top1": 0.861,
+"top3": 0.965,
+"confident": 187,
+"confident_right": 0.941
+},
+{
+"id": "raspberry",
+"offered": false,
+"test_photos": 21,
+"top1": 0.762,
+"top3": 1.0,
+"confident": 26,
+"confident_right": 0.538
+},
+{
+"id": "blueberry",
+"offered": false,
+"test_photos": 20,
+"top1": 0.9,
+"top3": 0.95,
+"confident": 29,
+"confident_right": 0.621
+},
+{
+"id": "berries",
+"offered": false,
+"test_photos": 12,
+"top1": 0.667,
+"top3": 0.75,
+"confident": 15,
+"confident_right": 0.533
+},
+{
+"id": "cherry",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 5,
+"confident_right": 0.0
+},
+{
+"id": "peach",
+"offered": true,
+"test_photos": 120,
+"top1": 0.8,
+"top3": 0.975,
+"confident": 94,
+"confident_right": 0.894
+},
+{
+"id": "apricot",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 17,
+"confident_right": 0.0
+},
+{
+"id": "plum",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "pear",
+"offered": true,
+"test_photos": 77,
+"top1": 0.753,
+"top3": 0.883,
+"confident": 48,
+"confident_right": 0.938
+},
+{
+"id": "pineapple",
+"offered": true,
+"test_photos": 59,
+"top1": 0.983,
+"top3": 0.983,
+"confident": 60,
+"confident_right": 0.933
+},
+{
+"id": "mango",
+"offered": false,
+"test_photos": 51,
+"top1": 0.569,
+"top3": 0.686,
+"confident": 26,
+"confident_right": 0.962
+},
+{
+"id": "grapes",
+"offered": true,
+"test_photos": 160,
+"top1": 0.838,
+"top3": 0.956,
+"confident": 124,
+"confident_right": 0.992
+},
+{
+"id": "melon",
+"offered": true,
+"test_photos": 79,
+"top1": 0.835,
+"top3": 0.962,
+"confident": 78,
+"confident_right": 0.808
+},
+{
+"id": "kiwi",
+"offered": true,
+"test_photos": 30,
+"top1": 0.933,
+"top3": 1.0,
+"confident": 33,
+"confident_right": 0.848
+},
+{
+"id": "papaya",
+"offered": true,
+"test_photos": 27,
+"top1": 0.926,
+"top3": 0.926,
+"confident": 25,
+"confident_right": 1.0
+},
+{
+"id": "pomegranate",
+"offered": true,
+"test_photos": 50,
+"top1": 0.92,
+"top3": 0.92,
+"confident": 46,
+"confident_right": 1.0
+},
+{
+"id": "rhubarb",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "fig",
+"offered": true,
+"test_photos": 38,
+"top1": 0.895,
+"top3": 0.895,
+"confident": 30,
+"confident_right": 0.9
+},
+{
+"id": "coconut",
+"offered": false,
+"test_photos": 43,
+"top1": 0.581,
+"top3": 0.674,
+"confident": 19,
+"confident_right": 1.0
+},
+{
+"id": "parsley",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 6,
+"confident_right": 0.0
+},
+{
+"id": "coriander",
+"offered": false,
+"test_photos": 30,
+"top1": 0.3,
+"top3": 0.767,
+"confident": 6,
+"confident_right": 1.0
+},
+{
+"id": "basil",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 6,
+"confident_right": 0.0
+},
+{
+"id": "mint",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "dill",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "rosemary",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "thyme",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "chives",
+"offered": false,
+"test_photos": 0,
+"top1": null,
+"top3": null,
+"confident": 0,
+"confident_right": null
+},
+{
+"id": "lemongrass",
+"offered": false,
+"test_photos": 1,
+"top1": 0.0,
+"top3": 0.0,
+"confident": 1,
+"confident_right": 0.0
+}
+]
 }

@@ -31,3 +31,5 @@ Thumbs.db
 .venv-ml/
 model/data/
 model/runs/
+.venv-clip/
+model/hf/

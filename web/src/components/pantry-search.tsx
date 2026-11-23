@@ -7,6 +7,7 @@ import { useEffect, useId, useMemo, useRef, useState, useTransition } from "reac
 import { useDict, useLocale } from "@/components/locale";
 import { PhotoDialog } from "@/components/photo-dialog";
 import { ScanDialog } from "@/components/scan-dialog";
+import { preloadClassifier } from "@/lib/classifier";
 import { FAMILIES } from "@/lib/families";
 import { label } from "@/lib/labels";
 import { type Diet, FAMILY_KEYS, type SearchState, TIME_OPTIONS, toQuery } from "@/lib/params";
@@ -38,6 +39,9 @@ export function PantrySearch({ state, entries }: Props) {
     const merged = { ...state, n: undefined, ...next };
     startTransition(() => router.replace(`${pathname}${toQuery(merged)}`, { scroll: false }));
   };
+
+  // Fetch the photo recogniser in the background, so the Photo button opens ready.
+  useEffect(() => preloadClassifier(), []);
 
   // Debounced recipe-name search.
   useEffect(() => {

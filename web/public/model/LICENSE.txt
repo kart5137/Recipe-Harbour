@@ -1,12 +1,15 @@
-Recipe Harbour produce classifier (TensorFlow.js)
+Recipe Harbour photo recogniser (siglip2-b32-q4h)
 
-Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+vision.onnx
+  SigLIP 2 base, patch 32, 256 px (google/siglip2-base-patch32-256) by Google LLC, Apache License 2.0
+  (https://www.apache.org/licenses/LICENSE-2.0). Modified: only the image encoder, weights
+  quantised to 4 bits (matrices) and 16 bits (other large weights).
 
-Trained on:
-- Fruits-360 by Mihai Oltean, CC BY-SA 4.0 (https://github.com/fruits-360)
-- Open Images V7 (https://storage.googleapis.com/openimages/web/index.html): annotations CC BY 4.0
-  by Google LLC; photos CC BY 2.0 by their authors, listed in model/OPEN_IMAGES_CREDITS.csv
-  of the Recipe Harbour source repository.
-- MobileNetV2 ImageNet weights from TensorFlow/Keras (Apache 2.0).
+head.bin, labels.json (ingredient head and metadata)
+  Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Trained on:
+  - Fruits-360 by Mihai Oltean, CC BY-SA 4.0 (https://github.com/fruits-360)
+  - Open Images V7 (https://storage.googleapis.com/openimages/web/index.html): annotations
+    CC BY 4.0 by Google LLC; photos CC BY 2.0 by their authors, listed in
+    model/OPEN_IMAGES_CREDITS.csv of https://github.com/kart5137/Recipe-Harbour
 
 Details and test results: docs/model/MODEL_CARD.md in the source repository.

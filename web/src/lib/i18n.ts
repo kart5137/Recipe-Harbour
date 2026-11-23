@@ -173,7 +173,6 @@ const en = {
   },
   photo: {
     title: "Photo of fruit or vegetables",
-    loading: "Loading the recognition model (about 5 MB, once)…",
     failed: "The recognition model could not be loaded. Check your connection and open this again, or type the ingredient in the search box.",
     blocked: "Camera access is blocked. Choose a photo instead, or allow the camera in your browser settings.",
     noCamera: "No camera available. Choose a photo instead.",
@@ -356,7 +355,6 @@ const de: Dict = {
   },
   photo: {
     title: "Foto von Obst oder Gemüse",
-    loading: "Das Erkennungsmodell wird geladen (etwa 5 MB, einmalig)…",
     failed: "Das Erkennungsmodell konnte nicht geladen werden. Prüf deine Verbindung und öffne das hier erneut, oder gib die Zutat im Suchfeld ein.",
     blocked: "Der Kamerazugriff ist blockiert. Wähle stattdessen ein Foto oder erlaube die Kamera in den Browsereinstellungen.",
     noCamera: "Keine Kamera verfügbar. Wähle stattdessen ein Foto.",

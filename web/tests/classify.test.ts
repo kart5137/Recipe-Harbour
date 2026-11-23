@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
-import { interpret, type Labels, offeredIds } from "../src/lib/classify-result.ts";
+import { CONFIDENT, interpret, type Labels, offeredIds } from "../src/lib/classify-result.ts";
+import { label } from "../src/lib/labels.ts";
 
 const L: Labels = {
   version: "t",
@@ -55,22 +56,44 @@ describe("interpret", () => {
   });
 });
 
-describe("the exported labels", () => {
+describe("the exported model files", () => {
   const labels = JSON.parse(readFileSync(new URL("../public/model/labels.json", import.meta.url), "utf-8")) as Labels & {
-    thresholds: { top1: number; top3: number; min_test: number };
+    thresholds: { top3: number; precision: number; confident: number; min_test: number };
+    classes: (Labels["classes"][number] & { confident: number; confident_right: number | null })[];
+    input: { size: number; mean: number[]; std: number[] };
+    dim: number;
+    names: string[];
   };
-  it("offers exactly the classes that pass the model card's bar", () => {
+  it("offers exactly the ingredients that pass the model card's bar", () => {
     const t = labels.thresholds;
     for (const c of labels.classes) {
-      const passes = c.test_photos >= t.min_test && (c.top1 ?? 0) >= t.top1 && (c.top3 ?? 0) >= t.top3;
+      const passes =
+        c.test_photos >= t.min_test && (c.top3 ?? 0) >= t.top3 && c.confident >= t.min_test && (c.confident_right ?? 0) >= t.precision;
       assert.equal(c.offered, passes, c.id);
     }
-    assert.equal(offeredIds(labels).length, 10);
   });
-  it("model.json declares the 224x224x3 input and one output per class", () => {
-    const m = JSON.parse(readFileSync(new URL("../public/model/model.json", import.meta.url), "utf-8"));
-    const s = JSON.stringify(m.modelTopology);
-    assert.ok(s.includes("[null,224,224,3]") || s.includes('"batch_input_shape":[null,224,224,3]'));
-    assert.equal(labels.classes.length, 24);
+  it("the dialog's confidence level is the one the model was measured at", () => {
+    assert.equal(labels.thresholds.confident, CONFIDENT);
+  });
+  it("offers the everyday vegetables people photograph first", () => {
+    for (const id of ["onion", "garlic", "potato", "carrot", "tomato"]) assert.ok(offeredIds(labels).includes(id), id);
+  });
+  it("every ingredient is in the vocabulary and has a label in both languages", () => {
+    for (const c of labels.classes) {
+      assert.notEqual(label(c.id), c.id, c.id);
+      assert.ok(label(c.id, "de"), c.id);
+    }
+  });
+  it("head.bin holds one float16 vector per name, and every name belongs to an ingredient", () => {
+    const head = readFileSync(new URL("../public/model/head.bin", import.meta.url));
+    assert.equal(head.length, labels.names.length * labels.dim * 2);
+    const ids = new Set(labels.classes.map((c) => c.id));
+    assert.ok(labels.names.every((n) => ids.has(n)));
+    assert.ok(labels.classes.every((c) => labels.names.includes(c.id)), "every ingredient has at least one name");
+  });
+  it("declares the input the browser prepares", () => {
+    assert.equal(labels.input.size, 256);
+    assert.equal(labels.input.mean.length, 3);
+    assert.equal(labels.input.std.length, 3);
   });
 });

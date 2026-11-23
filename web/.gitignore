@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# copied from node_modules by scripts/copy-ort.mjs
+/public/ort/
+
+# the photo model is served from Hugging Face (see src/lib/classifier.ts); local copy only
+/public/model/vision.onnx
