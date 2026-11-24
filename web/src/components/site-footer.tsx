@@ -5,7 +5,7 @@ const LINK = "underline decoration-line underline-offset-4 hover:text-ink";
 export function SiteFooter({ lang }: { lang: Locale }) {
   const t = dict(lang).footer;
   return (
-    <footer className="glass-soft mt-16 border-t border-line/70">
+    <footer className="glass-bar mt-16 border-t">
       <div className="mx-auto max-w-6xl space-y-2 px-4 py-8 text-sm text-muted sm:px-6">
         <p>
           {t.recipesFrom}{" "}

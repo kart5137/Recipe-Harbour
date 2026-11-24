@@ -98,17 +98,9 @@ files instead of the Hugging Face copy, put `NEXT_PUBLIC_MODEL_BASE=/model/` in 
   and [Fruits-360](https://github.com/fruits-360) by Mihai Oltean (CC BY-SA 4.0).
 - **Translation models:** [WMT19 en-de and de-en](https://huggingface.co/facebook/wmt19-en-de) by
   Facebook AI (Apache 2.0).
-- **Background photos** (Wikimedia Commons, resized for the web, in `web/public/backdrops/` and
-  `web/public/floaters/`; the floating items were cut out of their photos by removing the plain background):
-  [sourdough bread](https://commons.wikimedia.org/wiki/File:Home_made_sour_dough_bread.jpg) by Tomascastelazo (CC BY-SA 4.0),
-  [salt shaker](https://commons.wikimedia.org/wiki/File:Salt_shaker_on_white_background.jpg) and
-  [garlic](https://commons.wikimedia.org/wiki/File:Opened_garlic_bulb_with_garlic_clove.jpg) by Dubravko Sorić (CC BY 2.0),
-  [basil leaf](https://commons.wikimedia.org/wiki/File:Ocimum_Basilicum_leaf_lighted_by_the_left.jpg) by BernaBotto (CC BY-SA 4.0),
-  [tomato](https://commons.wikimedia.org/wiki/File:A_Tomato.jpg) by Donovan Govan (CC BY-SA 3.0),
-  [orange](https://commons.wikimedia.org/wiki/File:Citrus_sinensis.jpg) by Neutrality (public domain),
-  [chilli](https://commons.wikimedia.org/wiki/File:Naga_Jolokia_Peppers.jpg) by Gannon anjo (public domain),
-  [lemon](https://commons.wikimedia.org/wiki/File:Lemon_with_white_background.jpg) by Bordercolliez (CC0).
-  The edited versions of the CC BY-SA photos are shared under the same licence.
+- **Background photo:** [sourdough bread](https://commons.wikimedia.org/wiki/File:Home_made_sour_dough_bread.jpg)
+  by Tomascastelazo (CC BY-SA 4.0), from Wikimedia Commons, resized and softened for the web
+  (`web/public/backdrops/`, shared under the same licence). The colour palette is taken from it.
 - **Image-text model:** [SigLIP 2](https://huggingface.co/google/siglip2-base-patch32-256) by Google
   (Apache 2.0), run with [ONNX Runtime Web](https://onnxruntime.ai) (MIT).
 

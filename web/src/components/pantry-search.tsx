@@ -85,7 +85,7 @@ export function PantrySearch({ state, entries }: Props) {
   const showList = open && text.trim() !== "";
 
   return (
-    <section aria-label={t.search.label} className="glass rounded-3xl border border-white/60 p-4 shadow-xl shadow-black/10 sm:p-6 dark:border-white/10">
+    <section aria-label={t.search.label} className="glass rounded-[28px] p-4 sm:p-6">
       <label htmlFor={`${listId}-input`} className="block font-display text-xl font-semibold sm:text-2xl">
         {t.search.whatHave}
       </label>
@@ -104,7 +104,7 @@ export function PantrySearch({ state, entries }: Props) {
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
       <div className="relative min-w-0 flex-1">
         <div
-          className="flex min-h-14 flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-2 shadow-inner shadow-black/5 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/25"
+          className="flex min-h-14 flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface/80 px-3 py-2 shadow-inner shadow-black/5 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/25"
           onClick={() => inputRef.current?.focus()}
         >
           {state.have.map((id) => (
@@ -195,7 +195,7 @@ export function PantrySearch({ state, entries }: Props) {
           <button
             type="button"
             onClick={() => setScanOpen(true)}
-            className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-5 text-sm font-semibold text-ink shadow-sm transition hover:border-brand hover:text-brand"
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface/80 px-5 text-sm font-semibold text-ink shadow-sm transition hover:border-brand hover:text-brand"
           >
             <ScanBarcode className="size-5" aria-hidden />
             {t.search.barcode}
@@ -212,10 +212,10 @@ export function PantrySearch({ state, entries }: Props) {
             onChange={(e) => setQ(e.target.value)}
             placeholder={t.search.names}
             aria-label={t.search.namesAria}
-            className="h-11 w-full rounded-xl border border-line bg-surface pr-3 pl-9 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
+            className="h-11 w-full rounded-xl border border-line bg-surface/80 pr-3 pl-9 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
           />
         </div>
-        <div role="radiogroup" aria-label={t.search.recipeLanguage} className="inline-flex rounded-xl border border-line bg-surface p-1 text-sm">
+        <div role="radiogroup" aria-label={t.search.recipeLanguage} className="inline-flex rounded-xl border border-line bg-surface/80 p-1 text-sm">
           {(
             [
               ["all", t.search.langAll],

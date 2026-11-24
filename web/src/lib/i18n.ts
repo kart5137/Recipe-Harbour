@@ -26,8 +26,8 @@ const en = {
     stats: (total: number) => [`${nf("en")(total)} recipes`, "English & German", "Free, no sign-up"],
   },
   footer: {
-    photos: "Background photos from Wikimedia Commons:",
-    photoCredits: "photographers and licences",
+    photos: "Background photo from Wikimedia Commons:",
+    photoCredits: "photographer and licence",
     recipesFrom: "Recipes from the",
     cookbook: "Wikibooks Cookbook",
     and: "and",
@@ -209,8 +209,8 @@ const de: Dict = {
     stats: (total: number) => [`${nf("de")(total)} Rezepte`, "Deutsch & Englisch", "Kostenlos, ohne Anmeldung"],
   },
   footer: {
-    photos: "Hintergrundfotos von Wikimedia Commons:",
-    photoCredits: "Fotografen und Lizenzen",
+    photos: "Hintergrundfoto von Wikimedia Commons:",
+    photoCredits: "Fotograf und Lizenz",
     recipesFrom: "Rezepte aus dem",
     cookbook: "Wikibooks Cookbook",
     and: "und dem",

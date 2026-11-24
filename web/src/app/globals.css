@@ -1,43 +1,52 @@
 @import "tailwindcss";
 
-/* Recipe Harbour palette: "fresh market" – leaf green, lemon and carrot on a light green-white. */
+/* Recipe Harbour palette: "bakery", taken from the background photo – flour cream, crust brown,
+   dark roast and wheat gold. Every text pair meets WCAG AA. */
 :root {
-  --bg: #f7fbf4;
-  --surface: #ffffff;
-  --surface-2: #eff6ea;
-  --ink: #1e2a1e;
-  --muted: #536253;
-  --line: #dde8d6;
-  --brand: #2e7d32;
+  --bg: #faf5ef;
+  --surface: #fffdfa;
+  --surface-2: #f4ebe2;
+  --ink: #2e1b17;
+  --muted: #5e4a3f;
+  --line: #e8dace;
+  --brand: #8a4a2b;
   --brand-ink: #ffffff;
-  --brand-soft: #e2f1e3;
-  --accent: #f28c28;
-  --lemon: #f4c430;
-  --pattern: #2e7d32;
-  --have: #276c2b;
-  --have-soft: #e4f2e2;
-  --miss: #a04e0b;
-  --miss-soft: #fdefd9;
+  --brand-soft: #f3e2d6;
+  --accent: #b3623c;
+  --lemon: #f0c27a;
+  --have: #55652a;
+  --have-soft: #ecefdc;
+  --miss: #a3381c;
+  --miss-soft: #fbe6dc;
+  --glass-top: rgb(255 255 255 / 0.8);
+  --glass-bottom: rgb(255 249 242 / 0.64);
+  --glass-shine: rgb(255 255 255 / 0.5);
+  --glass-edge: rgb(255 255 255 / 0.65);
+  --glass-shadow: rgb(46 27 23 / 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1a12;
-    --surface: #16241a;
-    --surface-2: #1b2d20;
-    --ink: #e8f1e6;
-    --muted: #9db09f;
-    --line: #26392a;
-    --brand: #7bd389;
-    --brand-ink: #0b160d;
-    --brand-soft: #1b3a20;
-    --accent: #f5a65b;
-    --lemon: #e9c046;
-    --pattern: #7bd389;
-    --have: #7bd389;
-    --have-soft: #183320;
-    --miss: #f2b36b;
-    --miss-soft: #3a2810;
+    --bg: #161009;
+    --surface: #201812;
+    --surface-2: #2a2018;
+    --ink: #f4ebe1;
+    --muted: #c2ae9d;
+    --line: #3b2e24;
+    --brand: #e3a77c;
+    --brand-ink: #24150c;
+    --brand-soft: #3b271a;
+    --accent: #e7a06b;
+    --lemon: #f0c27a;
+    --have: #c4cf8c;
+    --have-soft: #2b2f18;
+    --miss: #f2a582;
+    --miss-soft: #3e2318;
+    --glass-top: rgb(42 31 23 / 0.76);
+    --glass-bottom: rgb(24 17 12 / 0.66);
+    --glass-shine: rgb(255 255 255 / 0.07);
+    --glass-edge: rgb(255 255 255 / 0.13);
+    --glass-shadow: rgb(0 0 0 / 0.6);
   }
 }
 
@@ -77,8 +86,8 @@ body {
   background: var(--brand-soft);
 }
 
-/* One food photo behind everything, cut-out food floating over it (components/backdrop.tsx),
-   and a frosted wash of the page colour between them and the text. */
+/* The background photo stays put while the page scrolls (components/backdrop.tsx), under a
+   frosted wash of the page colour. */
 .backdrop {
   position: fixed;
   inset: 0;
@@ -93,52 +102,54 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.04);
-  will-change: transform;
 }
 
 .scrim {
   position: absolute;
   inset: 0;
-  z-index: 1;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.1);
   backdrop-filter: blur(18px) saturate(1.1);
 }
 
-/* Elsewhere the items sit under the wash, faint, so they never compete with recipe text. */
-.floaters {
-  position: absolute;
-  inset: 0;
-}
-
-.floater {
-  position: absolute;
-  top: 0;
-  height: auto;
-  filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.28));
-  will-change: transform;
-}
-
 /* On the home page the photo shows clearly at the top and the wash only half closes in as you
-   scroll (everything below the panel sits on its own card or frosted bar); the items float above it. */
+   scroll: everything below the panel sits on its own glass card. */
 body:has([data-photo-hero]) .scrim {
   opacity: calc(0.12 + 0.38 * var(--hero-scroll, 0));
 }
 
-body:has([data-photo-hero]) .floaters {
-  z-index: 2;
-}
-
-/* Frosted panels that sit on the photos. */
+/* Apple-style glass: strong blur and saturation, a light sheen from the top left, a bright
+   hairline edge and a soft deep shadow. Light enough to show the photo, solid enough for text. */
 .glass {
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  backdrop-filter: blur(20px) saturate(1.2);
+  background:
+    radial-gradient(120% 70% at 0% 0%, var(--glass-shine), transparent 55%),
+    linear-gradient(160deg, var(--glass-top), var(--glass-bottom));
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge),
+    0 2px 6px rgb(46 27 23 / 0.08),
+    0 24px 60px -22px var(--glass-shadow);
 }
 
-.glass-soft {
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+/* The same glass as a bar (header, footer): no rounded edges or deep shadow. */
+.glass-bar {
+  background: linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  border-color: var(--glass-edge);
+}
+
+/* Dark smoked glass for white text on the photo (the home page heading). */
+.glass-dark {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.12), transparent 55%),
+    linear-gradient(160deg, rgb(32 21 15 / 0.72), rgb(32 21 15 / 0.6));
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 24px 60px -22px rgb(0 0 0 / 0.55);
 }
