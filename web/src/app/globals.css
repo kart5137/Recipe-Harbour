@@ -70,13 +70,22 @@
   --font-display: var(--font-fraunces);
 }
 
+/* The page scrolls inside <body>, not the browser window. Phone browsers then keep their address
+   bar in place instead of sliding it away mid-scroll, which would drag everything pinned to the
+   screen (the background photo) along with it. The same on every browser and phone. */
 html {
+  height: 100%;
+  overflow: hidden;
   background: var(--bg);
 }
 
 body {
   position: relative;
   isolation: isolate;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -87,8 +96,8 @@ body {
 }
 
 /* The background photo stays put while the page scrolls (components/backdrop.tsx). Nothing here
-   is painted per frame: the layer is sized to the *largest* viewport (100lvh), so a phone's address
-   bar sliding in and out never resizes or re-crops it, and it sits on its own GPU layer. The frosted
+   is painted per frame: the layer is sized to the largest viewport (100lvh), so it never resizes or
+   re-crops, and it sits on its own GPU layer. The frosted
    wash is a pre-blurred copy of the photo plus the page colour, faded in by opacity alone. */
 .backdrop {
   position: fixed;
@@ -181,5 +190,62 @@ body:has([data-photo-hero]) .scrim {
   .glass-dark {
     -webkit-backdrop-filter: blur(16px) saturate(1.6);
     backdrop-filter: blur(16px) saturate(1.6);
+  }
+}
+
+/* When the client router opens a new page it scrolls the page's first element into view; the big
+   margin makes that land at the very top, with the header showing. */
+.page-body > * {
+  scroll-margin-top: 100vh;
+}
+
+/* Motion. Panels and cards rise in softly as they appear (cards one after another, `--i`), buttons
+   give a little when pressed, and results dim while a search is updating. Fill mode `backwards`
+   lets hover effects take over once an entrance is done. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+
+.rise {
+  animation: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+button,
+.press {
+  transition-property: scale, color, background-color, border-color, box-shadow, opacity, translate;
+  transition-duration: 0.18s;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+button:not(:disabled):active,
+.press:active {
+  scale: 0.96;
+}
+
+.press-card:has(a:active) {
+  scale: 0.985;
+}
+
+.results-area {
+  transition: opacity 0.25s ease;
+}
+
+body[data-searching] .results-area {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+
+  button:not(:disabled):active,
+  .press:active,
+  .press-card:has(a:active) {
+    scale: none;
   }
 }

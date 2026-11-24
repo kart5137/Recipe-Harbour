@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { RecipeCard } from "@/components/recipe-card";
 import { getModel } from "@/lib/data";
@@ -25,7 +26,7 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
 
   if (!pantry && !named && !browse) {
     return (
-      <section aria-labelledby="try" className="glass mt-6 rounded-3xl p-5 sm:p-6">
+      <section aria-labelledby="try" className="glass rise results-area mt-6 rounded-3xl p-5 sm:p-6" style={{ "--i": 2 } as CSSProperties}>
         <h2 id="try" className="text-sm font-semibold text-muted">
           {t.tryHeading}
         </h2>
@@ -35,7 +36,7 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
               <Link
                 href={`/${lang}${toQuery({ ...state, have })}`}
                 scroll={false}
-                className="inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium shadow-sm transition hover:border-brand hover:text-brand"
+                className="press inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium shadow-sm transition hover:border-brand hover:text-brand"
               >
                 {t.examples[i]}
               </Link>
@@ -65,8 +66,8 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
   const order = pantry ? (res.canMakeNow > 0 && !state.ready ? null : t.bestFirst) : named ? null : t.browseOrder;
 
   return (
-    <section aria-labelledby="results" className="mt-8">
-      <div className="glass flex flex-wrap items-baseline justify-between gap-2 rounded-2xl px-5 py-3">
+    <section aria-labelledby="results" className="results-area mt-8">
+      <div className="glass rise flex flex-wrap items-baseline justify-between gap-2 rounded-2xl px-5 py-3">
         <h2 id="results" className="font-display text-2xl font-semibold">
           {res.total === 0 ? t.none : t.count(res.total)}
         </h2>
@@ -91,8 +92,8 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
         </p>
       ) : (
         <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {shown.map((hit) => (
-            <li key={hit.recipe.id} className="flex">
+          {shown.map((hit, i) => (
+            <li key={hit.recipe.id} className="rise flex" style={{ "--i": Math.min(i % PAGE, 8) } as CSSProperties}>
               <RecipeCard hit={hit} ingredients={ingredients} pantry={pantry} query={query} lang={lang} />
             </li>
           ))}
@@ -104,7 +105,7 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
           <Link
             href={`/${lang}${toQuery({ ...state, n: state.n + PAGE })}`}
             scroll={false}
-            className="rounded-full border border-line bg-surface px-6 py-2.5 text-sm font-semibold shadow-sm transition hover:border-brand hover:text-brand"
+            className="press rounded-full border border-line bg-surface px-6 py-2.5 text-sm font-semibold shadow-sm transition hover:border-brand hover:text-brand"
           >
             {t.more(res.total - shown.length)}
           </Link>

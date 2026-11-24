@@ -8,7 +8,7 @@ import { useDict, useLocale } from "@/components/locale";
 import { LOCALE_COOKIE } from "@/lib/negotiate";
 
 const CLASS =
-  "inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1.5 sm:px-3 text-sm font-medium text-muted transition hover:border-brand hover:text-ink";
+  "press inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1.5 sm:px-3 text-sm font-medium text-muted transition hover:border-brand hover:text-ink";
 
 const remember = (lang: string) => {
   document.cookie = `${LOCALE_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;

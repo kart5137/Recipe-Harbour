@@ -18,23 +18,25 @@ export function Backdrop() {
   useEffect(() => {
     const el = scrim.current;
     if (!el) return;
-    const hero = document.querySelector("[data-photo-hero]");
+    // Next keeps pages you left in the document, hidden, for a quick Back; only a shown one counts.
+    const hero = [...document.querySelectorAll("[data-photo-hero]")].some((e) => e.getClientRects().length > 0);
     if (!hero) {
-      el.style.removeProperty("opacity");
+      el.style.opacity = "1";
       return;
     }
+    const page = document.body; // the page scrolls inside <body>, see globals.css
     let frame = 0;
     const update = () => {
       frame = 0;
-      el.style.opacity = (0.12 + 0.38 * Math.min(1, scrollY / 420)).toFixed(3);
+      el.style.opacity = (0.12 + 0.38 * Math.min(1, page.scrollTop / 420)).toFixed(3);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
     update();
-    addEventListener("scroll", schedule, { passive: true });
+    page.addEventListener("scroll", schedule, { passive: true });
     return () => {
-      removeEventListener("scroll", schedule);
+      page.removeEventListener("scroll", schedule);
       cancelAnimationFrame(frame);
     };
   }, [pathname]);

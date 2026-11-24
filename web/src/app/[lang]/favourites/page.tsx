@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FavouritesPage() {
   const t = dict(await getLocale()).favourites;
   return (
-    <main className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:px-6">
+    <main className="rise mx-auto max-w-6xl px-4 pt-10 pb-6 sm:px-6">
       <h1 className="font-display text-3xl font-bold sm:text-4xl">{t.title}</h1>
       <p className="mt-3 max-w-xl text-muted">{t.intro}</p>
       <div className="mt-8">

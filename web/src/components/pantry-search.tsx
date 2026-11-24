@@ -26,6 +26,11 @@ export function PantrySearch({ state, entries }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
+  useEffect(() => {
+    // Dims the results while they update (`.results-area` in globals.css).
+    document.body.toggleAttribute("data-searching", pending);
+    return () => document.body.removeAttribute("data-searching");
+  }, [pending]);
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);

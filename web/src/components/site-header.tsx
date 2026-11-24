@@ -20,7 +20,7 @@ export function SiteHeader({ lang }: { lang: Locale }) {
         <nav className="flex shrink-0 items-center gap-2">
           <Link
             href={`/${lang}/favourites`}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-ink"
+            className="press inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-ink"
           >
             <Heart className="size-4" aria-hidden />
             <span className="max-sm:sr-only">{t.nav.favourites}</span>

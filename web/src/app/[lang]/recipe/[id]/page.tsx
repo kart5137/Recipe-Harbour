@@ -60,7 +60,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
   const source = t.recipe.source[r.lang];
 
   return (
-    <article className="mt-4">
+    <article className="rise mt-4">
       <header className={`overflow-hidden rounded-3xl ${fam.tint}`}>
         <div className="px-5 py-7 sm:px-8 sm:py-10">
           <div className="flex flex-wrap items-center justify-between gap-3">

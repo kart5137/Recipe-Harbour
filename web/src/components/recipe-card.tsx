@@ -24,7 +24,7 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
   const ready = pantry && !hit.missing.length && !hit.missingOther;
 
   return (
-    <article className="group relative flex w-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="press-card group relative flex w-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className={`flex items-center justify-between gap-2 py-2 pr-2 pl-4 ${fam.tint}`}>
         <span className={`inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase ${fam.ink}`}>
           <Icon className="size-5" aria-hidden />
