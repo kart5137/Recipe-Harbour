@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Clock, Leaf, ShoppingBasket } from "lucide-react";
+import { ArrowRight, Check, Clock, Drumstick, Leaf, ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 
 import { FavouriteButton } from "@/components/favourite-button";
@@ -17,7 +17,7 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
   const fam = family(r.family);
   const Icon = fam.icon;
   const time = formatMinutes(r.min, lang);
-  const diet = r.diet === "vegan" || r.diet === "vegetarian" ? t.diet[r.diet] : null;
+  const diet = r.diet === "vegan" || r.diet === "vegetarian" ? t.diet[r.diet] : r.diet === "none" ? t.diet.nonveg : null;
   const missing = hit.missing.map((i) => label(ingredients[i].id, lang));
   const shownMissing = missing.slice(0, 3);
   const moreMissing = missing.length - shownMissing.length + hit.missingOther;
@@ -62,8 +62,8 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
               </span>
             )}
             {diet && (
-              <span className="inline-flex items-center gap-1 font-medium text-have">
-                <Leaf className="size-3.5" aria-hidden />
+              <span className={`inline-flex items-center gap-1 font-medium ${r.diet === "none" ? "text-miss" : "text-have"}`}>
+                {r.diet === "none" ? <Drumstick className="size-3.5" aria-hidden /> : <Leaf className="size-3.5" aria-hidden />}
                 {diet}
               </span>
             )}

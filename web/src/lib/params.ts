@@ -2,7 +2,7 @@
  * Search state <-> URL, shared by server and client:
  * ?have=onion,garlic&q=soup&lang=de&staples=0&type=soup&time=30&diet=vegetarian&ready=1&n=48
  */
-export type Diet = "" | "vegetarian" | "vegan";
+export type Diet = "" | "vegetarian" | "vegan" | "nonveg";
 
 export type SearchState = {
   have: string[];
@@ -44,7 +44,7 @@ export function parseState(sp: Raw): SearchState {
     staples: first(sp.staples) !== "0",
     type: (FAMILY_KEYS as readonly string[]).includes(type) ? type : "",
     time: (TIME_OPTIONS as readonly number[]).includes(time) ? time : 0,
-    diet: diet === "vegetarian" || diet === "vegan" ? diet : "",
+    diet: diet === "vegetarian" || diet === "vegan" || diet === "nonveg" ? diet : "",
     ready: first(sp.ready) === "1",
     n: Number.isFinite(n) && n > 0 ? Math.min(n, MAX_N) : PAGE,
   };

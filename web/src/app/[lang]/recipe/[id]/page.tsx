@@ -1,4 +1,4 @@
-import { Clock, Gauge, Globe2, Languages, Leaf, Users } from "lucide-react";
+import { Clock, Drumstick, Gauge, Globe2, Languages, Leaf, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -101,7 +101,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
             )}
             {diet && (
               <Fact
-                icon={<Leaf className="size-4" />}
+                icon={r.diet === "none" ? <Drumstick className="size-4" /> : <Leaf className="size-4" />}
                 term={t.recipe.diet}
                 value={`${diet}${r.diet_source === "inferred" ? t.diet.fromIngredients : ""}`}
               />

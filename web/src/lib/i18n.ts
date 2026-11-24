@@ -69,6 +69,7 @@ const en = {
     anyDiet: "Any diet",
     vegetarian: "Vegetarian",
     vegan: "Vegan",
+    nonveg: "Non-veg",
     ready: "Only what I can make now",
     timeNote: "Recipes without a stated time are hidden while a time filter is on.",
     reset: "Reset filters",
@@ -98,7 +99,7 @@ const en = {
     others: (n: number) => `${n} other ingredient${n > 1 ? "s" : ""}`,
     view: "View recipe",
   },
-  diet: { vegan: "Vegan", vegetarian: "Vegetarian", none: "Contains meat or fish", fromIngredients: " (from the ingredients)" },
+  diet: { vegan: "Vegan", vegetarian: "Vegetarian", none: "Non-veg: contains meat or fish", nonveg: "Non-veg", fromIngredients: " (from the ingredients)" },
   recipe: {
     time: "Time",
     serves: "Serves",
@@ -189,7 +190,6 @@ const en = {
     noneRight: "If none is right, type the ingredient in the search box.",
     unknown: "The camera can't recognise this yet. Type the ingredient in the search box, or try a closer photo of one item.",
     addedChip: (name: string) => `${name} added`,
-    footer: "Photos stay on your device. Works best with one item, close up",
   },
 };
 
@@ -252,6 +252,7 @@ const de: Dict = {
     anyDiet: "Alles",
     vegetarian: "Vegetarisch",
     vegan: "Vegan",
+    nonveg: "Nicht vegetarisch",
     ready: "Nur was ich jetzt kochen kann",
     timeNote: "Rezepte ohne Zeitangabe werden ausgeblendet, solange ein Zeitfilter aktiv ist.",
     reset: "Filter zurücksetzen",
@@ -281,7 +282,7 @@ const de: Dict = {
     others: (n: number) => `${n} ${n > 1 ? "weitere Zutaten" : "weitere Zutat"}`,
     view: "Zum Rezept",
   },
-  diet: { vegan: "Vegan", vegetarian: "Vegetarisch", none: "Mit Fleisch oder Fisch", fromIngredients: " (aus den Zutaten ermittelt)" },
+  diet: { vegan: "Vegan", vegetarian: "Vegetarisch", none: "Nicht vegetarisch: mit Fleisch oder Fisch", nonveg: "Nicht vegetarisch", fromIngredients: " (aus den Zutaten ermittelt)" },
   recipe: {
     time: "Zeit",
     serves: "Portionen",
@@ -372,7 +373,6 @@ const de: Dict = {
     noneRight: "Wenn nichts passt, gib die Zutat im Suchfeld ein.",
     unknown: "Das kann die Kamera noch nicht erkennen. Gib die Zutat im Suchfeld ein oder versuch ein näheres Foto von einem Teil.",
     addedChip: (name: string) => `${name} hinzugefügt`,
-    footer: "Fotos bleiben auf deinem Gerät. Funktioniert am besten mit einem Teil, nah fotografiert",
   },
 };
 

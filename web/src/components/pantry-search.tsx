@@ -2,7 +2,7 @@
 
 import { Camera, ChevronDown, LoaderCircle, Plus, ScanBarcode, Search, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useMemo, useOptimistic, useRef, useState, useTransition } from "react";
 
 import { useDict, useLocale } from "@/components/locale";
 import { PhotoDialog } from "@/components/photo-dialog";
@@ -20,12 +20,15 @@ type Props = { state: SearchState; entries: SuggestEntry[] };
  * recipe-name box, recipe language and the "assume staples" switch. Everything lives in
  * the URL, so results are rendered on the server and every search can be shared.
  */
-export function PantrySearch({ state, entries }: Props) {
+export function PantrySearch({ state: server, entries }: Props) {
   const lang = useLocale();
   const t = useDict();
   const router = useRouter();
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
+  // The panel shows each change at once (removing a chip, switching a filter); the results follow
+  // when the server has them, and the URL catches up with them.
+  const [state, show] = useOptimistic(server);
   useEffect(() => {
     // Dims the results while they update (`.results-area` in globals.css).
     document.body.toggleAttribute("data-searching", pending);
@@ -44,7 +47,10 @@ export function PantrySearch({ state, entries }: Props) {
 
   const go = (next: Partial<SearchState>) => {
     const merged = { ...state, n: undefined, ...next };
-    startTransition(() => router.replace(`${pathname}${toQuery(merged)}`, { scroll: false }));
+    startTransition(() => {
+      show({ ...merged, n: state.n });
+      router.replace(`${pathname}${toQuery(merged)}`, { scroll: false });
+    });
   };
 
   // Fetch the photo recogniser in the background, so the Photo button opens ready.
@@ -285,7 +291,13 @@ export function PantrySearch({ state, entries }: Props) {
         </div>
       </div>
 
-      {filtersOpen && <Filters id={`${listId}-filters`} state={state} go={go} />}
+      {/* Always mounted, so it can glide open: the row grows from 0 to its height (moving everything
+          below down with it) while the filters fade and slide out from under the row above. */}
+      <div className="drawer" data-open={filtersOpen || undefined} inert={!filtersOpen}>
+        <div className="drawer-inner">
+          <Filters id={`${listId}-filters`} state={state} go={go} />
+        </div>
+      </div>
     </section>
   );
 }
@@ -323,6 +335,7 @@ function Filters({ id, state, go }: { id: string; state: SearchState; go: (next:
           <option value="">{t.anyDiet}</option>
           <option value="vegetarian">{t.vegetarian}</option>
           <option value="vegan">{t.vegan}</option>
+          <option value="nonveg">{t.nonveg}</option>
         </select>
         {state.have.length > 0 && (
           <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface px-3 text-sm font-medium has-checked:border-have has-checked:bg-have-soft has-checked:text-have">

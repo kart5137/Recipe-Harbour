@@ -122,7 +122,7 @@ export type Query = {
   staples: boolean; // assume salt, pepper, oil, sugar, water
   type?: string; // dish family, "" = any
   time?: number; // maximum minutes (recipes without a stated time are excluded), 0 = any
-  diet?: "" | "vegetarian" | "vegan"; // vegetarian includes vegan
+  diet?: "" | "vegetarian" | "vegan" | "nonveg"; // vegetarian includes vegan; nonveg = meat or fish
   ready?: boolean; // only recipes with nothing missing (needs ingredients)
   browse?: boolean; // with no ingredients and no name: list every recipe that passes the filters
 };
@@ -134,6 +134,7 @@ export function passesFilters(r: Recipe, q: Pick<Query, "lang" | "type" | "time"
   if (q.time && !(r.min && r.min[0] <= q.time)) return false;
   if (q.diet === "vegan" && r.diet !== "vegan") return false;
   if (q.diet === "vegetarian" && r.diet !== "vegetarian" && r.diet !== "vegan") return false;
+  if (q.diet === "nonveg" && r.diet !== "none") return false;
   return true;
 }
 

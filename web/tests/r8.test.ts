@@ -45,9 +45,10 @@ describe("passesFilters", () => {
     assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, time: 30 })).map((r) => r.id), ["a", "d"]);
     assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, time: 120 })).map((r) => r.id), ["a", "b", "d"]);
   });
-  it("vegetarian includes vegan; vegan is vegan only; unknown diet never passes", () => {
+  it("vegetarian includes vegan; vegan is vegan only; non-veg is meat or fish; unknown diet never passes", () => {
     assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, diet: "vegetarian" })).map((r) => r.id), ["a", "d"]);
     assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, diet: "vegan" })).map((r) => r.id), ["a"]);
+    assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, diet: "nonveg" })).map((r) => r.id), ["b"]);
   });
   it("filters by recipe language", () => assert.deepEqual([a, b, c, d].filter((r) => passesFilters(r, { ...none, lang: "de" })).map((r) => r.id), ["d"]));
 });

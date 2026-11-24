@@ -230,6 +230,38 @@ button:not(:disabled):active,
   scale: 0.985;
 }
 
+/* The "More filters" drawer: the row grows from nothing to its full height (sliding what is below
+   down with it) while the filters fade in and slide out from under the row above. */
+.drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.drawer[data-open] {
+  grid-template-rows: 1fr;
+}
+
+.drawer-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drawer-inner > * {
+  opacity: 0;
+  transform: translateY(-14px) scale(0.98);
+  transform-origin: top center;
+  transition:
+    opacity 0.3s ease,
+    transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.drawer[data-open] .drawer-inner > * {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.06s;
+}
+
 .results-area {
   transition: opacity 0.25s ease;
 }
@@ -241,6 +273,11 @@ body[data-searching] .results-area {
 @media (prefers-reduced-motion: reduce) {
   .rise {
     animation: none;
+  }
+
+  .drawer,
+  .drawer-inner > * {
+    transition: none;
   }
 
   button:not(:disabled):active,

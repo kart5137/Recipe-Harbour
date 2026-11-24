@@ -4,7 +4,7 @@ import { Camera, CameraOff, Check, ImageUp, LoaderCircle, Plus, RotateCcw, Spark
 import { useEffect, useId, useRef, useState } from "react";
 
 import { type Classifier, loadClassifier } from "@/lib/classifier";
-import { type Guess, type Interpretation, interpret, offeredIds } from "@/lib/classify-result";
+import { type Guess, type Interpretation, interpret } from "@/lib/classify-result";
 import { useDict, useLocale } from "@/components/locale";
 import type { Dict, Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
@@ -37,7 +37,6 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
   const clfRef = useRef<Classifier | null>(null);
   const [phase, setPhase] = useState<Phase>({ kind: "ready" });
   const [camera, setCamera] = useState<"off" | "starting" | "on" | string>("starting");
-  const [offered, setOffered] = useState<string[]>([]);
   const [perf, setPerf] = useState<{ backend: string; ms: number } | null>(null); // diagnostics only
   const titleId = useId();
 
@@ -71,7 +70,6 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
       .then((c) => {
         if (cancelled) return;
         clfRef.current = c;
-        setOffered(offeredIds(c.labels));
       })
       .catch(() => {}); // reported if a photo is taken before it works
     return () => {
@@ -281,10 +279,6 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
         )}
       </div>
 
-      <p className="border-t border-line px-5 py-3 text-xs leading-relaxed text-muted">
-        {t.photo.footer}
-        {offered.length > 0 && <>: {offered.map((id) => seen(id, lang)).join(", ")}</>}.
-      </p>
     </dialog>
   );
 }
