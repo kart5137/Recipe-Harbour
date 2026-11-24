@@ -86,36 +86,55 @@ body {
   background: var(--brand-soft);
 }
 
-/* The background photo stays put while the page scrolls (components/backdrop.tsx), under a
-   frosted wash of the page colour. */
+/* The background photo stays put while the page scrolls (components/backdrop.tsx). Nothing here
+   is painted per frame: the layer is sized to the *largest* viewport (100lvh), so a phone's address
+   bar sliding in and out never resizes or re-crops it, and it sits on its own GPU layer. The frosted
+   wash is a pre-blurred copy of the photo plus the page colour, faded in by opacity alone. */
 .backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-.backdrop-photo {
+.backdrop-photo,
+.scrim,
+.scrim img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.backdrop-photo,
+.scrim img {
   object-fit: cover;
 }
 
-.scrim {
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.1);
-  backdrop-filter: blur(18px) saturate(1.1);
+/* Scaled up a touch so the blurred copy has no soft edge at the screen border. */
+.scrim img {
+  transform: scale(1.06);
 }
 
-/* On the home page the photo shows clearly at the top and the wash only half closes in as you
-   scroll: everything below the panel sits on its own glass card. */
+.scrim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+}
+
+/* On the home page the photo shows clearly at the top and the wash half closes in as you scroll
+   (opacity set from 0.12 to 0.5 by the component); everything below sits on its own glass card. */
 body:has([data-photo-hero]) .scrim {
-  opacity: calc(0.12 + 0.38 * var(--hero-scroll, 0));
+  opacity: 0.12;
+  will-change: opacity;
 }
 
 /* Apple-style glass: strong blur and saturation, a light sheen from the top left, a bright
@@ -152,4 +171,15 @@ body:has([data-photo-hero]) .scrim {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.22),
     0 24px 60px -22px rgb(0 0 0 / 0.55);
+}
+
+/* Phones re-blur what is behind each glass panel on every scroll frame; a smaller radius keeps
+   scrolling at full frame rate and looks the same at that size. */
+@media (max-width: 640px) {
+  .glass,
+  .glass-bar,
+  .glass-dark {
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    backdrop-filter: blur(16px) saturate(1.6);
+  }
 }
