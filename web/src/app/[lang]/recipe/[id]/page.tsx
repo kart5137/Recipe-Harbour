@@ -1,4 +1,4 @@
-import { Clock, Gauge, Globe2, Leaf, Users } from "lucide-react";
+import { Clock, Gauge, Globe2, Languages, Leaf, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -11,7 +11,7 @@ import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
 import { dict, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
-import type { RecipeDetail } from "@/lib/recipe";
+import { localize, type RecipeDetail } from "@/lib/recipe";
 
 export function generateStaticParams() {
   // A sample is prerendered at build time; every other recipe renders on first visit and is then cached.
@@ -20,8 +20,10 @@ export function generateStaticParams() {
 
 export async function generateMetadata(props: PageProps<"/[lang]/recipe/[id]">): Promise<Metadata> {
   const { id } = await props.params;
-  const t = dict(await getLocale());
-  const r = getRecipe(id);
+  const lang = await getLocale();
+  const t = dict(lang);
+  const raw = getRecipe(id);
+  const r = raw && localize(raw, lang);
   return r
     ? {
         title: `${r.title} · Recipe Harbour`,
@@ -47,8 +49,9 @@ export default async function RecipePage(props: PageProps<"/[lang]/recipe/[id]">
 
 async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "params"> & { lang: Locale }) {
   const { id } = await params;
-  const r = getRecipe(id);
-  if (!r) notFound();
+  const raw = getRecipe(id);
+  if (!raw) notFound();
+  const r = localize(raw, lang);
   const t = dict(lang);
   const diet = r.diet === "vegan" || r.diet === "vegetarian" || r.diet === "none" ? t.diet[r.diet] : null;
   const fam = family(r.family);
@@ -70,22 +73,31 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
             </p>
             <FavouriteButton fav={{ id: r.id, title: r.title, lang: r.lang, family: r.family, min: r.minutes }} />
           </div>
-          <h1 lang={r.lang} className="mt-3 max-w-3xl font-display text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
+          <h1 lang={r.textLang} className="mt-3 max-w-3xl font-display text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
             {r.title}
           </h1>
+          {r.translated && (
+            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface/80 px-3 py-1 text-xs font-medium text-muted">
+              <Languages className="size-3.5" aria-hidden />
+              {t.recipe.machineTranslated[r.lang]} ·{" "}
+              <a href={r.url} hrefLang={r.lang} className="underline decoration-line underline-offset-2 hover:text-ink">
+                {t.recipe.original}
+              </a>
+            </p>
+          )}
           {r.description && (
-            <p lang={r.lang} className="mt-4 max-w-3xl text-base leading-relaxed text-ink/80 sm:text-lg">
+            <p lang={r.textLang} className="mt-4 max-w-3xl text-base leading-relaxed text-ink/80 sm:text-lg">
               {r.description}
             </p>
           )}
           <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm">
             {time && <Fact icon={<Clock className="size-4" />} term={t.recipe.time} value={time} />}
             {r.servings_text && (
-              <Fact icon={<Users className="size-4" />} term={t.recipe.serves} value={r.servings_text} lang={r.lang} />
+              <Fact icon={<Users className="size-4" />} term={t.recipe.serves} value={r.servings_text} lang={r.textLang} />
             )}
             {r.difficulty && <Fact icon={<Gauge className="size-4" />} term={t.recipe.difficulty} value={t.recipe.difficultyValue(r.difficulty)} />}
             {(r.cuisine || r.category) && (
-              <Fact icon={<Globe2 className="size-4" />} term={t.recipe.type} value={[r.cuisine, r.category].filter(Boolean).join(" · ")} lang={r.lang} />
+              <Fact icon={<Globe2 className="size-4" />} term={t.recipe.type} value={[r.cuisine, r.category].filter(Boolean).join(" · ")} lang={r.textLang} />
             )}
             {diet && (
               <Fact
@@ -103,9 +115,9 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
           {/* The panel reads the URL (useSearchParams), so in a prerendered page the browser renders
               everything up to the nearest Suspense boundary. Its own boundary keeps that to the panel;
               the fallback is the plain ingredient list. */}
-          <Suspense fallback={<StaticIngredients groups={r.groups} lang={r.lang} heading={t.recipe.ingredients} />}>
+          <Suspense fallback={<StaticIngredients groups={r.groups} lang={r.textLang} heading={t.recipe.ingredients} />}>
             <IngredientsPanel
-              recipe={{ title: r.title, groups: r.groups, lang: r.lang }}
+              recipe={{ title: r.title, groups: r.groups, lang: r.textLang }}
               ingredients={getIngredientsLite()}
             />
           </Suspense>
@@ -116,7 +128,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
             <h2 id="method" className="font-display text-2xl font-semibold">
               {t.recipe.method}
             </h2>
-            <ol className="mt-4 space-y-4" lang={r.lang}>
+            <ol className="mt-4 space-y-4" lang={r.textLang}>
               {r.steps.map((s, i) => (
                 <li key={i} className="flex gap-4">
                   <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-bold text-brand-ink">
@@ -133,7 +145,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
               <h2 id="equipment" className="font-display text-xl font-semibold">
                 {t.recipe.equipment}
               </h2>
-              <ul className="mt-3 flex flex-wrap gap-2" lang={r.lang}>
+              <ul className="mt-3 flex flex-wrap gap-2" lang={r.textLang}>
                 {r.equipment.map((e, i) => (
                   <li key={i} className="rounded-full border border-line bg-surface px-3 py-1 text-sm">
                     {e}
@@ -148,7 +160,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
               <h2 id="notes" className="font-display text-xl font-semibold">
                 {t.recipe.notes}
               </h2>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-muted" lang={r.lang}>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-muted" lang={r.textLang}>
                 {r.notes.map((n, i) => (
                   <li key={i}>{n}</li>
                 ))}

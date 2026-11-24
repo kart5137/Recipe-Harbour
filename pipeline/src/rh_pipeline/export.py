@@ -2,14 +2,16 @@
 
 web/src/data/search-index.json   what search and the result cards need:
     ingredients  [{id, group, staple, parents: [index], en: [names], de: [names]}]
-    recipes      [{id, lang, title, family, desc, min, diff, diet, req, opt, unk, lines}]
+    recipes      [{id, lang, title, family, desc, min, diff, diet, req, opt, unk, lines, tt, td}]
+        tt, td  title and short description machine-translated into the other language
         req   required items, each a list of ingredient indexes; more than one only for
               alternatives ("margarine or butter"), where any one satisfies it
         opt   ingredients only used in optional lines
         unk   required lines that were not understood (shown as "other ingredients")
 
 web/src/data/recipes/shard-NN.json   full recipe pages (description, ingredients, steps,
-    attribution), split into 32 shards so a page loads ~300 KB instead of the whole set.
+    attribution), split into 32 shards so a page loads only part of the set. "tr" holds the
+    page texts machine-translated into the other language (data/translations.jsonl, see mt.py).
 """
 
 from __future__ import annotations
@@ -22,6 +24,8 @@ from pathlib import Path
 
 from .config import OUT_DIR, ROOT
 from .ingredients import Vocabulary, norm, vocab
+from .mt import Translator
+from .mt import load as load_translations
 
 log = logging.getLogger(__name__)
 WEB_DATA = ROOT / "web" / "src" / "data"
@@ -103,7 +107,7 @@ def shard_of(recipe_id: str) -> int:
     return _fnv1a(recipe_id) % SHARDS
 
 
-def _detail(r: dict, family: str) -> dict:
+def _detail(r: dict, family: str, tr: dict | None) -> dict:
     """Everything the recipe page shows. Quantities stay inside the line text."""
     return {
         "id": r["id"],
@@ -137,12 +141,19 @@ def _detail(r: dict, family: str) -> dict:
         "history_url": r.get("history_url", ""),
         "revision_id": r.get("revision_id", None),
         "revision_timestamp": r.get("revision_timestamp", ""),
+        **({"tr": tr} if tr else {}),
     }
 
 
-def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DATA) -> dict:
+def export(
+    recipes_path: Path = OUT_DIR / "recipes.json",
+    out_dir: Path = WEB_DATA,
+    translations_path: Path = OUT_DIR / "translations.jsonl",
+) -> dict:
     v = vocab()
     recipes = json.loads(recipes_path.read_text(encoding="utf-8"))
+    rows = load_translations(translations_path)
+    translator = Translator(rows) if rows else None
     ids = list(v.items)
     pos = {iid: k for k, iid in enumerate(ids)}
     non_food = {i for i in ids if "non_food" in v.flags(i)}
@@ -184,7 +195,8 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
                     unk += 1
         fam = family_of(r, v)
         families[fam] = families.get(fam, 0) + 1
-        shards[shard_of(r["id"])][r["id"]] = _detail(r, fam)
+        tr = translator.recipe(r) if translator else None
+        shards[shard_of(r["id"])][r["id"]] = _detail(r, fam, tr)
         out_recipes.append({
             "id": r["id"],
             "lang": r["lang"],
@@ -198,6 +210,7 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
             "opt": sorted(opt),
             "unk": unk,
             "url": r["url"],
+            **({"tt": tr["title"], "td": _short(tr["description"])} if tr else {}),
         })
 
     index = {
@@ -218,6 +231,9 @@ def export(recipes_path: Path = OUT_DIR / "recipes.json", out_dir: Path = WEB_DA
     log.info("search index: %d recipes, %d ingredients, %.1f MB -> %s", len(out_recipes), len(ingredients),
              path.stat().st_size / 1e6, path)
     log.info("families: %s", dict(sorted(families.items(), key=lambda kv: -kv[1])))
+    if translator:
+        log.info("translations: %d sentences, %d not translated yet (shown in the original)",
+                 len(rows), translator.missing)
     detail_dir = out_dir / "recipes"
     detail_dir.mkdir(parents=True, exist_ok=True)
     for old in detail_dir.glob("shard-*.json"):

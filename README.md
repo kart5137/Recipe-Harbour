@@ -6,7 +6,9 @@ recipes you can make, from 4,389 open cookbook recipes in English and German.
 **Live:** https://recipe-harbour.vercel.app
 
 The interface is in English and German (`/en`, `/de`), and ingredients can be typed in either
-language: "Zwiebel" and "onion" are the same thing.
+language: "Zwiebel" and "onion" are the same thing. Every recipe can be read in both languages:
+English recipes are machine-translated into German and German ones into English (marked as such,
+with a link to the original).
 
 ## What it does
 
@@ -49,6 +51,9 @@ docs/       spec, data profile, model card
 
 - **Data pipeline:** the MediaWiki API, `mwparserfromhell`, and a hand-checked bilingual ingredient
   vocabulary. Each recipe keeps its source URL, revision and author history link.
+- **Translation:** Facebook's WMT19 English-German models, run once over every sentence
+  (`model/translate_recipes.py`, results in `data/translations.jsonl`); the export adds the
+  translated texts to the recipe data.
 - **Search:** a compact index (about 1.7 MB) loaded once per server. Recipe pages read from 32 shards.
 - **Photo model:** the image half of Google SigLIP 2 (4-bit weights, 66.5 MB) plus an ingredient head
   tuned on real Open Images photos, run with ONNX Runtime Web. It is served from
@@ -91,11 +96,13 @@ files instead of the Hugging Face copy, put `NEXT_PUBLIC_MODEL_BASE=/model/` in 
 - **Training photos:** [Open Images V7](https://storage.googleapis.com/openimages/web/index.html)
   (images CC BY 2.0, every photographer listed in [model/OPEN_IMAGES_CREDITS.csv](model/OPEN_IMAGES_CREDITS.csv))
   and [Fruits-360](https://github.com/fruits-360) by Mihai Oltean (CC BY-SA 4.0).
+- **Translation models:** [WMT19 en-de and de-en](https://huggingface.co/facebook/wmt19-en-de) by
+  Facebook AI (Apache 2.0).
 - **Image-text model:** [SigLIP 2](https://huggingface.co/google/siglip2-base-patch32-256) by Google
   (Apache 2.0), run with [ONNX Runtime Web](https://onnxruntime.ai) (MIT).
 
 ## Licences
 
 - **Code:** MIT, see [LICENSE](LICENSE).
-- **Recipe data** (`data/`, `web/src/data/`): CC BY-SA 4.0.
+- **Recipe data** (`data/`, `web/src/data/`), including the machine translations: CC BY-SA 4.0.
 - **Photo model** (`web/public/model/`, Hugging Face): image encoder Apache 2.0 (SigLIP 2, quantised), ingredient head CC BY-SA 4.0; see [its licence file](web/public/model/LICENSE.txt).

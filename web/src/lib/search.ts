@@ -33,6 +33,9 @@ export type Recipe = {
   req: number[][];
   opt: number[];
   unk: number;
+  /** Title and short description machine-translated into the other language. */
+  tt?: string;
+  td?: string;
   url: string;
 };
 
@@ -53,7 +56,8 @@ export type Relations = {
 
 export type Model = Relations & {
   data: IndexData;
-  titleTokens: string[][];
+  /** Per recipe: the tokens of its title and, if translated, of the translated title. */
+  titleTokens: string[][][];
 };
 
 export function buildRelations(ingredients: Ingredient[]): Relations {
@@ -74,7 +78,8 @@ export function buildRelations(ingredients: Ingredient[]): Relations {
 }
 
 export function buildModel(data: IndexData): Model {
-  const titleTokens = data.recipes.map((r) => tokens(r.title));
+  // Name search finds a recipe by its own title or by its translated one.
+  const titleTokens = data.recipes.map((r) => (r.tt ? [tokens(r.title), tokens(r.tt)] : [tokens(r.title)]));
   return { ...buildRelations(data.ingredients), data, titleTokens };
 }
 
@@ -151,13 +156,20 @@ export type Result = {
 
 function titleMatch(m: Model, i: number, qTokens: string[]): number {
   if (!qTokens.length) return 1;
-  const tt = m.titleTokens[i];
-  if (!qTokens.every((q) => tt.some((t) => t.startsWith(q)))) return 0;
-  const title = tt.join(" ");
   const q = qTokens.join(" ");
-  if (title === q) return 3;
-  if (title.startsWith(q)) return 2;
-  return 1;
+  let best = 0;
+  for (const tt of m.titleTokens[i]) {
+    if (!qTokens.every((x) => tt.some((t) => t.startsWith(x)))) continue;
+    const title = tt.join(" ");
+    best = Math.max(best, title === q ? 3 : title.startsWith(q) ? 2 : 1);
+  }
+  return best;
+}
+
+/** A recipe's title and description in the reader's language, and the language they are in. */
+export function shown(r: Recipe, lang: "en" | "de"): { title: string; desc: string; lang: "en" | "de" } {
+  if (lang !== r.lang && r.tt) return { title: r.tt, desc: r.td ?? "", lang };
+  return { title: r.title, desc: r.desc, lang: r.lang };
 }
 
 export function search(m: Model, query: Query): Result {

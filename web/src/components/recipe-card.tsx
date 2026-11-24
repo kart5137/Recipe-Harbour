@@ -6,13 +6,14 @@ import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
 import { dict, type Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
-import type { Hit, Ingredient } from "@/lib/search";
+import { type Hit, type Ingredient, shown } from "@/lib/search";
 
 type Props = { hit: Hit; ingredients: Ingredient[]; pantry: boolean; query: string; lang: Locale };
 
 export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
   const t = dict(lang);
   const r = hit.recipe;
+  const view = shown(r, lang);
   const fam = family(r.family);
   const Icon = fam.icon;
   const time = formatMinutes(r.min, lang);
@@ -33,14 +34,14 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
           <span className="rounded-md bg-surface/80 px-1.5 py-0.5 text-[11px] font-bold tracking-wider text-muted" title={t.card.recipeLang[r.lang]}>
             {r.lang.toUpperCase()}
           </span>
-          <FavouriteButton fav={{ id: r.id, title: r.title, lang: r.lang, family: r.family, min: r.min }} compact />
+          <FavouriteButton fav={{ id: r.id, title: view.title, lang: r.lang, family: r.family, min: r.min }} compact />
         </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <h3 className="font-display text-lg leading-snug font-semibold">
-          <Link href={`/${lang}/recipe/${r.id}${query}`} lang={r.lang} className="after:absolute after:inset-0 focus-visible:outline-none">
-            {r.title}
+          <Link href={`/${lang}/recipe/${r.id}${query}`} lang={view.lang} className="after:absolute after:inset-0 focus-visible:outline-none">
+            {view.title}
           </Link>
         </h3>
 
@@ -69,9 +70,9 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
           </div>
         )}
 
-        {r.desc && (
-          <p lang={r.lang} className="line-clamp-2 text-sm text-muted">
-            {r.desc}
+        {view.desc && (
+          <p lang={view.lang} className="line-clamp-2 text-sm text-muted">
+            {view.desc}
           </p>
         )}
 
