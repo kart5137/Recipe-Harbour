@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { RecipeCard } from "@/components/recipe-card";
+import { ExampleChip, MoreLink } from "@/components/search-links";
 import { getModel } from "@/lib/data";
 import { dict, type Locale } from "@/lib/i18n";
 import { label } from "@/lib/labels";
@@ -33,13 +33,13 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
         <ul className="mt-3 flex flex-wrap gap-2">
           {EXAMPLES.map((have, i) => (
             <li key={have.join()}>
-              <Link
+              <ExampleChip
                 href={`/${lang}${toQuery({ ...state, have })}`}
-                scroll={false}
+                have={have}
                 className="press inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium shadow-sm transition hover:border-brand hover:text-brand"
               >
                 {t.examples[i]}
-              </Link>
+              </ExampleChip>
             </li>
           ))}
         </ul>
@@ -102,13 +102,12 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
 
       {res.total > shown.length && (
         <div className="mt-8 flex justify-center">
-          <Link
+          <MoreLink
             href={`/${lang}${toQuery({ ...state, n: state.n + PAGE })}`}
-            scroll={false}
             className="press rounded-full border border-line bg-surface px-6 py-2.5 text-sm font-semibold shadow-sm transition hover:border-brand hover:text-brand"
           >
             {t.more(res.total - shown.length)}
-          </Link>
+          </MoreLink>
         </div>
       )}
     </section>

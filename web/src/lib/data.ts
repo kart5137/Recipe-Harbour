@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { type RecipeDetail, shardOf } from "./recipe.ts";
-import { buildModel, type IndexData, type Model, suggestEntries, type SuggestEntry } from "./search.ts";
+import { buildModel, type IndexData, type Model, type SuggestNames } from "./search.ts";
 
 /**
  * The search index exported by the pipeline (`rh export`). Read once per server
@@ -47,8 +47,9 @@ export function getIngredientsLite() {
   }));
 }
 
-export function getSuggestEntries(): SuggestEntry[] {
-  return suggestEntries(getModel().data);
+/** Every ingredient's English and German names, for the autocomplete (served by /api/suggest). */
+export function getSuggestNames(): SuggestNames {
+  return { ingredients: getModel().data.ingredients.map(({ id, en, de }) => ({ id, en, de })) };
 }
 
 export function getStats() {

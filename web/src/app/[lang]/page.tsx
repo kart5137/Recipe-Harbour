@@ -2,7 +2,7 @@ import { type CSSProperties, Suspense } from "react";
 
 import { PantrySearch } from "@/components/pantry-search";
 import { Results } from "@/components/results";
-import { getStats, getSuggestEntries } from "@/lib/data";
+import { getStats } from "@/lib/data";
 import { dict, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
 import { parseState } from "@/lib/params";
@@ -37,7 +37,7 @@ async function SearchArea({ searchParams, lang }: Pick<PageProps<"/[lang]">, "se
   const state = parseState(await searchParams);
   return (
     <>
-      <PantrySearch state={state} entries={getSuggestEntries()} />
+      <PantrySearch state={state} />
       <Results state={state} lang={lang} />
     </>
   );

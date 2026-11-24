@@ -232,8 +232,11 @@ export function search(m: Model, query: Query): Result {
 export type Suggestion = { id: string; name: string; lang: "en" | "de" };
 export type SuggestEntry = { id: string; names: { n: string; name: string; lang: "en" | "de" }[] };
 
-/** Flatten the vocabulary into what the ingredient box needs (sent to the browser). */
-export function suggestEntries(data: IndexData): SuggestEntry[] {
+/** Ingredient names only: what the browser downloads once for the ingredient box (/api/suggest). */
+export type SuggestNames = { ingredients: Pick<Ingredient, "id" | "en" | "de">[] };
+
+/** Flatten the vocabulary into what the ingredient box needs. */
+export function suggestEntries(data: SuggestNames): SuggestEntry[] {
   return data.ingredients.map((ing) => ({
     id: ing.id,
     names: [

@@ -2,9 +2,10 @@
 
 import { Languages } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { useDict, useLocale } from "@/components/locale";
+import { PendingDim } from "@/components/search-links";
 import { LOCALE_COOKIE } from "@/lib/negotiate";
 
 const CLASS =
@@ -23,9 +24,16 @@ export function LanguageSwitch() {
   const other = t.nav.otherLanguageCode;
   const rest = pathname.replace(new RegExp(`^/${lang}(?=/|$)`), "");
   const qs = sp.toString();
+  const router = useRouter();
+  const href = `/${other}${rest}${qs ? `?${qs}` : ""}`;
+  // Fetch the whole other-language page the moment a finger or pointer lands on the button.
+  const warm = () => router.prefetch(href);
   return (
     <Link
-      href={`/${other}${rest}${qs ? `?${qs}` : ""}`}
+      href={href}
+      onPointerEnter={warm}
+      onPointerDown={warm}
+      onFocus={warm}
       hrefLang={other}
       lang={other}
       aria-label={t.nav.switchLabel}
@@ -35,6 +43,7 @@ export function LanguageSwitch() {
       <Languages className="size-4" aria-hidden />
       <span className="max-sm:hidden">{t.nav.otherLanguage}</span>
       <span className="uppercase sm:hidden">{other}</span>
+      <PendingDim />
     </Link>
   );
 }

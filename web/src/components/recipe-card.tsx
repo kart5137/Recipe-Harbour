@@ -1,7 +1,7 @@
 import { ArrowRight, Check, Clock, Drumstick, Leaf, ShoppingBasket } from "lucide-react";
-import Link from "next/link";
 
 import { FavouriteButton } from "@/components/favourite-button";
+import { CardLink } from "@/components/search-links";
 import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
 import { dict, type Locale } from "@/lib/i18n";
@@ -40,9 +40,9 @@ export function RecipeCard({ hit, ingredients, pantry, query, lang }: Props) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <h3 className="font-display text-lg leading-snug font-semibold">
-          <Link href={`/${lang}/recipe/${r.id}${query}`} lang={view.lang} className="after:absolute after:inset-0 focus-visible:outline-none">
+          <CardLink href={`/${lang}/recipe/${r.id}${query}`} lang={view.lang} className="after:absolute after:inset-0 focus-visible:outline-none">
             {view.title}
-          </Link>
+          </CardLink>
         </h3>
 
         {(time || r.diff || diet) && (

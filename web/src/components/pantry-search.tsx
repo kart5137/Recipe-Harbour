@@ -7,20 +7,22 @@ import { useEffect, useId, useMemo, useOptimistic, useRef, useState, useTransiti
 import { useDict, useLocale } from "@/components/locale";
 import { PhotoDialog } from "@/components/photo-dialog";
 import { ScanDialog } from "@/components/scan-dialog";
+import { PICK_EVENT } from "@/components/search-links";
 import { preloadClassifier } from "@/lib/classifier";
 import { FAMILIES } from "@/lib/families";
 import { label } from "@/lib/labels";
 import { type Diet, FAMILY_KEYS, type SearchState, TIME_OPTIONS, toQuery } from "@/lib/params";
 import { suggest, type SuggestEntry } from "@/lib/search";
+import { loadSuggestEntries } from "@/lib/suggest-client";
 
-type Props = { state: SearchState; entries: SuggestEntry[] };
+type Props = { state: SearchState };
 
 /**
  * The search panel: ingredient chips with autocomplete (English or German names), a
  * recipe-name box, recipe language and the "assume staples" switch. Everything lives in
  * the URL, so results are rendered on the server and every search can be shared.
  */
-export function PantrySearch({ state: server, entries }: Props) {
+export function PantrySearch({ state: server }: Props) {
   const lang = useLocale();
   const t = useDict();
   const router = useRouter();
@@ -53,13 +55,30 @@ export function PantrySearch({ state: server, entries }: Props) {
     });
   };
 
+  // An example chip under the panel was tapped: show its ingredients at once.
+  const goRef = useRef(go);
+  useEffect(() => {
+    goRef.current = go;
+  });
+  useEffect(() => {
+    const pick = (e: Event) => goRef.current({ have: (e as CustomEvent<string[]>).detail });
+    addEventListener(PICK_EVENT, pick);
+    return () => removeEventListener(PICK_EVENT, pick);
+  }, []);
+
   // Fetch the photo recogniser in the background, so the Photo button opens ready.
   useEffect(() => preloadClassifier(), []);
+
+  // The ingredient names for the autocomplete: downloaded once and cached, not sent with every search.
+  const [entries, setEntries] = useState<SuggestEntry[]>([]);
+  useEffect(() => {
+    loadSuggestEntries().then(setEntries, () => {});
+  }, []);
 
   // Debounced recipe-name search.
   useEffect(() => {
     if (q === state.q) return;
-    const t = setTimeout(() => go({ q }), 350);
+    const t = setTimeout(() => go({ q }), 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
@@ -119,7 +138,7 @@ export function PantrySearch({ state: server, entries }: Props) {
           onClick={() => inputRef.current?.focus()}
         >
           {state.have.map((id) => (
-            <span key={id} className="inline-flex items-center gap-1 rounded-full bg-brand-soft py-1 pr-1 pl-3 text-sm font-medium text-ink">
+            <span key={id} className="pop inline-flex items-center gap-1 rounded-full bg-brand-soft py-1 pr-1 pl-3 text-sm font-medium text-ink">
               {label(id, lang)}
               <button
                 type="button"
