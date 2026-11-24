@@ -77,21 +77,47 @@ body {
   background: var(--brand-soft);
 }
 
-/* Faint hand-drawn produce and dishes behind everything, tinted by the theme. */
-body::before {
-  content: "";
+/* Food photos behind everything (components/backdrop.tsx), under a frosted wash of the page colour. */
+.backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   pointer-events: none;
-  background-color: var(--pattern);
-  opacity: 0.06;
-  -webkit-mask: url("/food-pattern.svg") 0 0 / 420px 420px repeat;
-  mask: url("/food-pattern.svg") 0 0 / 420px 420px repeat;
 }
 
-@media (prefers-color-scheme: dark) {
-  body::before {
-    opacity: 0.05;
-  }
+.backdrop img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: opacity, transform;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+/* On the home page the first photo shows clearly at the top and the wash only half closes in as
+   you scroll: everything below the panel sits on its own card or frosted bar. */
+body:has([data-photo-hero]) .scrim {
+  opacity: calc(0.12 + 0.38 * var(--hero-scroll, 0));
+}
+
+/* Frosted panels that sit on the photos. */
+.glass {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.glass-soft {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }

@@ -98,6 +98,13 @@ files instead of the Hugging Face copy, put `NEXT_PUBLIC_MODEL_BASE=/model/` in 
   and [Fruits-360](https://github.com/fruits-360) by Mihai Oltean (CC BY-SA 4.0).
 - **Translation models:** [WMT19 en-de and de-en](https://huggingface.co/facebook/wmt19-en-de) by
   Facebook AI (Apache 2.0).
+- **Background photos** (Wikimedia Commons, resized and softened for the web, in `web/public/backdrops/`):
+  [carrots](https://commons.wikimedia.org/wiki/File:Preparing_and_slicing_carrots.jpg) by W.carter (CC0),
+  [oranges](https://commons.wikimedia.org/wiki/File:Melbourne_(AU),_Queen_Victoria_Market_--_2019_--_1544.jpg)
+  by Dietmar Rabich (CC BY-SA 4.0),
+  [mushrooms](https://commons.wikimedia.org/wiki/File:Edible_fungi_in_basket_2012_G1.jpg) by George Chernilevsky
+  (public domain), [sourdough bread](https://commons.wikimedia.org/wiki/File:Home_made_sour_dough_bread.jpg) by
+  Tomascastelazo (CC BY-SA 4.0). The resized versions of the CC BY-SA photos are shared under the same licence.
 - **Image-text model:** [SigLIP 2](https://huggingface.co/google/siglip2-base-patch32-256) by Google
   (Apache 2.0), run with [ONNX Runtime Web](https://onnxruntime.ai) (MIT).
 

@@ -22,10 +22,11 @@ const en = {
     before: "Cook with what you ",
     accent: "already have",
     after: ".",
-    sub: "Type what's in your kitchen, scan a barcode or snap a photo of your veg, and find recipes you can cook today.",
+    sub: "Type it, scan it or snap a photo, and get recipes you can cook today.",
     stats: (total: number) => [`${nf("en")(total)} recipes`, "English & German", "Free, no sign-up"],
   },
   footer: {
+    photos: "Background photos from Wikimedia Commons:",
     recipesFrom: "Recipes from the",
     cookbook: "Wikibooks Cookbook",
     and: "and",
@@ -38,7 +39,7 @@ const en = {
   },
   search: {
     label: "Search",
-    whatHave: "What do you have?",
+    whatHave: "What's in your kitchen?",
     photo: "Photo",
     barcode: "Barcode",
     placeholderFirst: "Type an ingredient: onion, Zwiebel, rice…",
@@ -56,6 +57,7 @@ const en = {
     clear: "Clear search",
   },
   filters: {
+    more: "More filters",
     label: "Filters",
     type: "Dish type",
     anyType: "Any dish",
@@ -202,10 +204,11 @@ const de: Dict = {
     before: "Koch mit dem, was du ",
     accent: "schon hast",
     after: ".",
-    sub: "Tippe ein, was in deiner Küche ist, scanne einen Barcode oder fotografiere dein Gemüse und finde Rezepte, die du heute kochen kannst.",
+    sub: "Eintippen, scannen oder fotografieren – und Rezepte finden, die du heute kochen kannst.",
     stats: (total: number) => [`${nf("de")(total)} Rezepte`, "Deutsch & Englisch", "Kostenlos, ohne Anmeldung"],
   },
   footer: {
+    photos: "Hintergrundfotos von Wikimedia Commons:",
     recipesFrom: "Rezepte aus dem",
     cookbook: "Wikibooks Cookbook",
     and: "und dem",
@@ -218,7 +221,7 @@ const de: Dict = {
   },
   search: {
     label: "Suche",
-    whatHave: "Was hast du da?",
+    whatHave: "Was ist in deiner Küche?",
     photo: "Foto",
     barcode: "Barcode",
     placeholderFirst: "Zutat eingeben: Zwiebel, onion, Reis…",
@@ -236,6 +239,7 @@ const de: Dict = {
     clear: "Suche zurücksetzen",
   },
   filters: {
+    more: "Mehr Filter",
     label: "Filter",
     type: "Gericht",
     anyType: "Alle Gerichte",

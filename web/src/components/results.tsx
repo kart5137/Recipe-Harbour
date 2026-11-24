@@ -25,7 +25,7 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
 
   if (!pantry && !named && !browse) {
     return (
-      <section aria-labelledby="try" className="mt-10">
+      <section aria-labelledby="try" className="glass-soft mt-6 rounded-3xl p-5 sm:p-6">
         <h2 id="try" className="text-sm font-semibold text-muted">
           {t.tryHeading}
         </h2>
@@ -65,8 +65,8 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
   const order = pantry ? (res.canMakeNow > 0 && !state.ready ? null : t.bestFirst) : named ? null : t.browseOrder;
 
   return (
-    <section aria-labelledby="results" className="mt-10">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
+    <section aria-labelledby="results" className="mt-8">
+      <div className="glass-soft flex flex-wrap items-baseline justify-between gap-2 rounded-2xl px-5 py-3">
         <h2 id="results" className="font-display text-2xl font-semibold">
           {res.total === 0 ? t.none : t.count(res.total)}
         </h2>
@@ -79,10 +79,10 @@ export function Results({ state, lang }: { state: SearchState; lang: Locale }) {
         {res.total > 0 && order && <p className="text-sm text-muted">{order}</p>}
       </div>
 
-      {res.unknown.length > 0 && <p className="mt-2 text-sm text-miss">{t.ignored(res.unknown.join(", "))}</p>}
+      {res.unknown.length > 0 && <p className="glass-soft mt-2 rounded-xl px-4 py-2 text-sm text-miss">{t.ignored(res.unknown.join(", "))}</p>}
 
       {res.total === 0 ? (
-        <p className="mt-4 max-w-prose text-muted">
+        <p className="glass-soft mt-4 max-w-prose rounded-2xl px-5 py-3 text-muted">
           {pantry
             ? `${t.noneWithPantry} (${state.have.map((id) => label(id, lang)).join(", ")})`
             : named

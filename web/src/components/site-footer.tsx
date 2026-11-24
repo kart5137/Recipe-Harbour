@@ -1,3 +1,4 @@
+import { PHOTO_CREDITS } from "@/lib/backdrops";
 import { dict, type Locale } from "@/lib/i18n";
 
 const LINK = "underline decoration-line underline-offset-4 hover:text-ink";
@@ -5,7 +6,7 @@ const LINK = "underline decoration-line underline-offset-4 hover:text-ink";
 export function SiteFooter({ lang }: { lang: Locale }) {
   const t = dict(lang).footer;
   return (
-    <footer className="mt-16 border-t border-line/70">
+    <footer className="glass-soft mt-16 border-t border-line/70">
       <div className="mx-auto max-w-6xl space-y-2 px-4 py-8 text-sm text-muted sm:px-6">
         <p>
           {t.recipesFrom}{" "}
@@ -21,6 +22,23 @@ export function SiteFooter({ lang }: { lang: Locale }) {
             CC BY-SA 4.0
           </a>
           {t.reformatted}
+        </p>
+        <p>
+          {t.photos}{" "}
+          {PHOTO_CREDITS.map((p, i) => (
+            <span key={p.name}>
+              {i > 0 && ", "}
+              <a className={LINK} href={p.url}>
+                {p.author}
+              </a>{" "}
+              (
+              <a className={LINK} href={p.licenceUrl}>
+                {p.licence}
+              </a>
+              )
+            </span>
+          ))}
+          .
         </p>
         <p>{t.madeBy}</p>
       </div>

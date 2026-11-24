@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist } from "next/font/google";
 
+import { Backdrop } from "@/components/backdrop";
 import { LocaleProvider } from "@/components/locale";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -30,6 +31,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   return (
     <html lang={lang} className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
+        <Backdrop />
         <LocaleProvider lang={lang}>
           <SiteHeader lang={lang} />
           <div className="flex-1">{children}</div>

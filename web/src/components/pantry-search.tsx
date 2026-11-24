@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, LoaderCircle, Plus, ScanBarcode, Search, SlidersHorizontal, X } from "lucide-react";
+import { Camera, ChevronDown, LoaderCircle, Plus, ScanBarcode, Search, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 
@@ -32,6 +32,8 @@ export function PantrySearch({ state, entries }: Props) {
   const [q, setQ] = useState(state.q);
   const [scanOpen, setScanOpen] = useState(false);
   const [photoOpen, setPhotoOpen] = useState(false);
+  const activeFilters = [state.type, state.time, state.diet, state.ready].filter(Boolean).length;
+  const [filtersOpen, setFiltersOpen] = useState(activeFilters > 0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
@@ -83,30 +85,10 @@ export function PantrySearch({ state, entries }: Props) {
   const showList = open && text.trim() !== "";
 
   return (
-    <section aria-label={t.search.label} className="rounded-3xl border border-line bg-surface p-4 shadow-sm sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <label htmlFor={`${listId}-input`} className="shrink-0 text-sm font-semibold">
-          {t.search.whatHave}
-        </label>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setPhotoOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
-          >
-            <Camera className="size-4" aria-hidden />
-            {t.search.photo}
-          </button>
-          <button
-            type="button"
-            onClick={() => setScanOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
-          >
-            <ScanBarcode className="size-4" aria-hidden />
-            {t.search.barcode}
-          </button>
-        </div>
-      </div>
+    <section aria-label={t.search.label} className="glass rounded-3xl border border-white/60 p-4 shadow-xl shadow-black/10 sm:p-6 dark:border-white/10">
+      <label htmlFor={`${listId}-input`} className="block font-display text-xl font-semibold sm:text-2xl">
+        {t.search.whatHave}
+      </label>
       <PhotoDialog
         open={photoOpen}
         onClose={() => setPhotoOpen(false)}
@@ -119,9 +101,10 @@ export function PantrySearch({ state, entries }: Props) {
         onAdd={(id) => go({ have: [...state.have.filter((h) => h !== id), id] })}
         have={state.have}
       />
-      <div className="relative mt-2">
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
+      <div className="relative min-w-0 flex-1">
         <div
-          className="flex min-h-14 flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface-2 px-3 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/25"
+          className="flex min-h-14 flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-2 shadow-inner shadow-black/5 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/25"
           onClick={() => inputRef.current?.focus()}
         >
           {state.have.map((id) => (
@@ -200,6 +183,25 @@ export function PantrySearch({ state, entries }: Props) {
           </ul>
         )}
       </div>
+        <div className="grid grid-cols-2 gap-2 sm:flex">
+          <button
+            type="button"
+            onClick={() => setPhotoOpen(true)}
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-ink shadow-sm transition hover:brightness-110"
+          >
+            <Camera className="size-5" aria-hidden />
+            {t.search.photo}
+          </button>
+          <button
+            type="button"
+            onClick={() => setScanOpen(true)}
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-5 text-sm font-semibold text-ink shadow-sm transition hover:border-brand hover:text-brand"
+          >
+            <ScanBarcode className="size-5" aria-hidden />
+            {t.search.barcode}
+          </button>
+        </div>
+      </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
         <div className="relative">
@@ -210,10 +212,10 @@ export function PantrySearch({ state, entries }: Props) {
             onChange={(e) => setQ(e.target.value)}
             placeholder={t.search.names}
             aria-label={t.search.namesAria}
-            className="h-11 w-full rounded-xl border border-line bg-surface-2 pr-3 pl-9 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
+            className="h-11 w-full rounded-xl border border-line bg-surface pr-3 pl-9 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
           />
         </div>
-        <div role="radiogroup" aria-label={t.search.recipeLanguage} className="inline-flex rounded-xl border border-line bg-surface-2 p-1 text-sm">
+        <div role="radiogroup" aria-label={t.search.recipeLanguage} className="inline-flex rounded-xl border border-line bg-surface p-1 text-sm">
           {(
             [
               ["all", t.search.langAll],
@@ -248,6 +250,7 @@ export function PantrySearch({ state, entries }: Props) {
           </button>
           {t.search.staples}
         </label>
+        <div className="flex items-center gap-4">
         {(state.have.length > 0 || state.q) && (
           <button
             type="button"
@@ -260,27 +263,41 @@ export function PantrySearch({ state, entries }: Props) {
             {t.search.clear}
           </button>
         )}
+        <button
+          type="button"
+          aria-expanded={filtersOpen}
+          aria-controls={`${listId}-filters`}
+          onClick={() => setFiltersOpen((o) => !o)}
+          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
+        >
+          <SlidersHorizontal className="size-4" aria-hidden />
+          {t.filters.more}
+          {activeFilters > 0 && (
+            <span className="grid size-5 place-items-center rounded-full bg-brand text-xs font-semibold text-brand-ink">{activeFilters}</span>
+          )}
+          <ChevronDown className={`size-4 transition ${filtersOpen ? "rotate-180" : ""}`} aria-hidden />
+        </button>
+        </div>
       </div>
 
-      <Filters state={state} go={go} />
+      {filtersOpen && <Filters id={`${listId}-filters`} state={state} go={go} />}
     </section>
   );
 }
 
 const SELECT =
-  "h-10 rounded-xl border border-line bg-surface-2 px-3 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/25";
+  "h-10 rounded-xl border border-line bg-surface px-3 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/25";
 
 /** Dish type, time and diet, plus "only what I can make now" once there are ingredients. */
-function Filters({ state, go }: { state: SearchState; go: (next: Partial<SearchState>) => void }) {
+function Filters({ id, state, go }: { id: string; state: SearchState; go: (next: Partial<SearchState>) => void }) {
   const lang = useLocale();
   const t = useDict().filters;
   const active = Boolean(state.type || state.time || state.diet || state.ready);
   const families = [...FAMILY_KEYS].sort((a, b) => FAMILIES[a].label[lang].localeCompare(FAMILIES[b].label[lang], lang));
   return (
-    <fieldset className="mt-4 border-t border-line pt-4">
+    <fieldset id={id} className="mt-4 border-t border-line pt-4">
       <legend className="sr-only">{t.label}</legend>
       <div className="flex flex-wrap items-center gap-2">
-        <SlidersHorizontal className="size-4 text-muted" aria-hidden />
         <select aria-label={t.type} value={state.type} onChange={(e) => go({ type: e.target.value })} className={SELECT}>
           <option value="">{t.anyType}</option>
           {families.map((k) => (
@@ -303,7 +320,7 @@ function Filters({ state, go }: { state: SearchState; go: (next: Partial<SearchS
           <option value="vegan">{t.vegan}</option>
         </select>
         {state.have.length > 0 && (
-          <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface-2 px-3 text-sm font-medium has-checked:border-have has-checked:bg-have-soft has-checked:text-have">
+          <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface px-3 text-sm font-medium has-checked:border-have has-checked:bg-have-soft has-checked:text-have">
             <input type="checkbox" checked={state.ready} onChange={(e) => go({ ready: e.target.checked })} className="size-4 accent-[var(--color-have)]" />
             {t.ready}
           </label>
