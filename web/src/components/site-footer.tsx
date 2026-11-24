@@ -1,4 +1,3 @@
-import { PHOTO_CREDITS } from "@/lib/backdrops";
 import { dict, type Locale } from "@/lib/i18n";
 
 const LINK = "underline decoration-line underline-offset-4 hover:text-ink";
@@ -25,19 +24,9 @@ export function SiteFooter({ lang }: { lang: Locale }) {
         </p>
         <p>
           {t.photos}{" "}
-          {PHOTO_CREDITS.map((p, i) => (
-            <span key={p.name}>
-              {i > 0 && ", "}
-              <a className={LINK} href={p.url}>
-                {p.author}
-              </a>{" "}
-              (
-              <a className={LINK} href={p.licenceUrl}>
-                {p.licence}
-              </a>
-              )
-            </span>
-          ))}
+          <a className={LINK} href="https://github.com/kart5137/Recipe-Harbour#credits">
+            {t.photoCredits}
+          </a>
           .
         </p>
         <p>{t.madeBy}</p>

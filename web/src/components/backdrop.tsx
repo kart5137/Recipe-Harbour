@@ -1,28 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-import { PHOTO_CREDITS } from "@/lib/backdrops";
+import { BACKGROUND, FLOATERS } from "@/lib/backdrops";
 
 /**
- * Food photos behind every page (Wikimedia Commons, credited in the footer). They crossfade
- * into one another as you scroll down the page. A frosted wash of the page colour keeps text
- * readable; on the home page it starts thin, so the first photo shows at the top, and thickens
- * as you scroll (see `.scrim` in globals.css).
+ * One food photo behind every page, with cut-out food floating over it. As you scroll, each item
+ * drifts at its own speed and turns a little (the salt shaker falls), and wraps round so some are
+ * always on screen. A frosted wash of the page colour keeps text readable; on the home page it
+ * starts thin and the items float above it (see `.scrim` and `.floaters` in globals.css).
  */
-const PHOTOS = PHOTO_CREDITS.map((p) => p.name);
-
-const smooth = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+const MARGIN = 200; // px an item travels off screen before it wraps round
 
 export function Backdrop() {
-  const photos = useRef<(HTMLImageElement | null)[]>([]);
-  // The first photo loads with the page; the others once it has settled.
-  const [all, setAll] = useState(false);
-
-  useEffect(() => {
-    const id = setTimeout(() => setAll(true), 1200);
-    return () => clearTimeout(id);
-  }, []);
+  const photo = useRef<HTMLImageElement>(null);
+  const items = useRef<(HTMLImageElement | null)[]>([]);
 
   useEffect(() => {
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -30,17 +22,17 @@ export function Backdrop() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const max = root.scrollHeight - innerHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
-      const n = PHOTOS.length - 1;
-      photos.current.forEach((img, i) => {
-        if (!img || i === 0) return;
-        // Each photo holds for a while, then the next one fades in over half a stretch.
-        const o = smooth((p * n - (i - 1) - 0.25) / 0.5);
-        img.style.opacity = String(o);
-        if (!still) img.style.transform = `scale(${(1.06 - 0.06 * o).toFixed(4)})`;
+      const y = still ? 0 : scrollY;
+      const h = innerHeight;
+      const span = h + 2 * MARGIN;
+      FLOATERS.forEach((f, i) => {
+        const el = items.current[i];
+        if (!el) return;
+        const top = ((((f.y / 100) * h - f.speed * y + MARGIN) % span) + span) % span - MARGIN;
+        el.style.transform = `translate3d(-50%, ${top.toFixed(1)}px, 0) rotate(${(f.tilt + (f.spin * y) / 100).toFixed(1)}deg)`;
       });
-      root.style.setProperty("--hero-scroll", smooth(scrollY / 420).toFixed(3));
+      if (photo.current && !still) photo.current.style.transform = `scale(${(1.04 + Math.min(scrollY, 2000) / 25000).toFixed(4)})`;
+      root.style.setProperty("--hero-scroll", Math.min(1, scrollY / 420).toFixed(3));
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -48,38 +40,48 @@ export function Backdrop() {
     update();
     addEventListener("scroll", schedule, { passive: true });
     addEventListener("resize", schedule);
-    const grow = new ResizeObserver(schedule); // results loading in change the page height
-    grow.observe(document.body);
     return () => {
       removeEventListener("scroll", schedule);
       removeEventListener("resize", schedule);
-      grow.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [all]);
+  }, []);
 
   return (
     <div aria-hidden className="backdrop">
-      {PHOTOS.map((name, i) =>
-        i === 0 || all ? (
-          // Pre-sized WebP files in /public/backdrops; next/image would only resize them again.
+      {/* Pre-sized WebP files in /public; next/image would only resize them again. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={photo}
+        className="backdrop-photo"
+        src={`/backdrops/${BACKGROUND.name}-1920.webp`}
+        srcSet={`/backdrops/${BACKGROUND.name}-960.webp 960w, /backdrops/${BACKGROUND.name}-1920.webp 1920w`}
+        sizes="100vw"
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+      />
+      <div className="scrim" />
+      <div className="floaters">
+        {FLOATERS.map((f, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            key={name}
+            key={f.name}
             ref={(el) => {
-              photos.current[i] = el;
+              items.current[i] = el;
             }}
-            src={`/backdrops/${name}-1920.webp`}
-            srcSet={`/backdrops/${name}-960.webp 960w, /backdrops/${name}-1920.webp 1920w`}
-            sizes="100vw"
+            src={`/floaters/${f.name}.webp`}
             alt=""
-            fetchPriority={i === 0 ? "high" : "low"}
             decoding="async"
-            style={i === 0 ? undefined : { opacity: 0 }}
+            className={f.phone ? "floater" : "floater max-sm:hidden"}
+            style={{
+              left: `${f.x}%`,
+              width: `clamp(${Math.round(f.size * 0.6)}px, ${((f.size / 1280) * 100).toFixed(2)}vw, ${f.size}px)`,
+              transform: `translate3d(-50%, ${f.y}vh, 0) rotate(${f.tilt}deg)`,
+            }}
           />
-        ) : null,
-      )}
-      <div className="scrim" />
+        ))}
+      </div>
     </div>
   );
 }

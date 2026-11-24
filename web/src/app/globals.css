@@ -77,7 +77,8 @@ body {
   background: var(--brand-soft);
 }
 
-/* Food photos behind everything (components/backdrop.tsx), under a frosted wash of the page colour. */
+/* One food photo behind everything, cut-out food floating over it (components/backdrop.tsx),
+   and a frosted wash of the page colour between them and the text. */
 .backdrop {
   position: fixed;
   inset: 0;
@@ -86,27 +87,47 @@ body {
   pointer-events: none;
 }
 
-.backdrop img {
+.backdrop-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  will-change: opacity, transform;
+  transform: scale(1.04);
+  will-change: transform;
 }
 
 .scrim {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.1);
   backdrop-filter: blur(18px) saturate(1.1);
 }
 
-/* On the home page the first photo shows clearly at the top and the wash only half closes in as
-   you scroll: everything below the panel sits on its own card or frosted bar. */
+/* Elsewhere the items sit under the wash, faint, so they never compete with recipe text. */
+.floaters {
+  position: absolute;
+  inset: 0;
+}
+
+.floater {
+  position: absolute;
+  top: 0;
+  height: auto;
+  filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.28));
+  will-change: transform;
+}
+
+/* On the home page the photo shows clearly at the top and the wash only half closes in as you
+   scroll (everything below the panel sits on its own card or frosted bar); the items float above it. */
 body:has([data-photo-hero]) .scrim {
   opacity: calc(0.12 + 0.38 * var(--hero-scroll, 0));
+}
+
+body:has([data-photo-hero]) .floaters {
+  z-index: 2;
 }
 
 /* Frosted panels that sit on the photos. */

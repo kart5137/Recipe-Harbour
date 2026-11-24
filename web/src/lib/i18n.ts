@@ -27,6 +27,7 @@ const en = {
   },
   footer: {
     photos: "Background photos from Wikimedia Commons:",
+    photoCredits: "photographers and licences",
     recipesFrom: "Recipes from the",
     cookbook: "Wikibooks Cookbook",
     and: "and",
@@ -209,6 +210,7 @@ const de: Dict = {
   },
   footer: {
     photos: "Hintergrundfotos von Wikimedia Commons:",
+    photoCredits: "Fotografen und Lizenzen",
     recipesFrom: "Rezepte aus dem",
     cookbook: "Wikibooks Cookbook",
     and: "und dem",
