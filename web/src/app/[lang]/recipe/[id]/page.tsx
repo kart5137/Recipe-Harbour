@@ -1,4 +1,4 @@
-import { Clock, Drumstick, Gauge, Globe2, Languages, Leaf, Users } from "lucide-react";
+import { Clock, Drumstick, Flame, Gauge, Globe2, Languages, Leaf, Slice, Thermometer, Timer, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -6,11 +6,12 @@ import { Suspense } from "react";
 import { BackLink } from "@/components/back-link";
 import { FavouriteButton } from "@/components/favourite-button";
 import { IngredientsPanel } from "@/components/ingredients-panel";
-import { getIngredientsLite, getRecipe, sampleRecipeIds } from "@/lib/data";
+import { getIngredientsLite, getRecipe, ingredientGroup, sampleRecipeIds } from "@/lib/data";
 import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
 import { dict, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
+import { type Cue, type Method, type PrepLine, splitMethod } from "@/lib/method";
 import { localize, type RecipeDetail } from "@/lib/recipe";
 
 export function generateStaticParams() {
@@ -124,21 +125,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
         </div>
 
         <div className="space-y-8">
-          <section aria-labelledby="method">
-            <h2 id="method" className="font-display text-2xl font-semibold">
-              {t.recipe.method}
-            </h2>
-            <ol className="mt-4 space-y-4" lang={r.textLang}>
-              {r.steps.map((s, i) => (
-                <li key={i} className="flex gap-4">
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-bold text-brand-ink">
-                    {i + 1}
-                  </span>
-                  <p className="pt-1 leading-relaxed">{s}</p>
-                </li>
-              ))}
-            </ol>
-          </section>
+          <MethodSections method={splitMethod(r.groups, r.steps, r.textLang, ingredientGroup)} lang={lang} textLang={r.textLang} />
 
           {r.equipment.length > 0 && (
             <section aria-labelledby="equipment">
@@ -190,6 +177,122 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
         </div>
       </div>
     </article>
+  );
+}
+
+/**
+ * The method in two parts: getting ready (what to cut and how, the spices and their amounts, the
+ * steps before anything is heated) and cooking (the rest, with the time and heat each step names).
+ * Step numbers run on across both parts, so they still match the original recipe.
+ */
+function MethodSections({ method: m, lang, textLang }: { method: Method; lang: Locale; textLang: string }) {
+  const t = dict(lang).recipe;
+  const split = m.cook.length > 0;
+  const hasPrep = m.cut.length > 0 || m.season.length > 0 || m.prep.length > 0;
+  return (
+    <>
+      {hasPrep && (
+        <section aria-labelledby="preparation">
+          <h2 id="preparation" className="flex items-center gap-2 font-display text-2xl font-semibold">
+            <Slice className="size-6 text-brand" aria-hidden />
+            {split ? t.preparation : t.method}
+          </h2>
+          {split && <p className="mt-1 text-xs text-muted">{t.splitNote}</p>}
+          {(m.cut.length > 0 || m.season.length > 0) && (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2" lang={textLang}>
+              {m.cut.length > 0 && <PrepList heading={t.cutHeading} lines={m.cut} />}
+              {m.season.length > 0 && <PrepList heading={t.seasonHeading} lines={m.season} />}
+            </div>
+          )}
+          {m.prep.length > 0 && (
+            <>
+              {(m.cut.length > 0 || m.season.length > 0) && (
+                <h3 className="mt-6 text-sm font-semibold tracking-wide text-muted uppercase">{t.stepsHeading}</h3>
+              )}
+              <ol className="mt-3 space-y-4" lang={textLang}>
+                {m.prep.map((s, i) => (
+                  <Step key={i} n={i + 1} text={s} />
+                ))}
+              </ol>
+            </>
+          )}
+        </section>
+      )}
+      {split && (
+        <section aria-labelledby="cooking">
+          <h2 id="cooking" className="flex items-center gap-2 font-display text-2xl font-semibold">
+            <Flame className="size-6 text-brand" aria-hidden />
+            {t.cooking}
+          </h2>
+          <ol className="mt-4 space-y-4" lang={textLang}>
+            {m.cook.map((s, i) => (
+              <Step key={i} n={m.prep.length + i + 1} text={s.text}>
+                {s.cues.length > 0 && (
+                  <span className="mt-2 flex flex-wrap gap-1.5" lang={lang}>
+                    {s.cues.map((c, ci) => (
+                      <CuePill key={ci} cue={c} lang={lang} />
+                    ))}
+                  </span>
+                )}
+              </Step>
+            ))}
+          </ol>
+        </section>
+      )}
+    </>
+  );
+}
+
+function PrepList({ heading, lines }: { heading: string; lines: PrepLine[] }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-4 shadow-sm">
+      <h3 className="text-sm font-semibold tracking-wide text-muted uppercase">{heading}</h3>
+      <ul className="mt-3 divide-y divide-line/70">
+        {lines.map((l, i) => (
+          <li key={i} className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-2 text-[15px] first:pt-0 last:pb-0">
+            {l.amount && <span className="font-semibold tabular-nums">{l.amount}</span>}
+            <span className="min-w-0 flex-1">{l.name}</span>
+            {l.cut && <span className="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-ink">{l.cut}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Step({ n, text, children }: { n: number; text: string; children?: React.ReactNode }) {
+  return (
+    <li className="flex gap-4">
+      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-bold text-brand-ink">{n}</span>
+      <div className="pt-1">
+        <p className="leading-relaxed">{text}</p>
+        {children}
+      </div>
+    </li>
+  );
+}
+
+const fraction = (n: number, lang: Locale) =>
+  ({ 0.25: "¼", 0.5: "½", 0.75: "¾" })[n] ?? (lang === "de" ? String(n).replace(".", ",") : String(n));
+
+function CuePill({ cue, lang }: { cue: Cue; lang: Locale }) {
+  const t = dict(lang).recipe;
+  let icon = <Timer className="size-3.5" aria-hidden />;
+  let text: string;
+  if (cue.kind === "time") text = `${fraction(cue.from, lang)}${cue.to !== null ? `–${fraction(cue.to, lang)}` : ""} ${t.units[cue.unit]}`;
+  else if (cue.kind === "overnight") text = t.overnight;
+  else if (cue.kind === "heat") {
+    icon = <Flame className="size-3.5" aria-hidden />;
+    text = t.heat[cue.level];
+  } else {
+    icon = <Thermometer className="size-3.5" aria-hidden />;
+    text = `${cue.value} °${cue.scale}`;
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink">
+      {icon}
+      {text}
+    </span>
   );
 }
 

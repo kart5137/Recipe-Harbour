@@ -20,6 +20,13 @@ export function getModel(): Model {
   return model;
 }
 
+/** An ingredient's group in the search index ("vegetable", "spice", ...), or undefined. */
+export function ingredientGroup(id: string): string | undefined {
+  const m = getModel();
+  const i = m.byId.get(id);
+  return i === undefined ? undefined : m.ingredients[i]?.group;
+}
+
 const shards = new Map<number, Record<string, RecipeDetail>>();
 
 /** One recipe's page data, or null for an unknown id. Loads only that recipe's shard. */
