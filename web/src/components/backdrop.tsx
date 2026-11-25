@@ -21,9 +21,14 @@ export function Backdrop() {
     // Next keeps pages you left in the document, hidden, for a quick Back; only a shown one counts.
     const hero = [...document.querySelectorAll("[data-photo-hero]")].some((e) => e.getClientRects().length > 0);
     if (!hero) {
+      delete el.dataset.hero;
       el.style.opacity = "1";
       return;
     }
+    el.dataset.hero = "";
+    el.style.removeProperty("opacity");
+    // Where the browser can tie an animation to scrolling, it runs on the graphics chip (globals.css).
+    if (CSS.supports("animation-timeline: scroll()")) return;
     const page = document.body; // the page scrolls inside <body>, see globals.css
     let frame = 0;
     const update = () => {

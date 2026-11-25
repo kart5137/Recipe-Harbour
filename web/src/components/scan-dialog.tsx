@@ -142,7 +142,7 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
                       {t.scan.camera[cameraError]}
                     </span>
                   ) : (
-                    <LoaderCircle className="size-8 animate-spin" aria-label={t.scan.starting} />
+                    <span className="inline-flex animate-spin"><LoaderCircle className="size-8" aria-label={t.scan.starting} /></span>
                   )}
                 </div>
               )}
@@ -153,7 +153,7 @@ export function ScanDialog({ open, onClose, onAdd, have }: Props) {
 
         {phase.kind === "looking" && (
           <p className="flex items-center justify-center gap-2 py-10 text-muted" role="status">
-            <LoaderCircle className="size-5 animate-spin" aria-hidden />
+            <span className="inline-flex animate-spin"><LoaderCircle className="size-5" aria-hidden /></span>
             {t.scan.looking(phase.code)}
           </p>
         )}

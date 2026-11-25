@@ -1,4 +1,4 @@
-import { Heart } from "lucide-react";
+import { Heart, Info } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -17,13 +17,20 @@ export function SiteHeader({ lang }: { lang: Locale }) {
             Recipe <span className="text-brand">Harbour</span>
           </span>
         </Link>
-        <nav className="flex shrink-0 items-center gap-2">
+        <nav className="flex shrink-0 items-center gap-1 sm:gap-2">
           <Link
             href={`/${lang}/favourites`}
-            className="press inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-ink"
+            className="press inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-sm font-medium text-muted sm:px-3 transition hover:bg-surface-2 hover:text-ink"
           >
             <Heart className="size-4" aria-hidden />
             <span className="max-sm:sr-only">{t.nav.favourites}</span>
+          </Link>
+          <Link
+            href={`/${lang}/credits`}
+            className="press inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-sm font-medium text-muted sm:px-3 transition hover:bg-surface-2 hover:text-ink"
+          >
+            <Info className="size-4" aria-hidden />
+            <span className="max-sm:sr-only">{t.nav.credits}</span>
           </Link>
           {/* The switch keeps the current page and search, which it reads from the URL. */}
           <Suspense fallback={<LanguageSwitchFallback />}>

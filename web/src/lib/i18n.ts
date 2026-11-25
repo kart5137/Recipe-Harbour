@@ -17,7 +17,7 @@ const en = {
     title: "Recipe Harbour",
     description: "Type, scan or photograph what's in your kitchen and find recipes you can cook today. Thousands of free recipes in English and German.",
   },
-  nav: { favourites: "Favourites", otherLanguage: "Deutsch", otherLanguageCode: "de", switchLabel: "Auf Deutsch" },
+  nav: { favourites: "Favourites", credits: "Credits", otherLanguage: "Deutsch", otherLanguageCode: "de", switchLabel: "Auf Deutsch" },
   hero: {
     before: "Cook with what you ",
     accent: "already have",
@@ -25,18 +25,49 @@ const en = {
     sub: "Type it, scan it or snap a photo, and get recipes you can cook today.",
     stats: (total: number) => [`${nf("en")(total)} recipes`, "English & German", "Free, no sign-up"],
   },
-  footer: {
-    photos: "Background photo from Wikimedia Commons:",
-    photoCredits: "photographer and licence",
-    recipesFrom: "Recipes from the",
-    cookbook: "Wikibooks Cookbook",
-    and: "and",
-    kochbuch: "Kochbuch",
-    writtenBy: ", written by their contributors and shared under",
-    reformatted: ". Reformatted for search.",
+  credits: {
+    title: "Credits",
+    intro: "Recipe Harbour is built on open recipes, photos, data and models. Thank you to everyone who made them.",
+    items: [
+      {
+        heading: "Recipes",
+        text: "From the Wikibooks Cookbook and Kochbuch, written by their contributors and shared under CC BY-SA 4.0. Reformatted for search and machine-translated between English and German. Every recipe page links to its original and its authors.",
+        links: [
+          ["Wikibooks Cookbook", "https://en.wikibooks.org/wiki/Cookbook:Table_of_Contents"],
+          ["Wikibooks Kochbuch", "https://de.wikibooks.org/wiki/Kochbuch"],
+          ["CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/"],
+        ],
+      },
+      {
+        heading: "Background photo",
+        text: "Sourdough bread by Tomascastelazo, from Wikimedia Commons, under CC BY-SA 4.0. Resized and softened for the web; the colours of the site are taken from it.",
+        links: [["The photo on Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Home_made_sour_dough_bread.jpg"]],
+      },
+      {
+        heading: "Product data",
+        text: "Barcode lookups use Open Food Facts, made by its contributors and shared under the ODbL.",
+        links: [
+          ["Open Food Facts", "https://world.openfoodfacts.org"],
+          ["ODbL", "https://opendatacommons.org/licenses/odbl/1-0/"],
+        ],
+      },
+      {
+        heading: "Photo recognition",
+        text: "Google's SigLIP 2 image-text model (Apache 2.0), run on your device with ONNX Runtime Web (MIT). Its ingredient layer was trained on Open Images V7 photos (CC BY 2.0) and Fruits-360 by Mihai Oltean (CC BY-SA 4.0).",
+        links: [
+          ["SigLIP 2", "https://huggingface.co/google/siglip2-base-patch32-256"],
+          ["Open Images V7", "https://storage.googleapis.com/openimages/web/index.html"],
+          ["Fruits-360", "https://github.com/fruits-360"],
+        ],
+      },
+      {
+        heading: "Translation",
+        text: "Facebook AI's WMT19 English-German and German-English models (Apache 2.0).",
+        links: [["WMT19 en-de", "https://huggingface.co/facebook/wmt19-en-de"]],
+      },
+    ] as { heading: string; text: string; links: [string, string][] }[],
+    full: "Every photographer and licence in full",
     madeBy: "Made by Karthik Manoj.",
-    model: "Photo recognition model:",
-    modelCard: "how it was trained and how accurate it is",
   },
   search: {
     label: "Search",
@@ -200,7 +231,7 @@ const de: Dict = {
     title: "Recipe Harbour",
     description: "Tippe, scanne oder fotografiere, was in deiner Küche ist, und finde Rezepte, die du heute kochen kannst. Tausende kostenlose Rezepte auf Deutsch und Englisch.",
   },
-  nav: { favourites: "Favoriten", otherLanguage: "English", otherLanguageCode: "en", switchLabel: "In English" },
+  nav: { favourites: "Favoriten", credits: "Danksagung", otherLanguage: "English", otherLanguageCode: "en", switchLabel: "In English" },
   hero: {
     before: "Koch mit dem, was du ",
     accent: "schon hast",
@@ -208,18 +239,49 @@ const de: Dict = {
     sub: "Eintippen, scannen oder fotografieren – und Rezepte finden, die du heute kochen kannst.",
     stats: (total: number) => [`${nf("de")(total)} Rezepte`, "Deutsch & Englisch", "Kostenlos, ohne Anmeldung"],
   },
-  footer: {
-    photos: "Hintergrundfoto von Wikimedia Commons:",
-    photoCredits: "Fotograf und Lizenz",
-    recipesFrom: "Rezepte aus dem",
-    cookbook: "Wikibooks Cookbook",
-    and: "und dem",
-    kochbuch: "Kochbuch",
-    writtenBy: ", geschrieben von ihren Autorinnen und Autoren und geteilt unter",
-    reformatted: ". Für die Suche neu formatiert.",
+  credits: {
+    title: "Danksagung",
+    intro: "Recipe Harbour baut auf offenen Rezepten, Fotos, Daten und Modellen auf. Danke an alle, die sie geschaffen haben.",
+    items: [
+      {
+        heading: "Rezepte",
+        text: "Aus dem Wikibooks Cookbook und dem Kochbuch, geschrieben von ihren Autorinnen und Autoren und geteilt unter CC BY-SA 4.0. Für die Suche neu formatiert und maschinell zwischen Deutsch und Englisch übersetzt. Jede Rezeptseite verlinkt das Original und seine Autoren.",
+        links: [
+          ["Wikibooks Cookbook", "https://en.wikibooks.org/wiki/Cookbook:Table_of_Contents"],
+          ["Wikibooks Kochbuch", "https://de.wikibooks.org/wiki/Kochbuch"],
+          ["CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/deed.de"],
+        ],
+      },
+      {
+        heading: "Hintergrundfoto",
+        text: "Sauerteigbrot von Tomascastelazo, von Wikimedia Commons, unter CC BY-SA 4.0. Für das Web verkleinert und weichgezeichnet; die Farben der Seite stammen daraus.",
+        links: [["Das Foto auf Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Home_made_sour_dough_bread.jpg"]],
+      },
+      {
+        heading: "Produktdaten",
+        text: "Die Barcode-Suche nutzt Open Food Facts, erstellt von seinen Mitwirkenden und geteilt unter der ODbL.",
+        links: [
+          ["Open Food Facts", "https://de.openfoodfacts.org"],
+          ["ODbL", "https://opendatacommons.org/licenses/odbl/1-0/"],
+        ],
+      },
+      {
+        heading: "Bilderkennung",
+        text: "Googles Bild-Text-Modell SigLIP 2 (Apache 2.0), auf deinem Gerät ausgeführt mit ONNX Runtime Web (MIT). Seine Zutaten-Schicht wurde mit Fotos aus Open Images V7 (CC BY 2.0) und Fruits-360 von Mihai Oltean (CC BY-SA 4.0) trainiert.",
+        links: [
+          ["SigLIP 2", "https://huggingface.co/google/siglip2-base-patch32-256"],
+          ["Open Images V7", "https://storage.googleapis.com/openimages/web/index.html"],
+          ["Fruits-360", "https://github.com/fruits-360"],
+        ],
+      },
+      {
+        heading: "Übersetzung",
+        text: "Die WMT19-Modelle Englisch-Deutsch und Deutsch-Englisch von Facebook AI (Apache 2.0).",
+        links: [["WMT19 de-en", "https://huggingface.co/facebook/wmt19-de-en"]],
+      },
+    ],
+    full: "Alle Fotografen und Lizenzen vollständig",
     madeBy: "Gemacht von Karthik Manoj.",
-    model: "Bilderkennungsmodell:",
-    modelCard: "wie es trainiert wurde und wie genau es ist",
   },
   search: {
     label: "Suche",

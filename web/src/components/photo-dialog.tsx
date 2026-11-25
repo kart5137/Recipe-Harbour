@@ -196,7 +196,7 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
               {camera !== "on" && (
                 <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-white">
                   {camera === "starting" ? (
-                    <LoaderCircle className="size-8 animate-spin" aria-label={t.scan.starting} />
+                    <span className="inline-flex animate-spin"><LoaderCircle className="size-8" aria-label={t.scan.starting} /></span>
                   ) : (
                     <span className="flex flex-col items-center gap-2">
                       <CameraOff className="size-8" aria-hidden />
@@ -246,7 +246,7 @@ export function PhotoDialog({ open, onClose, onAdd, have }: Props) {
             <div className="min-w-0 flex-1 space-y-3" role="status">
               {phase.kind === "analysing" ? (
                 <p className="flex items-center gap-2 pt-2 text-muted">
-                  <LoaderCircle className="size-5 animate-spin" aria-hidden /> {t.photo.looking}
+                  <span className="inline-flex animate-spin"><LoaderCircle className="size-5" aria-hidden /></span> {t.photo.looking}
                 </p>
               ) : (
                 <ResultView t={t} lang={lang} result={phase.result} have={have} onAdd={add} />

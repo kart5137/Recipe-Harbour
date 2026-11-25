@@ -14,10 +14,11 @@ export function ScrollMemory() {
     const page = document.body;
     const here = () => KEY + location.pathname + location.search;
     let restoring = 0; // frame id while a restore is running
-    let frame = 0;
+    let timer = 0;
 
+    // Saved once scrolling pauses (not on every frame), and right away on any click that may navigate.
     const save = () => {
-      frame = 0;
+      clearTimeout(timer);
       if (restoring) return;
       try {
         sessionStorage.setItem(here(), String(Math.round(page.scrollTop)));
@@ -26,7 +27,8 @@ export function ScrollMemory() {
       }
     };
     const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(save);
+      clearTimeout(timer);
+      timer = window.setTimeout(save, 150);
     };
 
     const onPop = () => {
@@ -49,11 +51,13 @@ export function ScrollMemory() {
     };
 
     page.addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("click", save, true);
     addEventListener("popstate", onPop);
     return () => {
       page.removeEventListener("scroll", onScroll);
+      removeEventListener("click", save, true);
       removeEventListener("popstate", onPop);
-      cancelAnimationFrame(frame);
+      clearTimeout(timer);
       cancelAnimationFrame(restoring);
     };
   }, []);

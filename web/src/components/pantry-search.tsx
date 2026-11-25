@@ -2,7 +2,7 @@
 
 import { Camera, ChevronDown, LoaderCircle, Plus, ScanBarcode, Search, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useOptimistic, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useLayoutEffect, useMemo, useOptimistic, useRef, useState, useTransition } from "react";
 
 import { useDict, useLocale } from "@/components/locale";
 import { PhotoDialog } from "@/components/photo-dialog";
@@ -44,6 +44,46 @@ export function PantrySearch({ state: server }: Props) {
   const [photoOpen, setPhotoOpen] = useState(false);
   const activeFilters = [state.type, state.time, state.diet, state.ready].filter(Boolean).length;
   const [filtersOpen, setFiltersOpen] = useState(activeFilters > 0);
+  // The filters card stays mounted while it slides shut; see slideDrawer below.
+  const [drawerShown, setDrawerShown] = useState(filtersOpen);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerOpening = useRef(false);
+  const drawerTimer = useRef(0);
+  const toggleFilters = () => {
+    const open = !filtersOpen;
+    setFiltersOpen(open);
+    clearTimeout(drawerTimer.current);
+    const card = drawerRef.current;
+    if (open) {
+      if (card) slideDrawer(card, 0, true); // reopened while still closing
+      else {
+        drawerOpening.current = true;
+        setDrawerShown(true);
+      }
+    } else if (card && !reducedMotion()) {
+      slideDrawer(card, -drawerHeight(card), true);
+      drawerTimer.current = window.setTimeout(() => setDrawerShown(false), DURATION);
+    } else setDrawerShown(false);
+  };
+  useLayoutEffect(() => {
+    const card = drawerRef.current;
+    if (drawerShown && card && drawerOpening.current) {
+      // Before the new card is first painted: tuck it and what follows up by its height, then let go.
+      drawerOpening.current = false;
+      if (reducedMotion()) return;
+      slideDrawer(card, -drawerHeight(card), false);
+      card.getBoundingClientRect();
+      slideDrawer(card, 0, true);
+    } else if (!drawerShown) {
+      // The card is gone and what followed it is back in place: drop the offsets in the same frame.
+      const panel = document.querySelector("[data-search-panel]");
+      for (let n = panel?.nextElementSibling; n; n = n.nextElementSibling)
+        if (n instanceof HTMLElement) {
+          n.style.transition = "none";
+          n.style.transform = "";
+        }
+    }
+  }, [drawerShown]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
@@ -115,7 +155,8 @@ export function PantrySearch({ state: server }: Props) {
   const showList = open && text.trim() !== "";
 
   return (
-    <section aria-label={t.search.label} className="glass rounded-[28px] p-4 sm:p-6">
+    <>
+    <section data-search-panel aria-label={t.search.label} className="glass relative z-[2] rounded-[28px] p-4 sm:p-6">
       <label htmlFor={`${listId}-input`} className="block font-display text-xl font-semibold sm:text-2xl">
         {t.search.whatHave}
       </label>
@@ -174,7 +215,7 @@ export function PantrySearch({ state: server }: Props) {
             className="min-w-40 flex-1 bg-transparent py-1.5 text-base outline-none placeholder:text-muted/80"
             autoComplete="off"
           />
-          {pending && <LoaderCircle className="size-5 animate-spin text-muted" aria-label={t.search.updating} />}
+          {pending && <span className="inline-flex animate-spin"><LoaderCircle className="size-5 text-muted" aria-label={t.search.updating} /></span>}
         </div>
 
         {showList && (
@@ -297,7 +338,7 @@ export function PantrySearch({ state: server }: Props) {
           type="button"
           aria-expanded={filtersOpen}
           aria-controls={`${listId}-filters`}
-          onClick={() => setFiltersOpen((o) => !o)}
+          onClick={toggleFilters}
           className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition hover:border-brand hover:text-brand"
         >
           <SlidersHorizontal className="size-4" aria-hidden />
@@ -305,21 +346,46 @@ export function PantrySearch({ state: server }: Props) {
           {activeFilters > 0 && (
             <span className="grid size-5 place-items-center rounded-full bg-brand text-xs font-semibold text-brand-ink">{activeFilters}</span>
           )}
-          <ChevronDown className={`size-4 transition ${filtersOpen ? "rotate-180" : ""}`} aria-hidden />
+          {/* Rotated as an HTML box, not the SVG itself, so the graphics chip can animate it. */}
+          <span className={`inline-flex transition-transform duration-300 ${filtersOpen ? "rotate-180" : ""}`} aria-hidden>
+            <ChevronDown className="size-4" />
+          </span>
         </button>
         </div>
       </div>
 
-      {/* Always mounted, so it can glide open: the row grows from 0 to its height (moving everything
-          below down with it) while the filters fade and slide out from under the row above. */}
-      <div className="drawer" data-open={filtersOpen || undefined} inert={!filtersOpen}>
-        <div className="drawer-inner">
+    </section>
+
+      {/* A glass card of its own that slides out from behind the panel; see useDrawer. */}
+      {drawerShown && (
+        <div ref={drawerRef} className="glass relative z-[1] mt-3 rounded-3xl p-4 sm:px-6">
           <Filters id={`${listId}-filters`} state={state} go={go} />
         </div>
-      </div>
-    </section>
+      )}
+    </>
   );
 }
+
+const EASE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+const DURATION = 450;
+
+/**
+ * Moves the filters card and everything after it on the page by `y` pixels: 0 is their natural
+ * place, minus the card's height tucks the card up behind the search panel. Only transform and
+ * opacity change, which the graphics chip animates without waiting for the main thread, so it
+ * stays smooth on any phone; the layout itself changes once, when the card is added or removed.
+ */
+function slideDrawer(card: HTMLElement, y: number, animate: boolean) {
+  for (let n: Element | null = card; n; n = n.nextElementSibling) {
+    if (!(n instanceof HTMLElement)) continue;
+    n.style.transition = animate ? `transform ${DURATION}ms ${EASE}, opacity ${Math.round(DURATION * 0.7)}ms ease` : "none";
+    n.style.transform = y ? `translate3d(0, ${y}px, 0)` : "";
+    if (n === card) n.style.opacity = y ? "0" : "";
+  }
+}
+
+const drawerHeight = (card: HTMLElement) => card.offsetHeight + parseFloat(getComputedStyle(card).marginTop);
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const SELECT =
   "h-10 rounded-xl border border-line bg-surface px-3 text-sm font-medium outline-none focus:border-brand focus:ring-2 focus:ring-brand/25";
@@ -331,7 +397,7 @@ function Filters({ id, state, go }: { id: string; state: SearchState; go: (next:
   const active = Boolean(state.type || state.time || state.diet || state.ready);
   const families = [...FAMILY_KEYS].sort((a, b) => FAMILIES[a].label[lang].localeCompare(FAMILIES[b].label[lang], lang));
   return (
-    <fieldset id={id} className="mt-4 border-t border-line pt-4">
+    <fieldset id={id}>
       <legend className="sr-only">{t.label}</legend>
       <div className="flex flex-wrap items-center gap-2">
         <select aria-label={t.type} value={state.type} onChange={(e) => go({ type: e.target.value })} className={SELECT}>

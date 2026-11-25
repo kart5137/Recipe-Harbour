@@ -4,7 +4,6 @@ import { Fraunces, Geist } from "next/font/google";
 import { Backdrop } from "@/components/backdrop";
 import { LocaleProvider } from "@/components/locale";
 import { ScrollMemory } from "@/components/scroll-memory";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { dict, LOCALES } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
@@ -36,8 +35,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <ScrollMemory />
         <LocaleProvider lang={lang}>
           <SiteHeader lang={lang} />
-          <div className="page-body flex-1">{children}</div>
-          <SiteFooter lang={lang} />
+          <div className="page-body flex-1 pb-10">{children}</div>
         </LocaleProvider>
       </body>
     </html>
