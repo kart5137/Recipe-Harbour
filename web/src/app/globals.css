@@ -248,6 +248,55 @@ body {
   animation-delay: calc(var(--i, 0) * 55ms);
 }
 
+/* Cooking mode (components/cooking-mode.tsx): the view slides up, and each step slides in from
+   the side you are heading to. The page behind it stops scrolling. */
+@keyframes cook-open {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+
+@keyframes step-next {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+}
+
+@keyframes step-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-36px);
+  }
+}
+
+@keyframes ring {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.cook-open {
+  animation: cook-open 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.step-next {
+  animation: step-next 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.step-prev {
+  animation: step-prev 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.ring {
+  animation: ring 0.8s ease-in-out infinite;
+}
+
+body[data-cooking] {
+  overflow: hidden;
+}
+
 button,
 .press {
   transition-property: scale, color, background-color, border-color, box-shadow, opacity, translate;
@@ -274,7 +323,11 @@ body[data-searching] .results-area {
 
 @media (prefers-reduced-motion: reduce) {
   .rise,
-  .pop {
+  .pop,
+  .cook-open,
+  .step-next,
+  .step-prev,
+  .ring {
     animation: none;
   }
 

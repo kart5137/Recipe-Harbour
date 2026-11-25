@@ -1,9 +1,11 @@
-import { Clock, Drumstick, Flame, Gauge, Globe2, Languages, Leaf, Slice, Thermometer, Timer, Users } from "lucide-react";
+import { Clock, Drumstick, Flame, Gauge, Globe2, Languages, Leaf, Slice, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BackLink } from "@/components/back-link";
+import { CookingMode, StartCookingButton } from "@/components/cooking-mode";
+import { CuePill } from "@/components/cue-pill";
 import { FavouriteButton } from "@/components/favourite-button";
 import { IngredientsPanel } from "@/components/ingredients-panel";
 import { getIngredientsLite, getRecipe, ingredientGroup, sampleRecipeIds } from "@/lib/data";
@@ -11,7 +13,7 @@ import { family } from "@/lib/families";
 import { formatMinutes } from "@/lib/format";
 import { dict, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
-import { type Cue, type Method, type PrepLine, splitMethod } from "@/lib/method";
+import { type Method, type PrepLine, splitMethod } from "@/lib/method";
 import { localize, type RecipeDetail } from "@/lib/recipe";
 
 export function generateStaticParams() {
@@ -59,6 +61,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
   const Icon = fam.icon;
   const time = formatMinutes(r.minutes, lang);
   const source = t.recipe.source[r.lang];
+  const method = splitMethod(r.groups, r.steps, r.textLang, ingredientGroup);
 
   return (
     <article className="rise mt-4">
@@ -85,6 +88,15 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
                 {t.recipe.original}
               </a>
             </p>
+          )}
+          {r.steps.length > 0 && (
+            <div className="mt-5">
+              {/* Cooking mode opens from the address (?cook=1), so Back closes it; reading the
+                  address needs its own Suspense boundary in a prerendered page. */}
+              <Suspense fallback={<StartCookingButton />}>
+                <CookingMode method={method} title={r.title} textLang={r.textLang} />
+              </Suspense>
+            </div>
           )}
           {r.description && (
             <p lang={r.textLang} className="mt-4 max-w-3xl text-base leading-relaxed text-ink/80 sm:text-lg">
@@ -125,7 +137,7 @@ async function Recipe({ params, lang }: Pick<PageProps<"/[lang]/recipe/[id]">, "
         </div>
 
         <div className="space-y-8">
-          <MethodSections method={splitMethod(r.groups, r.steps, r.textLang, ingredientGroup)} lang={lang} textLang={r.textLang} />
+          <MethodSections method={method} lang={lang} textLang={r.textLang} />
 
           {r.equipment.length > 0 && (
             <section aria-labelledby="equipment">
@@ -269,30 +281,6 @@ function Step({ n, text, children }: { n: number; text: string; children?: React
         {children}
       </div>
     </li>
-  );
-}
-
-const fraction = (n: number, lang: Locale) =>
-  ({ 0.25: "¼", 0.5: "½", 0.75: "¾" })[n] ?? (lang === "de" ? String(n).replace(".", ",") : String(n));
-
-function CuePill({ cue, lang }: { cue: Cue; lang: Locale }) {
-  const t = dict(lang).recipe;
-  let icon = <Timer className="size-3.5" aria-hidden />;
-  let text: string;
-  if (cue.kind === "time") text = `${fraction(cue.from, lang)}${cue.to !== null ? `–${fraction(cue.to, lang)}` : ""} ${t.units[cue.unit]}`;
-  else if (cue.kind === "overnight") text = t.overnight;
-  else if (cue.kind === "heat") {
-    icon = <Flame className="size-3.5" aria-hidden />;
-    text = t.heat[cue.level];
-  } else {
-    icon = <Thermometer className="size-3.5" aria-hidden />;
-    text = `${cue.value} °${cue.scale}`;
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink">
-      {icon}
-      {text}
-    </span>
   );
 }
 
